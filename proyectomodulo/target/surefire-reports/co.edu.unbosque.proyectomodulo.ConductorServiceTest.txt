@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: co.edu.unbosque.proyectomodulo.ConductorServiceTest
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.11 s -- in co.edu.unbosque.proyectomodulo.ConductorServiceTest
