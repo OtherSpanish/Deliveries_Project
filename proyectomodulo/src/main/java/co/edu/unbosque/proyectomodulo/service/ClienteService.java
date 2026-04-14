@@ -8,11 +8,22 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+
+import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
 import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
+import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
+import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
+import co.edu.unbosque.proyectomodulo.entity.Admin;
 import co.edu.unbosque.proyectomodulo.entity.Cliente;
+import co.edu.unbosque.proyectomodulo.entity.Conductor;
+import co.edu.unbosque.proyectomodulo.entity.ManipuladorPaquete;
 import co.edu.unbosque.proyectomodulo.exceptions.CedulaException;
 import co.edu.unbosque.proyectomodulo.exceptions.LanzadorException;
+import co.edu.unbosque.proyectomodulo.repository.AdminRepository;
 import co.edu.unbosque.proyectomodulo.repository.ClienteRepository;
+import co.edu.unbosque.proyectomodulo.repository.ConductorRepository;
+import co.edu.unbosque.proyectomodulo.repository.ManipuladorPaqueteRepository;
 
 /**
  * Servicio que gestiona las operaciones CRUD y de autenticación
@@ -27,6 +38,13 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	/** Repositorio para acceso a datos de clientes. */
 	@Autowired
 	private ClienteRepository clienteRep;
+	@Autowired
+	private AdminRepository aRep;
+	@Autowired
+	private ConductorRepository cRep;
+	@Autowired
+	private ManipuladorPaqueteRepository mRep;
+	
 
 	/** Mapper para conversión entre entidades y DTOs. */
 	@Autowired
@@ -34,7 +52,7 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 
 	/** Servicio de administrador para validar permisos. */
 	@Autowired
-	private AdminService aService;
+	private AdminService adminService;
 
 	/** Cliente actualmente autenticado en el sistema. */
 	private Cliente clienteLogueado;
@@ -54,10 +72,8 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	 */
 	public int login(String usuario, String contrasenia) {
 		Optional<Cliente> encontrado = clienteRep.findByUsuario(usuario);
-
 		if (encontrado.isPresent()
 				&& encontrado.get().getContrasenia().equals(contrasenia)) {
-
 			clienteLogueado = encontrado.get();
 			return 0;
 		}
@@ -95,15 +111,14 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 		if (encontrado.isPresent()) {
 			return 1;
 		}
-
 		try {
 			LanzadorException.verificarCedulaValida(data.getCedula());
 		} catch (CedulaException e) {
 			return 1;
 		}
-
 		Cliente entity = mapper.map(data, Cliente.class);
 		clienteRep.save(entity);
+
 		return 0;
 	}
 
@@ -114,8 +129,9 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	 * @return lista de clientes o {@code null} si no hay permisos
 	 */
 	@Override
-	public List<ClienteDTO> getAll() {
-		if (!aService.isLoggedadmin()) {
+	public String getAll() {
+		Gson gson = new Gson();
+		if (!adminService.isLoggedadmin()) {
 			return null;
 		}
 
@@ -125,8 +141,7 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 		entityList.forEach(entity ->
 			dtoList.add(mapper.map(entity, ClienteDTO.class))
 		);
-
-		return dtoList;
+		return gson.toJson(dtoList);
 	}
 
 	/**
@@ -139,12 +154,11 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	 */
 	@Override
 	public int deleteById(Long id) {
-		if (!aService.isLoggedadmin()) {
+		if (!adminService.isLoggedadmin()) {
 			return 2;
 		}
 
 		Optional<Cliente> encontrado = clienteRep.findById(id);
-
 		if (encontrado.isPresent()) {
 			ClienteDTO dto = mapper.map(encontrado.get(), ClienteDTO.class);
 			Cliente entity = mapper.map(dto, Cliente.class);
@@ -165,34 +179,37 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	 *         {@code 3-6} conflictos de datos
 	 */
 	@Override
-	public int updateById(Long id, ClienteDTO data) {
+	public int updateById(Long id, AdminDTO data, ClienteDTO dataC, ConductorDTO dataConductor, ManipuladorPaqueteDTO dataM) {
 
 		Optional<Cliente> encontradoID = clienteRep.findById(id);
-		Optional<Cliente> encontradoNombre = clienteRep.findByUsuario(data.getUsuario());
-		Optional<Cliente> encontradoCedula = clienteRep.findByCedula(data.getCedula());
-
-		if (encontradoNombre.isPresent() && !encontradoCedula.isPresent()) {
+		Optional<Cliente> encontradoUsuario = clienteRep.findByUsuario(dataC.getUsuario());
+		Optional<Cliente> encontradoCedula = clienteRep.findByCedula(dataC.getCedula());
+		Optional<Admin> encontradoUsuarioAdmin = aRep.findByUsuario(data.getUsuario());
+		Optional<Conductor> encontradoUsuarioConductor = cRep.findByUsuario(dataConductor.getUsuario());
+		Optional<ManipuladorPaquete> encontradoUsuarioManipulador = mRep.findByUsuario(dataM.getUsuario());
+		
+		if(!adminService.isLoggedadmin()) {
+			return 2;
+		}
+		if (encontradoUsuario.isPresent() || encontradoUsuarioAdmin.isPresent() || encontradoUsuarioConductor.isPresent() || encontradoUsuarioManipulador.isPresent()) {
 			return 3;
-		} else if (!encontradoNombre.isPresent() && encontradoCedula.isPresent()) {
+		} else if (encontradoCedula.isPresent()) {
 			return 4;
-		} else if (encontradoID.isPresent()
-				&& encontradoNombre.isPresent()
-				&& encontradoCedula.isPresent()) {
+		} else if (encontradoID.isPresent() && encontradoUsuario.isPresent() && encontradoCedula.isPresent()) {
 			return 5;
 		}
 
-		if (encontradoID.isPresent()
-				&& !(encontradoNombre.isPresent() && encontradoCedula.isPresent())) {
+		if (encontradoID.isPresent() && !(encontradoUsuario.isPresent() && encontradoCedula.isPresent() || encontradoUsuarioAdmin.isPresent() || encontradoUsuarioConductor.isPresent() || encontradoUsuarioManipulador.isPresent())) {
 
 			ClienteDTO temp = mapper.map(encontradoID.get(), ClienteDTO.class);
 
-			temp.setUsuario(data.getUsuario());
-			temp.setContrasenia(data.getContrasenia());
-			temp.setCedula(data.getCedula());
-			temp.setTipoCliente(data.getTipoCliente());
+			temp.setUsuario(dataC.getUsuario());
+			temp.setContrasenia(dataC.getContrasenia());
+			temp.setCedula(dataC.getCedula());
+			temp.setTipoCliente(dataC.getTipoCliente());
 
 			try {
-				LanzadorException.verificarCedulaValida(data.getCedula());
+				LanzadorException.verificarCedulaValida(dataC.getCedula());
 			} catch (CedulaException e) {
 				return 1;
 			}
@@ -270,32 +287,7 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	 *         {@code 2} lista vacía o sin permisos
 	 */
 	public int ObtenerTodo() {
-		List<ClienteDTO> encontrado = getAll();
-
-		if (encontrado == null || encontrado.isEmpty()) {
-			return 2;
-		}
 		return 0;
-	}
-
-	/**
-	 * Busca clientes por tipo.
-	 *
-	 * @param tipoCliente tipo de cliente
-	 * @return lista de clientes encontrados
-	 */
-	public List<ClienteDTO> findByTipoCliente(String tipoCliente) {
-
-		Optional<List<Cliente>> encontrados = clienteRep.findByTipoCliente(tipoCliente);
-		List<ClienteDTO> dtoList = new ArrayList<>();
-
-		if (encontrados.isPresent() && !encontrados.get().isEmpty()) {
-			encontrados.get().forEach(entity ->
-				dtoList.add(mapper.map(entity, ClienteDTO.class))
-			);
-		}
-
-		return dtoList;
 	}
 
 	/**
@@ -306,4 +298,6 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	public Cliente getClienteLogueado() {
 		return clienteLogueado;
 	}
+
+
 }

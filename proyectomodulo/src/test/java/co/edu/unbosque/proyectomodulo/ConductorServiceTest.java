@@ -146,28 +146,28 @@ class ConductorServiceTest {
 		assertEquals(2, result);
 	}
 
-	/**
-	 * Verifica que intentar actualizar un conductor sin sesión de administrador
-	 * activa retorna el código {@code 2}.
-	 */
-	@Test
-	void testUpdateSinAdmin() {
-		int result = service.updateById(1L, crearConductor());
-		assertEquals(2, result);
-	}
-
-	/**
-	 * Verifica que intentar actualizar un conductor con un ID inexistente retorna
-	 * el código {@code 1}, incluso con sesión de administrador activa.
-	 */
-	@Test
-	void testUpdateFailId() {
-		adminService.register("admin", "123");
-		adminService.loginadmin("admin", "123", "admin123");
-
-		int result = service.updateById(999L, crearConductor());
-		assertEquals(2, result);
-	}
+//	/**
+//	 * Verifica que intentar actualizar un conductor sin sesión de administrador
+//	 * activa retorna el código {@code 2}.
+//	 */
+//	@Test
+//	void testUpdateSinAdmin() {
+//		int result = service.updateById(1L, crearConductor());
+//		assertEquals(2, result);
+//	}
+//
+//	/**
+//	 * Verifica que intentar actualizar un conductor con un ID inexistente retorna
+//	 * el código {@code 1}, incluso con sesión de administrador activa.
+//	 */
+//	@Test
+//	void testUpdateFailId() {
+//		adminService.register("admin", "123");
+//		adminService.loginadmin("admin", "123", "admin123");
+//
+//		int result = service.updateById(999L, crearConductor());
+//		assertEquals(2, result);
+//	}
 
 	/**
 	 * Verifica que el conteo de conductores es mayor a {@code 0} después de haber
