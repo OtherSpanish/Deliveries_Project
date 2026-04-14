@@ -8,6 +8,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+
+import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
+import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
+import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
+import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
 import co.edu.unbosque.proyectomodulo.dto.PaqueteDTO;
 import co.edu.unbosque.proyectomodulo.entity.Paquete;
 import co.edu.unbosque.proyectomodulo.exceptions.DireccionException;
@@ -95,8 +101,9 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 *         o {@code null} si ningún usuario autorizado tiene sesión activa
 	 */
 	@Override
-	public List<PaqueteDTO> getAll() {
-
+	public String getAll() {
+		
+		Gson gson = new Gson();
 		if (!(adminService.isLoggedadmin() || conductorService.isLogged() || mService.isLogged())) {
 			return null;
 		}
@@ -107,8 +114,7 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 		entityList.forEach(entity ->
 			dtoList.add(mapper.map(entity, PaqueteDTO.class))
 		);
-
-		return dtoList;
+		return gson.toJson(dtoList);
 	}
 
 	/**
@@ -118,7 +124,8 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 * @return lista de {@link PaqueteDTO} con todos los paquetes,
 	 *         o {@code null} si el usuario no tiene los permisos requeridos
 	 */
-	public List<PaqueteDTO> getAllManipuladorPaquetes() {
+	public String getAllManipuladorPaquetes() {
+		Gson gson = new Gson();
 
 		if (!(mService.isLogged() || adminService.isLoggedadmin())) {
 			return null;
@@ -131,7 +138,7 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 			dtoList.add(mapper.map(entity, PaqueteDTO.class))
 		);
 
-		return dtoList;
+		return gson.toJson(dtoList);
 	}
 
 	/**
@@ -171,11 +178,16 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 *         {@code 1} si no se encontró el paquete o los datos son inválidos,
 	 *         {@code 2} si no se cuenta con los permisos requeridos
 	 */
-	@Override
 	public int updateById(Long id, PaqueteDTO data) {
 
 		if (!(adminService.isLoggedadmin() && clienteService.isLogged())) {
 			return 2;
+		}
+		if(!clienteService.isLogged()) {
+			return 3;
+		}
+		if (!adminService.isLoggedadmin()) {
+			return 4;
 		}
 
 		Optional<Paquete> encontrado = paqueteRep.findById(id);
@@ -256,5 +268,12 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 		}
 
 		return dtoList;
+	}
+
+	@Override
+	public int updateById(Long id, AdminDTO data, ClienteDTO datac, ConductorDTO dataConductor,
+			ManipuladorPaqueteDTO dataM) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

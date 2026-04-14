@@ -6,11 +6,23 @@ import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.gson.Gson;
+
+import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
+import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
 import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
+import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
+import co.edu.unbosque.proyectomodulo.entity.Admin;
+import co.edu.unbosque.proyectomodulo.entity.Cliente;
 import co.edu.unbosque.proyectomodulo.entity.Conductor;
+import co.edu.unbosque.proyectomodulo.entity.ManipuladorPaquete;
 import co.edu.unbosque.proyectomodulo.exceptions.LanzadorException;
 import co.edu.unbosque.proyectomodulo.exceptions.TipoVehiculoException;
+import co.edu.unbosque.proyectomodulo.repository.AdminRepository;
+import co.edu.unbosque.proyectomodulo.repository.ClienteRepository;
 import co.edu.unbosque.proyectomodulo.repository.ConductorRepository;
+import co.edu.unbosque.proyectomodulo.repository.ManipuladorPaqueteRepository;
 
 /**
  * Servicio que gestiona las operaciones CRUD y autenticación
@@ -24,8 +36,14 @@ import co.edu.unbosque.proyectomodulo.repository.ConductorRepository;
 public class ConductorService implements CRUDOPERATION<ConductorDTO> {
 
     /** Repositorio para acceso a datos de conductores. */
-    @Autowired
-    private ConductorRepository conductorRep;
+	@Autowired
+	private AdminRepository aRep;
+	@Autowired
+	private ClienteRepository cRep;
+	@Autowired
+	private ManipuladorPaqueteRepository mRep;
+	@Autowired
+	private ConductorRepository conductorRep;
 
     /** Servicio de administrador para validación de permisos. */
     @Autowired
@@ -56,16 +74,14 @@ public class ConductorService implements CRUDOPERATION<ConductorDTO> {
      */
     @Override
     public int create(ConductorDTO data) {
-
         if (!adminService.isLoggedadmin()) {
             return 2;
         }
-
+        
         Optional<Conductor> encontrado = conductorRep.findByUsuario(data.getUsuario());
         if (encontrado.isPresent()) {
             return 3;
         }
-
         try {
             LanzadorException.verificarTipoVehiculo(data.getTipoVehiculo());
         } catch (TipoVehiculoException e) {
@@ -84,8 +100,8 @@ public class ConductorService implements CRUDOPERATION<ConductorDTO> {
      * @return lista de conductores o {@code null} si no hay permisos
      */
     @Override
-    public List<ConductorDTO> getAll() {
-
+    public String getAll() {
+    	Gson gson = new Gson();
         if (!adminService.isLoggedadmin()) {
             return null;
         }
@@ -96,8 +112,7 @@ public class ConductorService implements CRUDOPERATION<ConductorDTO> {
         entityList.forEach(entity ->
             dtoList.add(mapper.map(entity, ConductorDTO.class))
         );
-
-        return dtoList;
+        return gson.toJson(dtoList);
     }
 
     /**
@@ -138,28 +153,30 @@ public class ConductorService implements CRUDOPERATION<ConductorDTO> {
      *         {@code 3} usuario duplicado
      */
     @Override
-    public int updateById(Long id, ConductorDTO data) {
-
+	public int updateById(Long id, AdminDTO data, ClienteDTO dataC, ConductorDTO dataConductor, ManipuladorPaqueteDTO dataM) {
         if (!adminService.isLoggedadmin()) {
             return 2;
         }
 
         Optional<Conductor> encontradoID = conductorRep.findById(id);
-        Optional<Conductor> encontradoUsuario = conductorRep.findByUsuario(data.getUsuario());
+        Optional<Conductor> encontradoUsuario = conductorRep.findByUsuario(dataConductor.getUsuario());
+        Optional<Admin> encontradoUsuarioAdmin = aRep.findByUsuario(data.getUsuario());
+		Optional<Cliente> encontradoUsuarioCliente = cRep.findByUsuario(dataC.getUsuario());
+		Optional<ManipuladorPaquete> encontradoUsuarioManipulador = mRep.findByUsuario(dataM.getUsuario());
 
-        if (encontradoID.isPresent() && encontradoUsuario.isPresent()) {
+        if (encontradoID.isPresent() && encontradoUsuario.isPresent() || (encontradoUsuario.isPresent() || encontradoUsuarioAdmin.isPresent() || encontradoUsuarioCliente.isPresent() || encontradoUsuarioManipulador.isPresent())) {
             return 3;
         }
 
         if (encontradoID.isPresent()) {
 
             ConductorDTO temp = mapper.map(encontradoID.get(), ConductorDTO.class);
-            temp.setUsuario(data.getUsuario());
-            temp.setContrasenia(data.getContrasenia());
-            temp.setTipoVehiculo(data.getTipoVehiculo());
+            temp.setUsuario(dataConductor.getUsuario());
+            temp.setContrasenia(dataConductor.getContrasenia());
+            temp.setTipoVehiculo(dataConductor.getTipoVehiculo());
 
             try {
-                LanzadorException.verificarTipoVehiculo(data.getTipoVehiculo());
+                LanzadorException.verificarTipoVehiculo(dataConductor.getTipoVehiculo());
             } catch (TipoVehiculoException e) {
                 return 1;
             }
@@ -231,4 +248,5 @@ public class ConductorService implements CRUDOPERATION<ConductorDTO> {
     public boolean isLogged() {
         return conductorLogueado != null;
     }
+
 }

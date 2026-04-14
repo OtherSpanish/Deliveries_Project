@@ -52,11 +52,11 @@ public class ConductorController {
 	public ResponseEntity<String> loginConductor(@RequestParam String usuario, @RequestParam String contrasenia) {
 		int status = cService.login(usuario, contrasenia);
 		if (status == 0) {
-			return new ResponseEntity<>("Conductor ingresado", HttpStatus.CREATED);
+			return new ResponseEntity<>("Conductor ingresado", HttpStatus.OK);
 		} else if (status == 1) {
 			return new ResponseEntity<>("Credenciales invalidas", HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 	}
 	/**
 	 * Cierra la sesión del administrador actualmente logueado.
@@ -82,11 +82,11 @@ public class ConductorController {
 	 */
 	@GetMapping("/mostrarpedidos")
 	public ResponseEntity<String> mostrarTodo() {
-		List<PaqueteDTO> paquetes = pService.getAll();
+		String paquetes = pService.getAll();
 		if (paquetes == null) {
 			return new ResponseEntity<>("Se necesita ingresar un conductor o un admin", HttpStatus.UNAUTHORIZED);
 		} else if (paquetes.isEmpty()) {
-			return new ResponseEntity<>("Esta vacia la lista", HttpStatus.NO_CONTENT);
+			return new ResponseEntity<>("Esta vacia la lista", HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>("" + paquetes, HttpStatus.ACCEPTED);
 		}

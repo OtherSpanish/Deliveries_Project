@@ -55,7 +55,7 @@ public class ManipuladorPaqueteController {
 		if (status == 0) {
 			return new ResponseEntity<>("Login exitoso", HttpStatus.OK);
 		}
-		return new ResponseEntity<>("Credenciales incorrectas", HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<>("Credenciales incorrectas", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -82,11 +82,11 @@ public class ManipuladorPaqueteController {
 	 */
 	@GetMapping("/mostrarpaquete")
 	public ResponseEntity<String> mostrarPaquetes() {
-		List<PaqueteDTO> paquetes = pService.getAllManipuladorPaquetes();
+		String paquetes = pService.getAllManipuladorPaquetes();
 		if (paquetes == null) {
 			return new ResponseEntity<>("Se necesita ingresar un manipulador de paquetes o un admin", HttpStatus.UNAUTHORIZED);
 		} else if (paquetes.isEmpty()) {
-			return new ResponseEntity<>("Contenido vacio", HttpStatus.NO_CONTENT);
+			return new ResponseEntity<>("Contenido vacio", HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>("" + paquetes, HttpStatus.ACCEPTED);
 		}
