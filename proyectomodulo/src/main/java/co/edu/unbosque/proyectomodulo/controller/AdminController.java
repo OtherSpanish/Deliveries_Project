@@ -68,11 +68,11 @@ public class AdminController {
 	 * @return {@code 202 Accepted} con la lista de conductores,
 	 *         {@code 400 Bad Request} si el admin no está ingresado o la lista está vacía.
 	 */
-	@GetMapping("/mostrarConductores")
+	@GetMapping("/mostrarconductores")
 	public ResponseEntity<String> mostrarConductores() {
-		String conductores = cService.getAll();
+		List<ConductorDTO> conductores = cService.getAll();
 		if (conductores == null) {
-			return new ResponseEntity<>("Admin no ingresado", HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>("Admin no ingresado", HttpStatus.BAD_REQUEST);
 		} else if (conductores.isEmpty()) {
 			return new ResponseEntity<>("Contenido vacio", HttpStatus.BAD_REQUEST);
 		} else {
@@ -87,9 +87,9 @@ public class AdminController {
 	 *         {@code 401 Unauthorized} si el admin no está ingresado,
 	 *         {@code 400 Bad Request} si la lista está vacía.
 	 */
-	@GetMapping("/mostrarAdmin")
+	@GetMapping("/mostraradmin")
 	public ResponseEntity<String> mostrarAdmins() {
-		String admins = aService.getAll();
+		List<AdminDTO> admins = aService.getAll();
 		if (admins == null) {
 			return new ResponseEntity<>("Admin no ingresado", HttpStatus.UNAUTHORIZED);
 		} else if (admins.isEmpty()) {
@@ -106,9 +106,9 @@ public class AdminController {
 	 *         {@code 401 Unauthorized} si no hay admin logueado,
 	 *         {@code 400 Bad Request} si la lista está vacía.
 	 */
-	@GetMapping("/mostrarCliente")
+	@GetMapping("/mostrarcliente")
 	public ResponseEntity<String> mostrarClientes() {
-		String clientes = clienteService.getAll();
+		List<ClienteDTO> clientes = clienteService.getAll();
 		if (clientes == null) {
 			return new ResponseEntity<>("Se necesita ingresar un admin", HttpStatus.UNAUTHORIZED);
 		} else if (clientes.isEmpty()) {
@@ -125,9 +125,9 @@ public class AdminController {
 	 *         {@code 401 Unauthorized} si no hay admin logueado,
 	 *         {@code 400 Bad Request} si la lista está vacía.
 	 */
-	@GetMapping("/mostrarPaquete")
+	@GetMapping("/mostrarpaquete")
 	public ResponseEntity<String> mostrarPaquetes() {
-		String paquetes = pService.getAll();
+		List<PaqueteDTO> paquetes = pService.getAll();
 		if (paquetes == null) {
 			return new ResponseEntity<>("Se necesita ingresar un admin", HttpStatus.UNAUTHORIZED);
 		} else if (paquetes.isEmpty()) {
@@ -144,9 +144,9 @@ public class AdminController {
 	 *         {@code 401 Unauthorized} si no hay admin logueado,
 	 *         {@code 400 Bad Request} si la lista está vacía.
 	 */
-	@GetMapping("/mostrarManipulador")
+	@GetMapping("/mostrarmanipulador")
 	public ResponseEntity<String> mostrarManipulador() {
-		String manipuladores = mService.getAll();
+		List<ManipuladorPaqueteDTO> manipuladores = mService.getAll();
 		if (manipuladores == null) {
 			return new ResponseEntity<>("Se necesita ingresar un admin", HttpStatus.UNAUTHORIZED);
 		} else if (manipuladores.isEmpty()) {
@@ -170,7 +170,7 @@ public class AdminController {
 			@RequestParam String codigoAdminverificar) {
 		int status = aService.loginadmin(usuarioAdmin, contraseniaAdmin, codigoAdminverificar);
 		if (status == 0) {
-			return new ResponseEntity<>("Admin ingresado", HttpStatus.OK);
+			return new ResponseEntity<>("Admin ingresado", HttpStatus.CREATED);
 		} else if (status == 1) {
 			return new ResponseEntity<>("Credenciales invalido", HttpStatus.BAD_REQUEST);
 		}
@@ -191,6 +191,29 @@ public class AdminController {
 		aService.logoutadmin();
 		return new ResponseEntity<>("Sesion cerrada", HttpStatus.OK);
 	}
+
+	/**
+	 * Registra un nuevo administrador en el sistema.
+	 *
+	 * @param usuario     nombre de usuario del nuevo administrador.
+	 * @param contrasenia contraseña del nuevo administrador.
+	 * @return {@code 201 Created} si se crea exitosamente,
+	 *         {@code 400 Bad Request} si el usuario ya existe,
+	 *         {@code 401 Unauthorized} si no hay admin logueado.
+	 */
+	@PostMapping("/crearadmin")
+	public ResponseEntity<String> crear(@RequestParam String usuario, @RequestParam String contrasenia) {
+		int status = aService.register(usuario, contrasenia);
+		if (status == 0) {
+			return new ResponseEntity<>("Admin creado", HttpStatus.CREATED);
+		} else if (status == 1) {
+			return new ResponseEntity<>("Usuario ya existe", HttpStatus.BAD_REQUEST);
+		} else if (status == 2) {
+			return new ResponseEntity<>("Se necesita loguear un admin", HttpStatus.UNAUTHORIZED);
+		}
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+	}
+
 	/**
 	 * Crea un nuevo conductor en el sistema.
 	 *
@@ -201,7 +224,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el tipo de vehículo es inválido o el usuario ya existe,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PostMapping("/crearConductor")
+	@PostMapping("/crearconductor")
 	public ResponseEntity<String> crearConductor(@RequestParam String usuario, @RequestParam String contrasenia,
 			@RequestParam String tipoVehiculo) {
 		ConductorDTO nuevo = new ConductorDTO(usuario, contrasenia, tipoVehiculo);
@@ -215,7 +238,7 @@ public class AdminController {
 		} else if (status == 3) {
 			return new ResponseEntity<>("El nombre de usuario ya esta en uso", HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -228,7 +251,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el ingreso es inválido,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PostMapping("/crearManipulador")
+	@PostMapping("/crearmanipulador")
 	public ResponseEntity<String> crearManipulador(@RequestParam String usuario, @RequestParam String contrasenia,
 			@RequestParam int tiempoDeTrabajo) {
 		ManipuladorPaqueteDTO nuevo = new ManipuladorPaqueteDTO(usuario, contrasenia, tiempoDeTrabajo);
@@ -240,7 +263,7 @@ public class AdminController {
 		} else if (status == 2) {
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -256,7 +279,7 @@ public class AdminController {
 	 *         o cédula ya existen, o no se pudo actualizar,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PutMapping("/actualizarCliente")
+	@PutMapping("/actualizarcliente")
 	public ResponseEntity<String> actualizarCliente(@RequestParam Long id, @RequestParam String usuario,
 			@RequestParam String contrasenia, @RequestParam String cedula, @RequestParam String tipoCliente) {
 		ClienteDTO actualizar = new ClienteDTO(usuario, contrasenia, cedula, tipoCliente);
@@ -278,7 +301,7 @@ public class AdminController {
 					HttpStatus.BAD_REQUEST);
 		}
 		}
-		int status = clienteService.updateById(id, null, actualizar, null, null);
+		int status = clienteService.updateById(id, actualizar);
 		if (status == 0) {
 			return new ResponseEntity<>("Cliente Actualizado", HttpStatus.ACCEPTED);
 		} else if (status == 1) {
@@ -292,7 +315,7 @@ public class AdminController {
 		} else if (status == 5) {
 			return new ResponseEntity<>("El usuario y la cedula ya existen", HttpStatus.BAD_REQUEST);
 		} else {
-			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+			return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -310,7 +333,7 @@ public class AdminController {
 	 *         logueado o no se pudo actualizar,
 	 *         {@code 401 Unauthorized} si no hay admin o cliente logueado.
 	 */
-	@PutMapping("/actualizarPaquete")
+	@PutMapping("/actualizarpaquete")
 	public ResponseEntity<String> actualizarPaquete(@RequestParam Long id, @RequestParam String tipoDePaquete,
 			@RequestParam String contenido, @RequestParam String direccionDeEnvio) {
 		String tiempoDeEnvio = "";
@@ -337,7 +360,7 @@ public class AdminController {
 			}
 			default: {
 				return new ResponseEntity<>("Tipo de paquete no válido", HttpStatus.BAD_REQUEST);
-				}
+			}
 			}
 			switch (clienteService.getClienteLogueado().getTipoCliente().toLowerCase()) {
 			case "normal": {
@@ -364,13 +387,8 @@ public class AdminController {
 				return new ResponseEntity<>("No se pudo actualizar el paquete, verifique la direccion (mayor de 5 caracteres) y el tipo de paquete (carta, no comestibles, comestibles)", HttpStatus.BAD_REQUEST);
 			} else if (status == 2) {
 				return new ResponseEntity<>("Debe iniciar sesion un admin y un cliente", HttpStatus.UNAUTHORIZED);
-			} else if(status == 3) {
-				return new ResponseEntity<>("Debe iniciar sesion un cliente", HttpStatus.UNAUTHORIZED);
-			} else if(status == 4) {
-				return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
 			}
-			
-			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+			return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -384,11 +402,11 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya existe,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PutMapping("/actualizarAdmin")
+	@PutMapping("/actualizaradmin")
 	public ResponseEntity<String> actualizarAdmin(@RequestParam Long id, @RequestParam String usuario,
 			@RequestParam String contrasenia) {
 		AdminDTO actualizar = new AdminDTO(usuario, contrasenia);
-		int status = aService.updateById(id, actualizar, null, null, null);
+		int status = aService.updateById(id, actualizar);
 		if (status == 0) {
 			return new ResponseEntity<>("Admin Actualizado", HttpStatus.ACCEPTED);
 		} else if (status == 1) {
@@ -398,7 +416,7 @@ public class AdminController {
 		} else if (status == 3) {
 			return new ResponseEntity<>("El usuario ya existe", HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -412,11 +430,11 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya existe,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PutMapping("/actualizarConductor")
+	@PutMapping("/actualizarconductor")
 	public ResponseEntity<String> actualizarConductor(@RequestParam Long id, @RequestParam String usuario,
 			@RequestParam String contrasenia, @RequestParam String tipoDeVehiculo) {
 		ConductorDTO actualizar = new ConductorDTO(usuario, contrasenia, tipoDeVehiculo);
-		int status = cService.updateById(id, null, null, actualizar, null);
+		int status = cService.updateById(id, actualizar);
 		if (status == 0) {
 			return new ResponseEntity<>("Conductor Actualizado", HttpStatus.ACCEPTED);
 		} else if (status == 1) {
@@ -426,7 +444,7 @@ public class AdminController {
 		} else if (status == 3) {
 			return new ResponseEntity<>("El usuario ya existe", HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -440,11 +458,11 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya existe,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PutMapping("/actualizarManipulador")
+	@PutMapping("/actualizarmanipulador")
 	public ResponseEntity<String> actualizarManipulador(@RequestParam Long id, @RequestParam String usuario,
 			@RequestParam String contrasenia, @RequestParam int tiempoDeTrabajo) {
 		ManipuladorPaqueteDTO actualizar = new ManipuladorPaqueteDTO(usuario, contrasenia, tiempoDeTrabajo);
-		int status = mService.updateById(id, null, null, null, actualizar);
+		int status = mService.updateById(id, actualizar);
 		if (status == 0) {
 			return new ResponseEntity<>("Manipulador Actualizado", HttpStatus.ACCEPTED);
 		} else if (status == 1) {
@@ -452,9 +470,30 @@ public class AdminController {
 		} else if (status == 2) {
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
 		} else if (status == 3) {
-			return new ResponseEntity<>("El usuario ya existe.", HttpStatus.CONFLICT);
+			return new ResponseEntity<>("El usuario ya existe.", HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+	}
+
+	/**
+	 * Elimina un administrador del sistema por su ID.
+	 *
+	 * @param id identificador del administrador a eliminar.
+	 * @return {@code 201 Created} si se elimina exitosamente,
+	 *         {@code 400 Bad Request} si el borrado es inválido,
+	 *         {@code 401 Unauthorized} si no hay admin logueado.
+	 */
+	@DeleteMapping("/borraradmin")
+	public ResponseEntity<String> borrarAdmin(@RequestParam Long id) {
+		int status = aService.deleteById(id);
+		if (status == 0) {
+			return new ResponseEntity<>("Admin borrado", HttpStatus.CREATED);
+		} else if (status == 1) {
+			return new ResponseEntity<>("Borrado invalido", HttpStatus.BAD_REQUEST);
+		} else if (status == 2) {
+			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
+		}
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -465,7 +504,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el borrado es inválido,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@DeleteMapping("/borrarConductor")
+	@DeleteMapping("/borrarconductor")
 	public ResponseEntity<String> borrarConductor(@RequestParam Long id) {
 		int status = cService.deleteById(id);
 		if (status == 0) {
@@ -475,7 +514,7 @@ public class AdminController {
 		} else if (status == 2) {
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -486,7 +525,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el borrado es inválido,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@DeleteMapping("/borrarCliente")
+	@DeleteMapping("/borrarcliente")
 	public ResponseEntity<String> borrarCliente(@RequestParam Long id) {
 		int status = clienteService.deleteById(id);
 		if (status == 0) {
@@ -496,7 +535,7 @@ public class AdminController {
 		} else if (status == 2) {
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -507,7 +546,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el borrado es inválido,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@DeleteMapping("/borrarPaquete")
+	@DeleteMapping("/borrarpaquete")
 	public ResponseEntity<String> borrarPaquete(@RequestParam Long id) {
 		int status = pService.deleteById(id);
 		if (status == 0) {
@@ -517,7 +556,7 @@ public class AdminController {
 		} else if (status == 2) {
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -528,7 +567,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el borrado es inválido,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@DeleteMapping("/borrarManipulador")
+	@DeleteMapping("/borrarmanipulador")
 	public ResponseEntity<String> borrarManipulador(@RequestParam Long id) {
 		int status = mService.deleteById(id);
 		if (status == 0) {
@@ -538,6 +577,6 @@ public class AdminController {
 		} else if (status == 2) {
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
 		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 	}
 }

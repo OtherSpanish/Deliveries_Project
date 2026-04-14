@@ -153,36 +153,36 @@ class ManipuladorPaquetesServiceTest {
 		int result = service.deleteById(999L);
 		assertEquals(2, result);
 	}
-//
-//	/**
-//	 * Verifica que intentar actualizar un manipulador sin sesión de administrador
-//	 * activa retorna el código {@code 2}.
-//	 */
-//	@Test
-//	void testUpdateSinAdmin() {
-//		int result = service.updateById(1L, crearManipulador());
-//		assertEquals(2, result);
-//	}
-//
-//	/**
-//	 * Verifica que intentar actualizar un manipulador con un ID inexistente retorna
-//	 * el código {@code 1}.
-//	 *
-//	 * <p>
-//	 * <b>Nota:</b> en esta prueba el login del administrador usa una contraseña
-//	 * incorrecta ({@code "admin123"} en lugar de {@code "123"}), por lo que la
-//	 * sesión de administrador no llega a iniciarse. El resultado {@code 1} puede
-//	 * deberse tanto al ID inexistente como a la ausencia de sesión activa.
-//	 * </p>
-//	 */
-//	@Test
-//	void testUpdateFail() {
-//		adminService.register("admin", "123");
-//		adminService.loginadmin("admin", "admin123", "admin123");
-//
-//		int result = service.updateById(999L, crearManipulador());
-//		assertEquals(2, result);
-//	}
+
+	/**
+	 * Verifica que intentar actualizar un manipulador sin sesión de administrador
+	 * activa retorna el código {@code 2}.
+	 */
+	@Test
+	void testUpdateSinAdmin() {
+		int result = service.updateById(1L, crearManipulador());
+		assertEquals(2, result);
+	}
+
+	/**
+	 * Verifica que intentar actualizar un manipulador con un ID inexistente retorna
+	 * el código {@code 1}.
+	 *
+	 * <p>
+	 * <b>Nota:</b> en esta prueba el login del administrador usa una contraseña
+	 * incorrecta ({@code "admin123"} en lugar de {@code "123"}), por lo que la
+	 * sesión de administrador no llega a iniciarse. El resultado {@code 1} puede
+	 * deberse tanto al ID inexistente como a la ausencia de sesión activa.
+	 * </p>
+	 */
+	@Test
+	void testUpdateFail() {
+		adminService.register("admin", "123");
+		adminService.loginadmin("admin", "admin123", "admin123");
+
+		int result = service.updateById(999L, crearManipulador());
+		assertEquals(2, result);
+	}
 
 	/**
 	 * Verifica que el conteo de manipuladores es mayor a {@code 0} después de haber

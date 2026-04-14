@@ -19,7 +19,7 @@ import jakarta.persistence.MappedSuperclass;
  * @version 1.0
  */
 @MappedSuperclass
-public abstract class Persona{
+public abstract class Persona {
 
 	/** Identificador único, generado automáticamente. */
 	@Id

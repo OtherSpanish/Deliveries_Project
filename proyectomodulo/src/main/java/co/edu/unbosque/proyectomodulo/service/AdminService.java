@@ -8,20 +8,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-
 import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
-import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
-import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
-import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
 import co.edu.unbosque.proyectomodulo.entity.Admin;
-import co.edu.unbosque.proyectomodulo.entity.Cliente;
-import co.edu.unbosque.proyectomodulo.entity.Conductor;
-import co.edu.unbosque.proyectomodulo.entity.ManipuladorPaquete;
 import co.edu.unbosque.proyectomodulo.repository.AdminRepository;
-import co.edu.unbosque.proyectomodulo.repository.ClienteRepository;
-import co.edu.unbosque.proyectomodulo.repository.ConductorRepository;
-import co.edu.unbosque.proyectomodulo.repository.ManipuladorPaqueteRepository;
 
 /**
  * Servicio que implementa las operaciones CRUD y de autenticación
@@ -36,12 +25,6 @@ public class AdminService implements CRUDOPERATION<AdminDTO> {
 	/** Repositorio para acceso a datos de administradores. */
 	@Autowired
 	private AdminRepository aRep;
-	@Autowired
-	private ClienteRepository cRep;
-	@Autowired
-	private ManipuladorPaqueteRepository mRep;
-	@Autowired
-	private ConductorRepository conductorRep;
 
 	/** Mapper para conversión entre entidades y DTOs. */
 	@Autowired
@@ -65,7 +48,7 @@ public class AdminService implements CRUDOPERATION<AdminDTO> {
 	@Override
 	public int create(AdminDTO data) {
 		Admin entity = mapper.map(data, Admin.class);
-		aRep.save(entity); 
+		aRep.save(entity);
 		return 0;
 	}
 
@@ -76,11 +59,10 @@ public class AdminService implements CRUDOPERATION<AdminDTO> {
 	 * @return lista de administradores o {@code null} si no hay sesión activa
 	 */
 	@Override
-	public String getAll() {
+	public List<AdminDTO> getAll() {
 		if (adminLogueado == null) {
 			return null;
 		}
-		Gson gson = new Gson();
 		List<Admin> entityList = (List<Admin>) aRep.findAll();
 		List<AdminDTO> dtoList = new ArrayList<>();
 
@@ -88,7 +70,8 @@ public class AdminService implements CRUDOPERATION<AdminDTO> {
 			AdminDTO dto = mapper.map(entity, AdminDTO.class);
 			dtoList.add(dto);
 		});
-		return gson.toJson(dtoList);
+
+		return dtoList;
 	}
 
 	/**
@@ -123,20 +106,18 @@ public class AdminService implements CRUDOPERATION<AdminDTO> {
 	 *         {@code 2} sin sesión activa, {@code 3} usuario duplicado
 	 */
 	@Override
-	public int updateById(Long id, AdminDTO data, ClienteDTO datac, ConductorDTO dataConductor, ManipuladorPaqueteDTO dataM) {
+	public int updateById(Long id, AdminDTO data) {
 		if (adminLogueado == null) {
 			return 2;
 		}
+
 		Optional<Admin> encontradoID = aRep.findById(id);
 		Optional<Admin> encontradoUsuario = aRep.findByUsuario(data.getUsuario());
-		Optional<Cliente> encontradoUsuarioCliente = cRep.findByUsuario(datac.getUsuario());
-		Optional<Conductor> encontradoUsuarioConductor = conductorRep.findByUsuario(dataConductor.getUsuario());
-		Optional<ManipuladorPaquete> encontradoUsuarioManipulador = mRep.findByUsuario(dataM.getUsuario());
-		
 
-		if (encontradoID.isPresent() && (encontradoUsuario.isPresent() || encontradoUsuarioCliente.isPresent() || encontradoUsuarioConductor.isPresent() || encontradoUsuarioManipulador.isPresent())) {
+		if (encontradoID.isPresent() && encontradoUsuario.isPresent()) {
 			return 3;
-		} else if (encontradoID.isPresent() && !(encontradoUsuario.isPresent() ||encontradoUsuarioCliente.isPresent() || encontradoUsuarioConductor.isPresent() || encontradoUsuarioManipulador.isPresent())) {
+		} else if (encontradoID.isPresent() && !encontradoUsuario.isPresent()) {
+
 			AdminDTO temp = mapper.map(encontradoID.get(), AdminDTO.class);
 			temp.setUsuario(data.getUsuario());
 			temp.setContrasenia(data.getContrasenia());
@@ -185,6 +166,7 @@ public class AdminService implements CRUDOPERATION<AdminDTO> {
 
 		if (encontrado.isPresent()
 				&& encontrado.get().getContrasenia().equals(contrasenia)
+				&& codigoadmin.equals("admin123")
 				&& encontrado.get().getCodigoAdmin().equals("admin123")) {
 
 			adminLogueado = encontrado.get();

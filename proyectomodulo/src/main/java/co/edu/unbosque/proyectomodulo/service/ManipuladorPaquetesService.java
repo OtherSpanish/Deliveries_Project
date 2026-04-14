@@ -8,21 +8,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-
-import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
-import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
-import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
 import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
-import co.edu.unbosque.proyectomodulo.entity.Admin;
-import co.edu.unbosque.proyectomodulo.entity.Cliente;
-import co.edu.unbosque.proyectomodulo.entity.Conductor;
 import co.edu.unbosque.proyectomodulo.entity.ManipuladorPaquete;
 import co.edu.unbosque.proyectomodulo.exceptions.HoraTrabajoException;
 import co.edu.unbosque.proyectomodulo.exceptions.LanzadorException;
-import co.edu.unbosque.proyectomodulo.repository.AdminRepository;
-import co.edu.unbosque.proyectomodulo.repository.ClienteRepository;
-import co.edu.unbosque.proyectomodulo.repository.ConductorRepository;
 import co.edu.unbosque.proyectomodulo.repository.ManipuladorPaqueteRepository;
 
 /**
@@ -38,13 +27,7 @@ public class ManipuladorPaquetesService implements CRUDOPERATION<ManipuladorPaqu
 
     /** Repositorio para acceso a datos de manipuladores de paquetes. */
     @Autowired
-    private ManipuladorPaqueteRepository mRep;
-    @Autowired
-    private AdminRepository aRep;
-    @Autowired
-	private ClienteRepository cRep;
-    @Autowired
-    private ConductorRepository conductorRep;
+    private ManipuladorPaqueteRepository manipuladorRep;
 
     /** Servicio de administrador para validación de permisos. */
     @Autowired
@@ -87,15 +70,13 @@ public class ManipuladorPaquetesService implements CRUDOPERATION<ManipuladorPaqu
             return 1;
         }
 
-        Optional<ManipuladorPaquete> encontrado = mRep.findByUsuario(data.getUsuario());
+        Optional<ManipuladorPaquete> encontrado = manipuladorRep.findByUsuario(data.getUsuario());
         if (encontrado.isPresent()) {
             return 1;
         }
 
         ManipuladorPaquete entity = mapper.map(data, ManipuladorPaquete.class);
-        mRep.save(entity);
-        Gson gson = new Gson();
-		gson.toJson(entity, ManipuladorPaqueteDTO.class);
+        manipuladorRep.save(entity);
         return 0;
     }
 
@@ -106,21 +87,20 @@ public class ManipuladorPaquetesService implements CRUDOPERATION<ManipuladorPaqu
      * @return lista de manipuladores o {@code null} si no hay permisos
      */
     @Override
-    public String getAll() {
+    public List<ManipuladorPaqueteDTO> getAll() {
 
-    	Gson gson = new Gson();
         if (!adminService.isLoggedadmin()) {
             return null;
         }
 
-        List<ManipuladorPaquete> entityList = (List<ManipuladorPaquete>) mRep.findAll();
+        List<ManipuladorPaquete> entityList = (List<ManipuladorPaquete>) manipuladorRep.findAll();
         List<ManipuladorPaqueteDTO> dtoList = new ArrayList<>();
 
         entityList.forEach(entity ->
             dtoList.add(mapper.map(entity, ManipuladorPaqueteDTO.class))
         );
 
-        return gson.toJson(dtoList);
+        return dtoList;
     }
 
     /**
@@ -138,10 +118,11 @@ public class ManipuladorPaquetesService implements CRUDOPERATION<ManipuladorPaqu
         if (!adminService.isLoggedadmin()) {
             return 2;
         }
-        
-        Optional<ManipuladorPaquete> encontrado = mRep.findById(id);
+
+        Optional<ManipuladorPaquete> encontrado = manipuladorRep.findById(id);
+
         if (encontrado.isPresent()) {
-            mRep.delete(encontrado.get());
+            manipuladorRep.delete(encontrado.get());
             return 0;
         }
 
@@ -160,42 +141,35 @@ public class ManipuladorPaquetesService implements CRUDOPERATION<ManipuladorPaqu
      *         {@code 3} usuario duplicado
      */
     @Override
-    public int updateById(Long id, AdminDTO data, ClienteDTO datac, ConductorDTO dataConductor,
-			ManipuladorPaqueteDTO dataM) {
+    public int updateById(Long id, ManipuladorPaqueteDTO data) {
 
         if (!adminService.isLoggedadmin()) {
             return 2;
         }
 
-        Optional<ManipuladorPaquete> encontradoID = mRep.findById(id);
-        Optional<ManipuladorPaquete> encontradoUsuario = mRep.findByUsuario(dataM.getUsuario());
-        Optional<Admin> encontradoUsuarioAdmin = aRep.findByUsuario(data.getUsuario());
-        Optional<Cliente> encontradoUsuarioCliente = cRep.findByUsuario(datac.getUsuario());
-        Optional<Conductor> encontradoUsuarioConductor = conductorRep.findByUsuario(dataConductor.getUsuario());
-        	
+        Optional<ManipuladorPaquete> encontradoID = manipuladorRep.findById(id);
+        Optional<ManipuladorPaquete> encontradoUsuario = manipuladorRep.findByUsuario(data.getUsuario());
 
-        if (!encontradoID.isPresent() && encontradoUsuario.isPresent() || encontradoUsuarioAdmin.isPresent()
-        	|| encontradoUsuarioCliente.isPresent() || encontradoUsuarioConductor.isPresent()) {
+        if (encontradoID.isPresent() && encontradoUsuario.isPresent()) {
             return 3;
         }
 
-        if (encontradoID.isPresent() && !(encontradoUsuario.isPresent() || encontradoUsuarioAdmin.isPresent()
-            	|| encontradoUsuarioCliente.isPresent() || encontradoUsuarioConductor.isPresent())) {
+        if (encontradoID.isPresent()) {
 
             ManipuladorPaqueteDTO temp = mapper.map(encontradoID.get(), ManipuladorPaqueteDTO.class);
-            temp.setUsuario(dataM.getUsuario());
-            temp.setContrasenia(dataM.getContrasenia());
-            temp.setTiempoDeTrabajo(dataM.getTiempoDeTrabajo());
+            temp.setUsuario(data.getUsuario());
+            temp.setContrasenia(data.getContrasenia());
+            temp.setTiempoDeTrabajo(data.getTiempoDeTrabajo());
 
             try {
-                LanzadorException.verificarHoraDeTrabajo(dataM.getTiempoDeTrabajo());
+                LanzadorException.verificarHoraDeTrabajo(data.getTiempoDeTrabajo());
             } catch (HoraTrabajoException e) {
                 return 1;
             }
 
             ManipuladorPaquete entity = mapper.map(temp, ManipuladorPaquete.class);
             entity.setId(id);
-            mRep.save(entity);
+            manipuladorRep.save(entity);
 
             return 0;
         }
@@ -210,7 +184,7 @@ public class ManipuladorPaquetesService implements CRUDOPERATION<ManipuladorPaqu
      */
     @Override
     public long count() {
-        return mRep.count();
+        return manipuladorRep.count();
     }
 
     /**
@@ -221,7 +195,7 @@ public class ManipuladorPaquetesService implements CRUDOPERATION<ManipuladorPaqu
      */
     @Override
     public boolean exist(Long id) {
-        return mRep.existsById(id);
+        return manipuladorRep.existsById(id);
     }
 
     /**
@@ -232,9 +206,12 @@ public class ManipuladorPaquetesService implements CRUDOPERATION<ManipuladorPaqu
      * @return {@code 0} éxito, {@code 1} credenciales inválidas
      */
     public int login(String usuario, String contrasenia) {
-    	Optional<ManipuladorPaquete> encontrado = mRep.findByUsuario(usuario);
+
+        Optional<ManipuladorPaquete> encontrado = manipuladorRep.findByUsuario(usuario);
+
         if (encontrado.isPresent()
                 && encontrado.get().getContrasenia().equals(contrasenia)) {
+
             manipuladorLogueado = encontrado.get();
             return 0;
         }
@@ -257,6 +234,4 @@ public class ManipuladorPaquetesService implements CRUDOPERATION<ManipuladorPaqu
     public boolean isLogged() {
         return manipuladorLogueado != null;
     }
-
-
 }

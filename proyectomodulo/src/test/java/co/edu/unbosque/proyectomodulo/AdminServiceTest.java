@@ -108,29 +108,29 @@ class AdminServiceTest {
 		assertEquals(2, result);
 	}
 
-//	/**
-//	 * Verifica que intentar actualizar un registro sin sesión iniciada retorna el
-//	 * código {@code 2}.
-//	 */
-//	@Test
-//	void testUpdateSinLogin() {
-//		int result = service.updateById(1L, crearAdmin());
-//		assertEquals(2, result);
-//	}
-//
-//	/**
-//	 * Verifica que intentar actualizar un administrador con un ID inexistente
-//	 * retorna el código {@code 1}, incluso con sesión iniciada.
-//	 */
-//	@Test
-//	void testUpdateFail() {
-//		service.register("user", "123");
-//		service.loginadmin("user", "123", "admin123");
-//
-//		int result = service.updateById(999L, crearAdmin());
-//
-//		assertEquals(2, result);
-//	}
+	/**
+	 * Verifica que intentar actualizar un registro sin sesión iniciada retorna el
+	 * código {@code 2}.
+	 */
+	@Test
+	void testUpdateSinLogin() {
+		int result = service.updateById(1L, crearAdmin());
+		assertEquals(2, result);
+	}
+
+	/**
+	 * Verifica que intentar actualizar un administrador con un ID inexistente
+	 * retorna el código {@code 1}, incluso con sesión iniciada.
+	 */
+	@Test
+	void testUpdateFail() {
+		service.register("user", "123");
+		service.loginadmin("user", "123", "admin123");
+
+		int result = service.updateById(999L, crearAdmin());
+
+		assertEquals(2, result);
+	}
 
 	/**
 	 * Verifica que el conteo de administradores es mayor a {@code 0} después de
@@ -149,16 +149,16 @@ class AdminServiceTest {
 	 * Verifica que {@code exist()} retorna {@code true} para un ID correspondiente
 	 * a un administrador creado previamente.
 	 */
-//	@Test
-//	void testExist() {
-//		service.create(crearAdmin());
-//		service.loginadmin("user", "123", "admin123");
-//		Long id = service.getAll().isEmpty() ? 1L : service.getAll().get(0).getId();
-//
-//		boolean existe = service.exist(id);
-//
-//		assertTrue(existe);
-//	}
+	@Test
+	void testExist() {
+		service.create(crearAdmin());
+		service.loginadmin("user", "123", "admin123");
+		Long id = service.getAll().isEmpty() ? 1L : service.getAll().get(0).getId();
+
+		boolean existe = service.exist(id);
+
+		assertTrue(existe);
+	}
 
 	/**
 	 * Verifica que el inicio de sesión retorna {@code 0} y que el estado de sesión

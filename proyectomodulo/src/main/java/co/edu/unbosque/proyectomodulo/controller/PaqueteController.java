@@ -62,7 +62,7 @@ public class PaqueteController {
 	public ResponseEntity<String> crearPaquete(@RequestParam String tipoPaquete, @RequestParam String contenido,
 			@RequestParam String direccionAEnviar) {
 		if (clienteService.getClienteLogueado() == null) {
-			return new ResponseEntity<>("Se debe ingresar un usuario", HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>("Se debe ingresar un usuario", HttpStatus.BAD_REQUEST);
 		} else {
 			String tiempoDeEnvio = "";
 			int precio;
@@ -109,7 +109,7 @@ public class PaqueteController {
 			} else if (status == 2) {
 				return new ResponseEntity<>("Debe iniciar sesion", HttpStatus.UNAUTHORIZED);
 			}
-			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+			return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -124,11 +124,29 @@ public class PaqueteController {
 	 *
 	 * @param tipoPaquete tipo de paquete a consultar (carta, alimenticios, no alimenticios).
 	 * @return {@code 200 OK} con el tiempo de entrega del tipo de paquete,
-	 *         
+	 *         {@code 400 Bad Request} si el tipo de paquete no es válido.
 	 */
-	@GetMapping("/tiempoPaquete")
-	public ResponseEntity<String> demoraDePaquete() {
-			return new ResponseEntity<>("El paquete de tipo: Alimenticios se demora un tiempo máximo de: 6 horas\nEl paquete de tipo: No Alimenticios se demora un tiempo máximo de: 24 horas\nEl paquete de tipo: Carta se demora un tiempo máximo de: 72 horas", HttpStatus.OK);
+	@GetMapping("/tiempopaquete")
+	public ResponseEntity<String> demoraDePaquete(@RequestParam String tipoPaquete) {
+		String verificar = tipoPaquete.toLowerCase();
+		if (verificar == null) {
+			return new ResponseEntity<>("verifica el tipo de paquete ingresado", HttpStatus.BAD_REQUEST);
+		} else {
+			String tiempo;
+			switch (verificar) {
+			case "carta":
+				tiempo = "72 horas";
+				break;
+			case "alimenticios":
+				tiempo = "6 horas";
+				break;
+			case "no alimenticios":
+				tiempo = "24 horas";
+				break;
+			default:
+				return new ResponseEntity<>("Tipo de paquete no válido", HttpStatus.BAD_REQUEST);
+			}
+			return new ResponseEntity<>("El paquete de tipo " + tipoPaquete + " demora: " + tiempo, HttpStatus.OK);
 		}
+	}
 }
-	

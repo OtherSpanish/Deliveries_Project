@@ -2,11 +2,6 @@ package co.edu.unbosque.proyectomodulo.service;
 
 import java.util.List;
 
-import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
-import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
-import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
-import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
-
 /**
  * Interfaz genérica que define las operaciones CRUD estándar
  * para los servicios de la aplicación.
@@ -39,7 +34,7 @@ public interface CRUDOPERATION<T> {
      * @return una lista de objetos de tipo {@code T} con todos los registros encontrados,
      *         o una lista vacía si no hay registros disponibles.
      */
-    public String getAll();
+    public List<T> getAll();
 
     /**
      * Elimina un registro identificado por su id.
@@ -49,6 +44,16 @@ public interface CRUDOPERATION<T> {
      *         ({@code 0} para éxito, valores distintos para diferentes tipos de error).
      */
     public int deleteById(Long id);
+
+    /**
+     * Actualiza los datos de un registro existente identificado por su id.
+     *
+     * @param id   el identificador único del registro a actualizar.
+     * @param data el objeto de tipo {@code T} con los nuevos datos a aplicar.
+     * @return un código entero que indica el resultado de la operación
+     *         ({@code 0} para éxito, valores distintos para diferentes tipos de error).
+     */
+    public int updateById(Long id, T data);
 
     /**
      * Retorna el número total de registros existentes del tipo {@code T}.
@@ -64,18 +69,5 @@ public interface CRUDOPERATION<T> {
      * @return {@code true} si el registro existe, {@code false} en caso contrario.
      */
     public boolean exist(Long id);
-    
-	public int updateById(Long id, AdminDTO data, ClienteDTO dataC, ConductorDTO dataConductor, ManipuladorPaqueteDTO dataM);
-
-	/**
-	 * Actualiza un cliente existente validando datos y restricciones.
-	 *
-	 * @param id   identificador del cliente
-	 * @param data nuevos datos
-	 * @return códigos de estado:
-	 *         {@code 0} éxito,
-	 *         {@code 1} cédula inválida,
-	 *         {@code 3-6} conflictos de datos
-	 */
 
 }
