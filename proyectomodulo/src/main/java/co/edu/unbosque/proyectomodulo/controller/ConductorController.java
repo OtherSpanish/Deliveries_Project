@@ -85,8 +85,6 @@ public class ConductorController {
 		String paquetes = pService.getAll();
 		if (paquetes == null) {
 			return new ResponseEntity<>("Se necesita ingresar un conductor o un admin", HttpStatus.UNAUTHORIZED);
-		} else if (paquetes.isEmpty()) {
-			return new ResponseEntity<>("Esta vacia la lista", HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>("" + paquetes, HttpStatus.ACCEPTED);
 		}

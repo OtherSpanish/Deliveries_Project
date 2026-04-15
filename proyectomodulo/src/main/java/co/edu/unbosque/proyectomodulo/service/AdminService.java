@@ -11,17 +11,8 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 
 import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
-import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
-import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
-import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
 import co.edu.unbosque.proyectomodulo.entity.Admin;
-import co.edu.unbosque.proyectomodulo.entity.Cliente;
-import co.edu.unbosque.proyectomodulo.entity.Conductor;
-import co.edu.unbosque.proyectomodulo.entity.ManipuladorPaquete;
 import co.edu.unbosque.proyectomodulo.repository.AdminRepository;
-import co.edu.unbosque.proyectomodulo.repository.ClienteRepository;
-import co.edu.unbosque.proyectomodulo.repository.ConductorRepository;
-import co.edu.unbosque.proyectomodulo.repository.ManipuladorPaqueteRepository;
 
 /**
  * Servicio que implementa las operaciones CRUD y de autenticación
@@ -36,12 +27,6 @@ public class AdminService implements CRUDOPERATION<AdminDTO> {
 	/** Repositorio para acceso a datos de administradores. */
 	@Autowired
 	private AdminRepository aRep;
-	@Autowired
-	private ClienteRepository cRep;
-	@Autowired
-	private ManipuladorPaqueteRepository mRep;
-	@Autowired
-	private ConductorRepository conductorRep;
 
 	/** Mapper para conversión entre entidades y DTOs. */
 	@Autowired
@@ -123,20 +108,17 @@ public class AdminService implements CRUDOPERATION<AdminDTO> {
 	 *         {@code 2} sin sesión activa, {@code 3} usuario duplicado
 	 */
 	@Override
-	public int updateById(Long id, AdminDTO data, ClienteDTO datac, ConductorDTO dataConductor, ManipuladorPaqueteDTO dataM) {
+	public int updateById(Long id, AdminDTO data) {
 		if (adminLogueado == null) {
 			return 2;
 		}
 		Optional<Admin> encontradoID = aRep.findById(id);
 		Optional<Admin> encontradoUsuario = aRep.findByUsuario(data.getUsuario());
-		Optional<Cliente> encontradoUsuarioCliente = cRep.findByUsuario(datac.getUsuario());
-		Optional<Conductor> encontradoUsuarioConductor = conductorRep.findByUsuario(dataConductor.getUsuario());
-		Optional<ManipuladorPaquete> encontradoUsuarioManipulador = mRep.findByUsuario(dataM.getUsuario());
 		
 
-		if (encontradoID.isPresent() && (encontradoUsuario.isPresent() || encontradoUsuarioCliente.isPresent() || encontradoUsuarioConductor.isPresent() || encontradoUsuarioManipulador.isPresent())) {
+		if (encontradoID.isPresent() && encontradoUsuario.isPresent() ) {
 			return 3;
-		} else if (encontradoID.isPresent() && !(encontradoUsuario.isPresent() ||encontradoUsuarioCliente.isPresent() || encontradoUsuarioConductor.isPresent() || encontradoUsuarioManipulador.isPresent())) {
+		} else if (encontradoID.isPresent() && !(encontradoUsuario.isPresent())) {
 			AdminDTO temp = mapper.map(encontradoID.get(), AdminDTO.class);
 			temp.setUsuario(data.getUsuario());
 			temp.setContrasenia(data.getContrasenia());
@@ -191,34 +173,6 @@ public class AdminService implements CRUDOPERATION<AdminDTO> {
 			return 0;
 		}
 		return 1;
-	}
-
-	/**
-	 * Registra un nuevo administrador.
-	 * Requiere que exista un administrador autenticado.
-	 *
-	 * @param usuario     nombre de usuario
-	 * @param contrasenia contraseña
-	 * @return {@code 0} registrado, {@code 1} usuario existente,
-	 *         {@code 2} sin sesión activa
-	 */
-	public int register(String usuario, String contrasenia) {
-
-		if (adminLogueado == null) {
-			return 2;
-		}
-
-		String codigo = "admin123";
-		Optional<Admin> encontrado = aRep.findByUsuario(usuario);
-
-		if (encontrado.isPresent()) {
-			return 1;
-		}
-
-		Admin nuevo = new Admin(usuario, contrasenia, codigo);
-		aRep.save(nuevo);
-
-		return 0;
 	}
 
 	/**

@@ -1,12 +1,5 @@
 package co.edu.unbosque.proyectomodulo.service;
 
-import java.util.List;
-
-import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
-import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
-import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
-import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
-
 /**
  * Interfaz genérica que define las operaciones CRUD estándar
  * para los servicios de la aplicación.
@@ -65,7 +58,7 @@ public interface CRUDOPERATION<T> {
      */
     public boolean exist(Long id);
     
-	public int updateById(Long id, AdminDTO data, ClienteDTO dataC, ConductorDTO dataConductor, ManipuladorPaqueteDTO dataM);
+	public int updateById(Long id, T data);
 
 	/**
 	 * Actualiza un cliente existente validando datos y restricciones.

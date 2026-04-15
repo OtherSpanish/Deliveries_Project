@@ -85,9 +85,7 @@ public class ManipuladorPaqueteController {
 		String paquetes = pService.getAllManipuladorPaquetes();
 		if (paquetes == null) {
 			return new ResponseEntity<>("Se necesita ingresar un manipulador de paquetes o un admin", HttpStatus.UNAUTHORIZED);
-		} else if (paquetes.isEmpty()) {
-			return new ResponseEntity<>("Contenido vacio", HttpStatus.BAD_REQUEST);
-		} else {
+		}else {
 			return new ResponseEntity<>("" + paquetes, HttpStatus.ACCEPTED);
 		}
 	}

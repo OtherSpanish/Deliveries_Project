@@ -73,9 +73,7 @@ public class AdminController {
 		String conductores = cService.getAll();
 		if (conductores == null) {
 			return new ResponseEntity<>("Admin no ingresado", HttpStatus.UNAUTHORIZED);
-		} else if (conductores.isEmpty()) {
-			return new ResponseEntity<>("Contenido vacio", HttpStatus.BAD_REQUEST);
-		} else {
+		}  else {
 			return new ResponseEntity<>("" + conductores, HttpStatus.ACCEPTED);
 		}
 	}
@@ -92,8 +90,6 @@ public class AdminController {
 		String admins = aService.getAll();
 		if (admins == null) {
 			return new ResponseEntity<>("Admin no ingresado", HttpStatus.UNAUTHORIZED);
-		} else if (admins.isEmpty()) {
-			return new ResponseEntity<>("Contenido vacio", HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>("" + admins, HttpStatus.ACCEPTED);
 		}
@@ -111,8 +107,6 @@ public class AdminController {
 		String clientes = clienteService.getAll();
 		if (clientes == null) {
 			return new ResponseEntity<>("Se necesita ingresar un admin", HttpStatus.UNAUTHORIZED);
-		} else if (clientes.isEmpty()) {
-			return new ResponseEntity<>("Contenido vacio", HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>("" + clientes, HttpStatus.ACCEPTED);
 		}
@@ -130,8 +124,6 @@ public class AdminController {
 		String paquetes = pService.getAll();
 		if (paquetes == null) {
 			return new ResponseEntity<>("Se necesita ingresar un admin", HttpStatus.UNAUTHORIZED);
-		} else if (paquetes.isEmpty()) {
-			return new ResponseEntity<>("Contenido vacio", HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>("" + paquetes, HttpStatus.ACCEPTED);
 		}
@@ -149,8 +141,6 @@ public class AdminController {
 		String manipuladores = mService.getAll();
 		if (manipuladores == null) {
 			return new ResponseEntity<>("Se necesita ingresar un admin", HttpStatus.UNAUTHORIZED);
-		} else if (manipuladores.isEmpty()) {
-			return new ResponseEntity<>("Contenido vacio", HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>("" + manipuladores, HttpStatus.ACCEPTED);
 		}
@@ -239,6 +229,8 @@ public class AdminController {
 			return new ResponseEntity<>("Ingreso invalido", HttpStatus.BAD_REQUEST);
 		} else if (status == 2) {
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
+		} else if (status == 3) {
+			return new ResponseEntity<>("Usuario Ya Existente", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 	}
@@ -278,7 +270,7 @@ public class AdminController {
 					HttpStatus.BAD_REQUEST);
 		}
 		}
-		int status = clienteService.updateById(id, null, actualizar, null, null);
+		int status = clienteService.updateById(id, actualizar);
 		if (status == 0) {
 			return new ResponseEntity<>("Cliente Actualizado", HttpStatus.ACCEPTED);
 		} else if (status == 1) {
@@ -375,33 +367,6 @@ public class AdminController {
 	}
 
 	/**
-	 * Actualiza los datos de un administrador existente.
-	 *
-	 * @param id          identificador del administrador a actualizar.
-	 * @param usuario     nuevo nombre de usuario.
-	 * @param contrasenia nueva contraseña.
-	 * @return {@code 202 Accepted} si se actualiza exitosamente,
-	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya existe,
-	 *         {@code 401 Unauthorized} si no hay admin logueado.
-	 */
-	@PutMapping("/actualizarAdmin")
-	public ResponseEntity<String> actualizarAdmin(@RequestParam Long id, @RequestParam String usuario,
-			@RequestParam String contrasenia) {
-		AdminDTO actualizar = new AdminDTO(usuario, contrasenia);
-		int status = aService.updateById(id, actualizar, null, null, null);
-		if (status == 0) {
-			return new ResponseEntity<>("Admin Actualizado", HttpStatus.ACCEPTED);
-		} else if (status == 1) {
-			return new ResponseEntity<>("No se pudo actualizar el admin", HttpStatus.BAD_REQUEST);
-		} else if (status == 2) {
-			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
-		} else if (status == 3) {
-			return new ResponseEntity<>("El usuario ya existe", HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
-	}
-
-	/**
 	 * Actualiza los datos de un conductor existente.
 	 *
 	 * @param id             identificador del conductor a actualizar.
@@ -416,7 +381,7 @@ public class AdminController {
 	public ResponseEntity<String> actualizarConductor(@RequestParam Long id, @RequestParam String usuario,
 			@RequestParam String contrasenia, @RequestParam String tipoDeVehiculo) {
 		ConductorDTO actualizar = new ConductorDTO(usuario, contrasenia, tipoDeVehiculo);
-		int status = cService.updateById(id, null, null, actualizar, null);
+		int status = cService.updateById(id, actualizar);
 		if (status == 0) {
 			return new ResponseEntity<>("Conductor Actualizado", HttpStatus.ACCEPTED);
 		} else if (status == 1) {
@@ -444,7 +409,7 @@ public class AdminController {
 	public ResponseEntity<String> actualizarManipulador(@RequestParam Long id, @RequestParam String usuario,
 			@RequestParam String contrasenia, @RequestParam int tiempoDeTrabajo) {
 		ManipuladorPaqueteDTO actualizar = new ManipuladorPaqueteDTO(usuario, contrasenia, tiempoDeTrabajo);
-		int status = mService.updateById(id, null, null, null, actualizar);
+		int status = mService.updateById(id, actualizar);
 		if (status == 0) {
 			return new ResponseEntity<>("Manipulador Actualizado", HttpStatus.ACCEPTED);
 		} else if (status == 1) {
