@@ -1,0 +1,43 @@
+<div class="client-container">
+
+  <!-- HEADER -->
+  <header class="client-header">
+
+    <div class="client-user">
+      Hola, {{nombreCliente}}
+    </div>
+
+    <div class="client-title">
+      client Dashboard
+    </div>
+
+    <button class="logout-btn" (click)="logout()">
+      Logout
+    </button>
+
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="client-content">
+
+    <!-- IZQUIERDA: GESTIÓN -->
+    <div class="client-panel">
+
+      <h2>Pedir Paquete</h2>
+
+      <div class="buttons">
+        <button (click)="pedir('carta')">Pedir Carta</button>
+        <button (click)="pedir('producto no alimentcio')">Pedir Producto No Alimenticio</button>
+        <button (click)="pedir('producto alimenticio')">Pedir Producto Alimenticio</button>
+      </div>
+
+    </div>
+
+    <!-- DERECHA: CARRUSEL -->
+    <div class="client-carousel">
+      <img [src]="imagenes[indiceImagen]" alt="paquete">
+    </div>
+
+  </div>
+
+</div>
