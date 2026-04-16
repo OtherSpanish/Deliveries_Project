@@ -1,0 +1,21 @@
+<div class="app-container">
+
+  <!-- LOGIN -->
+  <app-login
+    *ngIf="pantalla === 'login'"
+    (cambiarPantallaEvent)="cambiarPantalla($event)">
+  </app-login>
+
+  <!-- ADMIN -->
+  <app-admin-principal
+    *ngIf="pantalla === 'admin'"
+    (cerrarSesionEvent)="cambiarPantalla($event)">
+  </app-admin-principal>
+
+  <!-- FOOTER GLOBAL -->
+  <footer class="footer">
+    <div>MadeBy: UEBRAPIDISIMO</div>
+    <div>Version: 1.0.0</div>
+  </footer>
+
+</div>
