@@ -1,0 +1,25 @@
+/* Layout global */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* El login ocupa todo el espacio disponible */
+app-login {
+  flex: 1;
+  display: compact;
+}
+
+/* Footer */
+.footer {
+  width: 100%;
+  background-color: #937181;
+  color: #F7E8B1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  font-size: 13px;
+}

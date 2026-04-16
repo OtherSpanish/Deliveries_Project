@@ -1,0 +1,112 @@
+/* CONTENEDOR */
+.admin-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Poppins', Arial, sans-serif;
+  background-color: #F7E8B1;
+}
+
+/* HEADER */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #937181;
+  color: #F7E8B1;
+  padding: 15px 25px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.admin-user {
+  font-size: 14px;
+}
+
+.admin-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* CONTENIDO */
+.admin-content {
+  flex: 1;
+  display: flex;
+}
+
+/* PANEL IZQUIERDO */
+.admin-panel {
+  width: 40%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.admin-panel h2 {
+  margin-bottom: 20px;
+  color: #937181;
+}
+
+/* BOTONES */
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.buttons button {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background-color: #937181;
+  color: #F7E8B1;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.buttons button:hover {
+  transform: translateY(-2px);
+  background-color: #7a5d6a;
+}
+
+/* CARRUSEL DERECHO */
+.admin-carousel {
+  width: 60%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: -8px 0 25px rgba(0,0,0,0.15);
+}
+
+.admin-carousel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* overlay moderno */
+.admin-carousel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to left,
+    rgba(0,0,0,0.2),
+    rgba(0,0,0,0.5)
+  );
+}
+.logout-btn {
+  background-color: #F7E8B1;
+  color: #937181;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #e6d89f;
+  transform: scale(1.05);
+}

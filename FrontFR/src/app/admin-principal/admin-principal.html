@@ -1,0 +1,44 @@
+<div class="admin-container">
+
+  <!-- HEADER -->
+  <header class="admin-header">
+
+    <div class="admin-user">
+      Hola, {{ nombreAdmin }}
+    </div>
+
+    <div class="admin-title">
+      Admin Dashboard
+    </div>
+
+    <button class="logout-btn" (click)="logout()">
+      Logout
+    </button>
+
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="admin-content">
+
+    <!-- IZQUIERDA: GESTIÓN -->
+    <div class="admin-panel">
+
+      <h2>Gestionar</h2>
+
+      <div class="buttons">
+        <button (click)="gestionar('paquete')">Gestionar Paquete</button>
+        <button (click)="gestionar('manipulador')">Gestionar Manipulador</button>
+        <button (click)="gestionar('conductor')">Gestionar Conductor</button>
+        <button (click)="gestionar('cliente')">Gestionar Cliente</button>
+      </div>
+
+    </div>
+
+    <!-- DERECHA: CARRUSEL -->
+    <div class="admin-carousel">
+      <img [src]="imagenes[indiceImagen]" alt="paquete">
+    </div>
+
+  </div>
+
+</div>

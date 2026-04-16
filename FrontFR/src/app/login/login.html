@@ -1,0 +1,81 @@
+<div class="login-container">
+
+  <!-- HEADER (ARRIBA DE TODO) -->
+  <header class="header">
+    <div class="header-title">Delivery Service</div>
+
+    <div class="roles">
+      <button type="button" [class.active]="rol === 'cliente'" (click)="cambiarRol('cliente')">Cliente</button>
+      <button type="button" [class.active]="rol === 'admin'" (click)="cambiarRol('admin')">Admin</button>
+      <button type="button" [class.active]="rol === 'conductor'" (click)="cambiarRol('conductor')">Conductor</button>
+      <button type="button" [class.active]="rol === 'manipulador'" (click)="cambiarRol('manipulador')">Manipulador</button>
+    </div>
+  </header>
+
+  <!-- CONTENIDO (CARRUSEL + LOGIN) -->
+  <div class="main-content">
+
+    <!-- CARRUSEL IZQUIERDA -->
+    <div class="carousel">
+      <img [src]="imagenes[indiceImagen]" alt="delivery">
+    </div>
+
+    <!-- LOGIN / REGISTER DERECHA -->
+    <div class="login-box">
+
+      <!-- LOGIN -->
+      <div *ngIf="modo === 'login'">
+        <h2>Login - {{ rol }}</h2>
+
+        <form>
+          <input type="text" placeholder="Usuario" [(ngModel)]="usuario" name="usuario">
+          <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password">
+
+          <!-- Solo admin -->
+          <input *ngIf="rol === 'admin'"
+                 type="text"
+                 placeholder="Código de verificación"
+                 [(ngModel)]="codigo"
+                 name="codigo">
+
+          <button type="button" (click)="login()">Ingresar</button>
+        </form>
+
+        <p class="link" (click)="cambiarModo('register')">
+          ¿No tienes una cuenta? Regístrate como cliente!
+        </p>
+      </div>
+
+      <!-- REGISTER -->
+      <div *ngIf="modo === 'register'">
+        <h2>Registro</h2>
+
+        <form>
+          <div class="register-grid">
+            <input type="text" placeholder="Usuario" [(ngModel)]="usuario" name="r_usuario">
+            <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="r_password">
+            <input type="text" placeholder="Nombre" [(ngModel)]="nombre" name="nombre">
+
+            <input type="text" placeholder="Dirección de envío" [(ngModel)]="direccion" name="direccion">
+            <input type="text" placeholder="Cédula" [(ngModel)]="cedula" name="cedula">
+
+            <select [(ngModel)]="tipoCliente" name="tipoCliente">
+              <option value="" disabled selected>Tipo de cliente</option>
+              <option value="normal">Normal</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+
+          <button type="button" (click)="registrar()">Registrarse</button>
+        </form>
+
+        <p class="link" (click)="cambiarModo('login')">
+          ¿Ya tienes cuenta? Inicia sesión
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
