@@ -9,20 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
-import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
-import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
 import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
 import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
-import co.edu.unbosque.proyectomodulo.entity.Admin;
-import co.edu.unbosque.proyectomodulo.entity.Cliente;
 import co.edu.unbosque.proyectomodulo.entity.Conductor;
-import co.edu.unbosque.proyectomodulo.entity.ManipuladorPaquete;
 import co.edu.unbosque.proyectomodulo.exceptions.LanzadorException;
 import co.edu.unbosque.proyectomodulo.exceptions.TipoVehiculoException;
-import co.edu.unbosque.proyectomodulo.repository.AdminRepository;
-import co.edu.unbosque.proyectomodulo.repository.ClienteRepository;
 import co.edu.unbosque.proyectomodulo.repository.ConductorRepository;
-import co.edu.unbosque.proyectomodulo.repository.ManipuladorPaqueteRepository;
 
 /**
  * Servicio que gestiona las operaciones CRUD y autenticación
@@ -36,13 +28,6 @@ import co.edu.unbosque.proyectomodulo.repository.ManipuladorPaqueteRepository;
 public class ConductorService implements CRUDOPERATION<ConductorDTO> {
 
     /** Repositorio para acceso a datos de conductores. */
-	@Autowired
-	private AdminRepository aRep;
-	@Autowired
-	private ClienteRepository cRep;
-	@Autowired
-	private ManipuladorPaqueteRepository mRep;
-	@Autowired
 	private ConductorRepository conductorRep;
 
     /** Servicio de administrador para validación de permisos. */
@@ -87,9 +72,12 @@ public class ConductorService implements CRUDOPERATION<ConductorDTO> {
         } catch (TipoVehiculoException e) {
             return 1;
         }
-
         Conductor entity = mapper.map(data, Conductor.class);
         conductorRep.save(entity);
+        ManipuladorPaqueteDTO dto = mapper.map(entity, ManipuladorPaqueteDTO.class);
+        Gson gson = new Gson();
+        String json = gson.toJson(dto);
+        gson.toJson(json, ManipuladorPaqueteDTO.class);
         return 0;
     }
 
@@ -153,18 +141,16 @@ public class ConductorService implements CRUDOPERATION<ConductorDTO> {
      *         {@code 3} usuario duplicado
      */
     @Override
-	public int updateById(Long id, AdminDTO data, ClienteDTO dataC, ConductorDTO dataConductor, ManipuladorPaqueteDTO dataM) {
+	public int updateById(Long id, ConductorDTO dataConductor) {
         if (!adminService.isLoggedadmin()) {
             return 2;
         }
 
         Optional<Conductor> encontradoID = conductorRep.findById(id);
         Optional<Conductor> encontradoUsuario = conductorRep.findByUsuario(dataConductor.getUsuario());
-        Optional<Admin> encontradoUsuarioAdmin = aRep.findByUsuario(data.getUsuario());
-		Optional<Cliente> encontradoUsuarioCliente = cRep.findByUsuario(dataC.getUsuario());
-		Optional<ManipuladorPaquete> encontradoUsuarioManipulador = mRep.findByUsuario(dataM.getUsuario());
 
-        if (encontradoID.isPresent() && encontradoUsuario.isPresent() || (encontradoUsuario.isPresent() || encontradoUsuarioAdmin.isPresent() || encontradoUsuarioCliente.isPresent() || encontradoUsuarioManipulador.isPresent())) {
+
+        if (encontradoID.isPresent() && encontradoUsuario.isPresent()) {
             return 3;
         }
 

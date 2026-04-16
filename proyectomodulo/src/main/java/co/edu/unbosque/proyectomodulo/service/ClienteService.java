@@ -10,20 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
-import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
+
 import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
-import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
-import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
-import co.edu.unbosque.proyectomodulo.entity.Admin;
 import co.edu.unbosque.proyectomodulo.entity.Cliente;
-import co.edu.unbosque.proyectomodulo.entity.Conductor;
-import co.edu.unbosque.proyectomodulo.entity.ManipuladorPaquete;
 import co.edu.unbosque.proyectomodulo.exceptions.CedulaException;
 import co.edu.unbosque.proyectomodulo.exceptions.LanzadorException;
-import co.edu.unbosque.proyectomodulo.repository.AdminRepository;
 import co.edu.unbosque.proyectomodulo.repository.ClienteRepository;
-import co.edu.unbosque.proyectomodulo.repository.ConductorRepository;
-import co.edu.unbosque.proyectomodulo.repository.ManipuladorPaqueteRepository;
 
 /**
  * Servicio que gestiona las operaciones CRUD y de autenticación
@@ -38,13 +30,6 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	/** Repositorio para acceso a datos de clientes. */
 	@Autowired
 	private ClienteRepository clienteRep;
-	@Autowired
-	private AdminRepository aRep;
-	@Autowired
-	private ConductorRepository cRep;
-	@Autowired
-	private ManipuladorPaqueteRepository mRep;
-	
 
 	/** Mapper para conversión entre entidades y DTOs. */
 	@Autowired
@@ -118,7 +103,10 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 		}
 		Cliente entity = mapper.map(data, Cliente.class);
 		clienteRep.save(entity);
-
+		ClienteDTO dto = mapper.map(entity, ClienteDTO.class);
+        Gson gson = new Gson();
+        String json = gson.toJson(dto);
+		gson.toJson(json, ClienteDTO.class);
 		return 0;
 	}
 
@@ -179,19 +167,16 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	 *         {@code 3-6} conflictos de datos
 	 */
 	@Override
-	public int updateById(Long id, AdminDTO data, ClienteDTO dataC, ConductorDTO dataConductor, ManipuladorPaqueteDTO dataM) {
+	public int updateById(Long id, ClienteDTO dataC) {
 
 		Optional<Cliente> encontradoID = clienteRep.findById(id);
 		Optional<Cliente> encontradoUsuario = clienteRep.findByUsuario(dataC.getUsuario());
 		Optional<Cliente> encontradoCedula = clienteRep.findByCedula(dataC.getCedula());
-		Optional<Admin> encontradoUsuarioAdmin = aRep.findByUsuario(data.getUsuario());
-		Optional<Conductor> encontradoUsuarioConductor = cRep.findByUsuario(dataConductor.getUsuario());
-		Optional<ManipuladorPaquete> encontradoUsuarioManipulador = mRep.findByUsuario(dataM.getUsuario());
 		
 		if(!adminService.isLoggedadmin()) {
 			return 2;
 		}
-		if (encontradoUsuario.isPresent() || encontradoUsuarioAdmin.isPresent() || encontradoUsuarioConductor.isPresent() || encontradoUsuarioManipulador.isPresent()) {
+		if (encontradoUsuario.isPresent()) {
 			return 3;
 		} else if (encontradoCedula.isPresent()) {
 			return 4;
@@ -199,7 +184,7 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 			return 5;
 		}
 
-		if (encontradoID.isPresent() && !(encontradoUsuario.isPresent() && encontradoCedula.isPresent() || encontradoUsuarioAdmin.isPresent() || encontradoUsuarioConductor.isPresent() || encontradoUsuarioManipulador.isPresent())) {
+		if (encontradoID.isPresent() && !(encontradoUsuario.isPresent() && encontradoCedula.isPresent())) {
 
 			ClienteDTO temp = mapper.map(encontradoID.get(), ClienteDTO.class);
 
@@ -217,7 +202,6 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 			Cliente entity = mapper.map(temp, Cliente.class);
 			entity.setId(id);
 			clienteRep.save(entity);
-
 			return 0;
 		}
 
@@ -243,41 +227,6 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	@Override
 	public boolean exist(Long id) {
 		return clienteRep.existsById(id);
-	}
-
-	/**
-	 * Registra un nuevo cliente validando cédula, tipo y duplicados.
-	 *
-	 * @param usuario     nombre de usuario
-	 * @param contrasenia contraseña
-	 * @param cedula      documento de identidad
-	 * @param tipoCliente tipo (normal, premium)
-	 * @return {@code 0} éxito,
-	 *         {@code 1} datos inválidos,
-	 *         {@code 2} usuario existente,
-	 *         {@code 3} cliente ya logueado
-	 */
-	public int register(String usuario, String contrasenia, String cedula, String tipoCliente) {
-
-		if (clienteLogueado != null) return 3;
-
-		try {
-			LanzadorException.verificarCedulaValida(cedula);
-		} catch (CedulaException e) {
-			return 1;
-		}
-
-		if (!(tipoCliente.equals("normal") || tipoCliente.equals("premium"))) {
-			return 1;
-		}
-
-		Optional<Cliente> encontrado = clienteRep.findByUsuario(usuario);
-		if (encontrado.isPresent()) return 2;
-
-		Cliente nuevo = new Cliente(usuario, contrasenia, cedula, tipoCliente);
-		clienteRep.save(nuevo);
-
-		return 0;
 	}
 
 	/**

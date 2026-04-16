@@ -10,10 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
-import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
-import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
-import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
-import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
 import co.edu.unbosque.proyectomodulo.dto.PaqueteDTO;
 import co.edu.unbosque.proyectomodulo.entity.Paquete;
 import co.edu.unbosque.proyectomodulo.exceptions.DireccionException;
@@ -89,6 +85,10 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 
 		Paquete entity = mapper.map(data, Paquete.class);
 		paqueteRep.save(entity);
+		PaqueteDTO dto = mapper.map(entity, PaqueteDTO.class);
+        Gson gson = new Gson();
+        String json = gson.toJson(dto);
+		gson.toJson(json, PaqueteDTO.class);
 		return 0;
 	}
 
@@ -268,12 +268,5 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 		}
 
 		return dtoList;
-	}
-
-	@Override
-	public int updateById(Long id, AdminDTO data, ClienteDTO datac, ConductorDTO dataConductor,
-			ManipuladorPaqueteDTO dataM) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }

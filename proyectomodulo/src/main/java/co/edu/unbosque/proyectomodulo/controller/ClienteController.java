@@ -82,7 +82,8 @@ public class ClienteController {
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestParam String usuario, @RequestParam String contrasenia,
 			@RequestParam String cedula, @RequestParam String tipoCliente) {
-		int status = clienteService.register(usuario, contrasenia, cedula, tipoCliente);
+		ClienteDTO registrar = new ClienteDTO(usuario, contrasenia, cedula, tipoCliente);
+		int status = clienteService.create(registrar);
 		if (status == 0) {
 			return new ResponseEntity<>("Usuario registrado", HttpStatus.CREATED);
 		} else if (status == 1) {
