@@ -8,7 +8,7 @@ import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 })
 export class AdminPrincipal implements OnInit {
 
-  // 🔹 EVENTO para volver al login
+  // EVENTO para volver al login
   @Output() cerrarSesionEvent = new EventEmitter<string>();
 
   nombreAdmin: string = 'Admin';
@@ -31,7 +31,7 @@ export class AdminPrincipal implements OnInit {
     alert("Entrando a gestión de " + tipo);
   }
 
-  // 🔴 LOGOUT
+  // LOGOUT
   logout() {
     this.cerrarSesionEvent.emit('login');
   }

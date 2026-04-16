@@ -84,7 +84,6 @@
   object-fit: cover;
 }
 
-/* overlay moderno */
 .admin-carousel::after {
   content: "";
   position: absolute;

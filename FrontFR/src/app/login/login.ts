@@ -8,10 +8,10 @@ import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 })
 export class Login implements OnInit {
 
-  // 🔹 EVENTO para cambiar pantalla
+  // EVENTO para cambiar pantalla
   @Output() cambiarPantallaEvent = new EventEmitter<string>();
 
-  // 🔹 CARRUSEL
+  // CARRUSEL
   imagenes: string[] = [
     'login_pic_1.png',
     'login_pic_2.png'
@@ -35,7 +35,7 @@ export class Login implements OnInit {
   cedula: string = '';
   tipoCliente: string = '';
 
-  // 🔹 INIT (carrusel automático)
+  // (carrusel automático)
   ngOnInit() {
     setInterval(() => {
       this.indiceImagen = (this.indiceImagen + 1) % this.imagenes.length;
@@ -57,7 +57,7 @@ export class Login implements OnInit {
     console.log("Rol:", this.rol);
     console.log("Usuario:", this.usuario);
 
-    // 🔹 ADMIN
+    // ADMIN
     if (this.rol === 'admin') {
       if (this.codigo === '1234') {
         alert('Admin verificado');
@@ -69,7 +69,7 @@ export class Login implements OnInit {
       }
     }
 
-    // 🔹 OTROS ROLES
+    // OTROS ROLES
     if (this.rol === 'cliente') {
       this.cambiarPantallaEvent.emit('cliente');
     }

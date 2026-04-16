@@ -5,7 +5,6 @@
   flex-direction: column;
 }
 
-/* El login ocupa todo el espacio disponible */
 app-login {
   flex: 1;
   display: compact;
