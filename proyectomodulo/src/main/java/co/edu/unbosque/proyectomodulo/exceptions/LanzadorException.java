@@ -47,7 +47,7 @@ public class LanzadorException {
 			throw new TipoPaqueteException();
 		}
 		String t = tipo.trim().toLowerCase();
-		if (!(t.equals("carta") || t.equals("alimenticio") || t.equals("no alimenticio"))) {
+		if (!(t.equals("carta") || t.equals("alimenticios") || t.equals("no alimenticios"))) {
 			throw new TipoPaqueteException();
 		}
 	}

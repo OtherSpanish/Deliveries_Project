@@ -24,7 +24,7 @@ public class Paquete {
 	/** Identificador único del paquete, generado automáticamente. */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 
 	/** Tipo de paquete (carta, alimenticios, no alimenticios). */
 	private String tipoPaquete;
@@ -70,7 +70,7 @@ public class Paquete {
 	 *
 	 * @return identificador único
 	 */
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -79,7 +79,7 @@ public class Paquete {
 	 *
 	 * @param id nuevo identificador
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

@@ -1,5 +1,6 @@
 package co.edu.unbosque.proyectomodulo.dto;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Objects;
 public class PaqueteDTO {
 
 	/** Identificador único del paquete. */
-	private long id;
+	private Long id;
 
 	/** Tipo de paquete (carta, alimenticios, no alimenticios). */
 	private String tipoPaquete;
@@ -59,7 +60,7 @@ public class PaqueteDTO {
 	 *
 	 * @return identificador único
 	 */
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -68,7 +69,7 @@ public class PaqueteDTO {
 	 *
 	 * @param id nuevo identificador
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

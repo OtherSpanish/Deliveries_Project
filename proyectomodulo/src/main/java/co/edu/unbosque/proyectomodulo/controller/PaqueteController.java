@@ -1,5 +1,8 @@
 package co.edu.unbosque.proyectomodulo.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,26 +67,52 @@ public class PaqueteController {
 		if (clienteService.getClienteLogueado() == null) {
 			return new ResponseEntity<>("Se debe ingresar un usuario", HttpStatus.UNAUTHORIZED);
 		} else {
-			String tiempoDeEnvio = "";
+			LocalDateTime tiempoDeEnvio2 = LocalDateTime.now();
+			DateTimeFormatter formatoDias = DateTimeFormatter.ofPattern("dd");
+			DateTimeFormatter formatoMeses = DateTimeFormatter.ofPattern("MM");
+			DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH");
+			DateTimeFormatter formatoMinuto= DateTimeFormatter.ofPattern("HH");
+			DateTimeFormatter formatoAnio = DateTimeFormatter.ofPattern("uuuu");
+			String formateadoHora = tiempoDeEnvio2.format(formatoHora);
+			String formateadoDias = tiempoDeEnvio2.format(formatoDias);
+			String formateadoMeses = tiempoDeEnvio2.format(formatoMeses);
+			String formateadoAnio = tiempoDeEnvio2.format(formatoAnio);
+			String formateadoMinuto = tiempoDeEnvio2.format(formatoMinuto);
+			int anio = Integer.parseInt(formateadoAnio);
+			int hora = Integer.parseInt(formateadoHora);
+			int dia = Integer.parseInt(formateadoDias);
+			int mes = Integer.parseInt(formateadoMeses);
+			int minuto = Integer.parseInt(formateadoMinuto);
 			int precio;
+			
 			switch (tipoPaquete.toLowerCase()) {
-			case "carta":
-				tiempoDeEnvio = "72 horas";
+			case "carta": {
+				int dias = dia+1;
+				dia = dias;
 				precio = 10000;
 				break;
-			case "alimenticios":
-				tiempoDeEnvio = "6 horas";
+			}
+			case "alimenticios":{
+				int entrega = 6 + hora;
+				hora = entrega;
 				precio = 20000;
 				break;
-			case "no alimenticios":
-				tiempoDeEnvio = "24 horas";
+			}
+			case "no alimenticios":{
+				int dias = dia+1;
+				dia = dias;
 				precio = 30000;
 				break;
+			}
 			default:
 				return new ResponseEntity<>("Ingrese un tipo de paquete valido (carta, alimenticios, no alimenticios)",
 						HttpStatus.BAD_REQUEST);
 			}
+			LocalDateTime tiempoDeEnvioTesting = LocalDateTime.of(anio, mes, dia, hora, minuto);
+			DateTimeFormatter formatoFinal = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy");
+			String tiempoDeEnvio = tiempoDeEnvioTesting.format(formatoFinal);
 			String precioEnvio = "";
+
 			switch (clienteService.getClienteLogueado().getTipoCliente().toLowerCase()) {
 			case "normal": {
 				precioEnvio = "" + precio;

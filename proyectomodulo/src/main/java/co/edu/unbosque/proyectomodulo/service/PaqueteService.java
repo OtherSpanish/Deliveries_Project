@@ -3,6 +3,7 @@ package co.edu.unbosque.proyectomodulo.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,6 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 */
 	@Override
 	public int create(PaqueteDTO data) {
-
 		if (!clienteService.isLogged()) {
 			return 2;
 		}
@@ -83,12 +83,11 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 			return 1;
 		}
 
+		Gson gson = new Gson();
 		Paquete entity = mapper.map(data, Paquete.class);
 		paqueteRep.save(entity);
 		PaqueteDTO dto = mapper.map(entity, PaqueteDTO.class);
-        Gson gson = new Gson();
         String json = gson.toJson(dto);
-		gson.toJson(json, PaqueteDTO.class);
 		return 0;
 	}
 
