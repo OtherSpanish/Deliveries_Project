@@ -50,13 +50,14 @@ public class PaqueteController {
 	 * <li>no alimenticios: 24 horas, $30.000</li>
 	 * </ul>
 	 *
-	 * @param tipoPaquete      tipo de paquete (carta, alimenticios, no alimenticios).
+	 * @param tipoPaquete      tipo de paquete (carta, alimenticios, no
+	 *                         alimenticios).
 	 * @param contenido        descripción del contenido del paquete.
 	 * @param direccionAEnviar dirección de destino del paquete.
 	 * @return {@code 201 Created} si el paquete se crea exitosamente,
 	 *         {@code 400 Bad Request} si el tipo de paquete o tipo de cliente es
-	 *         inválido, o no hay cliente logueado,
-	 *         {@code 401 Unauthorized} si no se ha iniciado sesión.
+	 *         inválido, o no hay cliente logueado, {@code 401 Unauthorized} si no
+	 *         se ha iniciado sesión.
 	 */
 	@PostMapping("/crear")
 	public ResponseEntity<String> crearPaquete(@RequestParam String tipoPaquete, @RequestParam String contenido,
@@ -103,11 +104,13 @@ public class PaqueteController {
 			PaqueteDTO nuevo = new PaqueteDTO(tipoPaquete, contenido, direccionAEnviar, tiempoDeEnvio, precioEnvio);
 			int status = paqueteService.create(nuevo);
 			if (status == 0) {
-				return new ResponseEntity<>("Paquete creado", HttpStatus.CREATED);
+			    return new ResponseEntity<>("Paquete creado", HttpStatus.CREATED);
 			} else if (status == 1) {
-				return new ResponseEntity<>("Tipo invalido", HttpStatus.BAD_REQUEST);
+			    return new ResponseEntity<>("Tipo de paquete invalido", HttpStatus.BAD_REQUEST);
 			} else if (status == 2) {
-				return new ResponseEntity<>("Debe iniciar sesion", HttpStatus.UNAUTHORIZED);
+			    return new ResponseEntity<>("Debe iniciar sesion", HttpStatus.UNAUTHORIZED);
+			} else if (status == 3) {
+			    return new ResponseEntity<>("Direccion invalida (debe contener: avenida, carrera o calle)", HttpStatus.BAD_REQUEST);
 			}
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
@@ -122,13 +125,15 @@ public class PaqueteController {
 	 * <li>no alimenticios: 24 horas</li>
 	 * </ul>
 	 *
-	 * @param tipoPaquete tipo de paquete a consultar (carta, alimenticios, no alimenticios).
+	 * @param tipoPaquete tipo de paquete a consultar (carta, alimenticios, no
+	 *                    alimenticios).
 	 * @return {@code 200 OK} con el tiempo de entrega del tipo de paquete,
-	 *         
+	 * 
 	 */
 	@GetMapping("/tiempoPaquete")
 	public ResponseEntity<String> demoraDePaquete() {
-			return new ResponseEntity<>("El paquete de tipo: Alimenticios se demora un tiempo máximo de: 6 horas\nEl paquete de tipo: No Alimenticios se demora un tiempo máximo de: 24 horas\nEl paquete de tipo: Carta se demora un tiempo máximo de: 72 horas", HttpStatus.OK);
-		}
+		return new ResponseEntity<>(
+				"El paquete de tipo: Alimenticios se demora un tiempo máximo de: 6 horas\nEl paquete de tipo: No Alimenticios se demora un tiempo máximo de: 24 horas\nEl paquete de tipo: Carta se demora un tiempo máximo de: 72 horas",
+				HttpStatus.OK);
+	}
 }
-	
