@@ -69,7 +69,7 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 *         {@code 1} si los datos no pasan la validación,
 	 *         {@code 2} si el cliente no tiene sesión activa
 	 */
-	@Override
+		@Override
 	public int create(PaqueteDTO data) {
 
 		if (!clienteService.isLogged()) {
@@ -79,16 +79,19 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 		try {
 			LanzadorException.verificarTipoPaquete(data.getTipoPaquete());
 			LanzadorException.verificarDireccion(data.getDireccionDeEnvio());
-		} catch (TipoPaqueteException | DireccionException e) {
+		} catch (TipoPaqueteException e) {
 			return 1;
+		} catch (DireccionException e) {
+			return 3;
 		}
 
 		Paquete entity = mapper.map(data, Paquete.class);
 		paqueteRep.save(entity);
+
 		PaqueteDTO dto = mapper.map(entity, PaqueteDTO.class);
-        Gson gson = new Gson();
-        String json = gson.toJson(dto);
-		gson.toJson(json, PaqueteDTO.class);
+		Gson gson = new Gson();
+		String json = gson.toJson(dto);
+
 		return 0;
 	}
 
