@@ -1,0 +1,123 @@
+<div class="manipulador-container">
+
+  <!-- HEADER -->
+  <header class="manipulador-header">
+    <div class="header-left">
+      <span class="header-icon">👷</span>
+      <div>
+        <p class="header-sub">Panel de Manipulador</p>
+        <p class="header-title">Gestión de Paquetes</p>
+      </div>
+    </div>
+    <button class="logout-btn" (click)="logout()">
+      🔓 Cerrar sesión
+    </button>
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="manipulador-content">
+
+    <!-- IZQUIERDA: PANEL -->
+    <div class="manipulador-panel">
+
+      <!-- TARJETAS RESUMEN -->
+      <div class="resumen-cards">
+        <div class="resumen-card card-bodega">
+          <span class="resumen-num">{{ totalEnBodega }}</span>
+          <span class="resumen-label">En bodega</span>
+        </div>
+        <div class="resumen-card card-despachado">
+          <span class="resumen-num">{{ totalDespachados }}</span>
+          <span class="resumen-label">Despachados</span>
+        </div>
+        <div class="resumen-card card-entregado">
+          <span class="resumen-num">{{ totalEntregados }}</span>
+          <span class="resumen-label">Entregados</span>
+        </div>
+      </div>
+
+      <h2>Acciones</h2>
+      <div class="buttons">
+        <button
+          [class.active]="vistaActiva === 'paquetes'"
+          (click)="setVista('paquetes')">
+          📦 Mostrar Paquetes
+        </button>
+      </div>
+
+    </div>
+
+    <!-- DERECHA: CONTENIDO -->
+    <div class="manipulador-main">
+
+      <!-- ESTADO VACÍO -->
+      @if (vistaActiva === 'ninguna') {
+        <div class="empty-state">
+          <span class="empty-icon">📦</span>
+          <p>Selecciona una acción del panel lateral</p>
+        </div>
+      }
+
+      <!-- ÉXITO -->
+      @if (mensajeExito) {
+        <div class="alert-success">✅ {{ mensajeExito }}</div>
+      }
+
+      <!-- PAQUETES -->
+      @if (vistaActiva === 'paquetes') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Listado de Paquetes</span>
+            <span class="badge">{{ paquetes.length }} registros</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Contenido</th>
+                <th>Dirección de Envío</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (p of paquetes; track p.id) {
+                  <tr>
+                    <td>{{ p.numero }}</td>
+                    <td class="td-id">{{ p.id }}</td>
+                    <td>
+                      <span class="tipo-badge" [attr.data-tipo]="p.tipoPaquete">
+                        {{ p.tipoPaquete }}
+                      </span>
+                    </td>
+                    <td>{{ p.contenido }}</td>
+                    <td class="td-dir">{{ p.direccionEnvio }}</td>
+                    <td>
+                      <span class="estado-badge" [attr.data-estado]="p.estado">
+                        {{ p.estado }}
+                      </span>
+                    </td>
+                    <td>
+                      @if (p.estado === 'En bodega') {
+                        <button
+                          class="btn-accion btn-despachar"
+                          (click)="marcarDespachado(p)"
+                          title="Marcar como despachado">
+                          🚚
+                        </button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

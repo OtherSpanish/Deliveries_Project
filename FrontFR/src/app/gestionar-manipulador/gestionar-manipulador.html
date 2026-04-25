@@ -1,0 +1,204 @@
+<div class="gp-container">
+
+  <!-- HEADER -->
+  <header class="admin-header">
+    <div class="admin-user">Gestión de Personal</div>
+    <div class="admin-title">Manipuladores</div>
+    <button class="logout-btn" (click)="volver()">← Volver</button>
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="admin-content">
+
+    <!-- IZQUIERDA: BOTONES -->
+    <div class="admin-panel">
+      <h2>Acciones</h2>
+      <div class="buttons">
+        <button [class.active]="vistaActiva === 'mostrar'" (click)="setVista('mostrar')">
+          👁️ Mostrar
+        </button>
+        <button [class.active]="vistaActiva === 'actualizar' || vistaActiva === 'editar'" (click)="setVista('actualizar')">
+          ✏️ Actualizar
+        </button>
+        <button class="btn-danger" [class.active]="vistaActiva === 'borrar'" (click)="setVista('borrar')">
+          🗑️ Borrar
+        </button>
+      </div>
+    </div>
+
+    <!-- DERECHA: CONTENIDO -->
+    <div class="gp-main">
+
+      <!-- ESTADO VACÍO -->
+      @if (vistaActiva === 'ninguna') {
+        <div class="empty-state">
+          <span class="empty-icon">👷</span>
+          <p>Selecciona una acción del panel lateral</p>
+        </div>
+      }
+
+      <!-- ÉXITO -->
+      @if (mensajeExito) {
+        <div class="alert-success">✅ {{ mensajeExito }}</div>
+      }
+
+      <!-- MOSTRAR -->
+      @if (vistaActiva === 'mostrar') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Listado de Manipuladores</span>
+            <span class="badge">{{ manipuladores.length }} registros</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+                <th>Tiempo de Trabajo (h)</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (m of manipuladores; track m.id) {
+                  <tr>
+                    <td>{{ m.numero }}</td>
+                    <td class="td-id">{{ m.id }}</td>
+                    <td>{{ m.usuario }}</td>
+                    <td class="td-pass">{{ m.contrasena }}</td>
+                    <td>{{ m.tiempoTrabajo }} h</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- ACTUALIZAR -->
+      @if (vistaActiva === 'actualizar') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Selecciona un manipulador para editar</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+                <th>Tiempo de Trabajo (h)</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (m of manipuladores; track m.id) {
+                  <tr>
+                    <td>{{ m.numero }}</td>
+                    <td class="td-id">{{ m.id }}</td>
+                    <td>{{ m.usuario }}</td>
+                    <td class="td-pass">{{ m.contrasena }}</td>
+                    <td>{{ m.tiempoTrabajo }} h</td>
+                    <td>
+                      <button class="btn-accion btn-editar" (click)="iniciarEdicion(m)">✏️</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- EDITAR -->
+      @if (vistaActiva === 'editar' && manipuladorEditando) {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Editando manipulador</span>
+            <div class="header-chips">
+              <span class="chip">N° {{ manipuladorEditando.numero }}</span>
+              <span class="chip">{{ manipuladorEditando.id }}</span>
+              <span class="chip-note">N° e ID no editables</span>
+            </div>
+          </div>
+          <form class="editar-form" (ngSubmit)="guardarEdicion()">
+            <div class="form-group">
+              <label>Usuario</label>
+              <input
+                type="text"
+                [(ngModel)]="editForm.usuario"
+                name="usuario"
+                placeholder="Nombre de usuario"
+              />
+            </div>
+            <div class="form-group">
+              <label>Contraseña</label>
+              <input
+                type="text"
+                [(ngModel)]="editForm.contrasena"
+                name="contrasena"
+                placeholder="Contraseña"
+              />
+            </div>
+            <div class="form-group">
+              <label>Tiempo de Trabajo (horas)</label>
+              <input
+                type="number"
+                [(ngModel)]="editForm.tiempoTrabajo"
+                name="tiempoTrabajo"
+                placeholder="Ej: 160"
+                min="0"
+              />
+            </div>
+            <div class="editar-actions">
+              <button type="button" class="btn-cancelar" (click)="cancelarEdicion()">← Cancelar</button>
+              <button type="submit" class="btn-guardar">Guardar cambios ✓</button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- BORRAR -->
+      @if (vistaActiva === 'borrar') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Selecciona un manipulador para eliminar</span>
+            <span class="badge badge-danger">⚠️ Acción irreversible</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+                <th>Tiempo de Trabajo (h)</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (m of manipuladores; track m.id) {
+                  <tr class="fila-danger">
+                    <td>{{ m.numero }}</td>
+                    <td class="td-id">{{ m.id }}</td>
+                    <td>{{ m.usuario }}</td>
+                    <td class="td-pass">{{ m.contrasena }}</td>
+                    <td>{{ m.tiempoTrabajo }} h</td>
+                    <td>
+                      <button class="btn-accion btn-borrar" (click)="borrarManipulador(m)" title="Eliminar">🗑️</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

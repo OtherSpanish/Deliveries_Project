@@ -1,0 +1,229 @@
+<div class="gp-container">
+
+  <!-- HEADER -->
+  <header class="admin-header">
+    <div class="admin-user">Gestión de Personal</div>
+    <div class="admin-title">Clientes</div>
+    <button class="logout-btn" (click)="volver()">← Volver</button>
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="admin-content">
+
+    <!-- IZQUIERDA: BOTONES -->
+    <div class="admin-panel">
+      <h2>Acciones</h2>
+      <div class="buttons">
+        <button [class.active]="vistaActiva === 'mostrar'" (click)="setVista('mostrar')">
+          👁️ Mostrar
+        </button>
+        <button [class.active]="vistaActiva === 'actualizar' || vistaActiva === 'editar'" (click)="setVista('actualizar')">
+          ✏️ Actualizar
+        </button>
+        <button class="btn-danger" [class.active]="vistaActiva === 'borrar'" (click)="setVista('borrar')">
+          🗑️ Borrar
+        </button>
+      </div>
+    </div>
+
+    <!-- DERECHA: CONTENIDO -->
+    <div class="gp-main">
+
+      <!-- ESTADO VACÍO -->
+      @if (vistaActiva === 'ninguna') {
+        <div class="empty-state">
+          <span class="empty-icon">🧑‍💼</span>
+          <p>Selecciona una acción del panel lateral</p>
+        </div>
+      }
+
+      <!-- ÉXITO -->
+      @if (mensajeExito) {
+        <div class="alert-success">✅ {{ mensajeExito }}</div>
+      }
+
+      <!-- MOSTRAR -->
+      @if (vistaActiva === 'mostrar') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Listado de Clientes</span>
+            <span class="badge">{{ clientes.length }} registros</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+                <th>Cédula</th>
+                <th>Tipo de Cliente</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (c of clientes; track c.id) {
+                  <tr>
+                    <td>{{ c.numero }}</td>
+                    <td class="td-id">{{ c.id }}</td>
+                    <td>{{ c.usuario }}</td>
+                    <td class="td-pass">{{ c.contrasena }}</td>
+                    <td class="td-cedula">{{ c.cedula }}</td>
+                    <td>
+                      <span class="tipo-badge" [attr.data-tipo]="c.tipoCliente">
+                        {{ c.tipoCliente }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- ACTUALIZAR -->
+      @if (vistaActiva === 'actualizar') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Selecciona un cliente para editar</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+                <th>Cédula</th>
+                <th>Tipo de Cliente</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (c of clientes; track c.id) {
+                  <tr>
+                    <td>{{ c.numero }}</td>
+                    <td class="td-id">{{ c.id }}</td>
+                    <td>{{ c.usuario }}</td>
+                    <td class="td-pass">{{ c.contrasena }}</td>
+                    <td class="td-cedula">{{ c.cedula }}</td>
+                    <td>
+                      <span class="tipo-badge" [attr.data-tipo]="c.tipoCliente">
+                        {{ c.tipoCliente }}
+                      </span>
+                    </td>
+                    <td>
+                      <button class="btn-accion btn-editar" (click)="iniciarEdicion(c)">✏️</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- EDITAR -->
+      @if (vistaActiva === 'editar' && clienteEditando) {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Editando cliente</span>
+            <div class="header-chips">
+              <span class="chip">N° {{ clienteEditando.numero }}</span>
+              <span class="chip">{{ clienteEditando.id }}</span>
+              <span class="chip-note">N° e ID no editables</span>
+            </div>
+          </div>
+          <form class="editar-form" (ngSubmit)="guardarEdicion()">
+            <div class="form-group">
+              <label>Usuario</label>
+              <input
+                type="text"
+                [(ngModel)]="editForm.usuario"
+                name="usuario"
+                placeholder="Nombre de usuario"
+              />
+            </div>
+            <div class="form-group">
+              <label>Contraseña</label>
+              <input
+                type="text"
+                [(ngModel)]="editForm.contrasena"
+                name="contrasena"
+                placeholder="Contraseña"
+              />
+            </div>
+            <div class="form-group">
+              <label>Cédula</label>
+              <input
+                type="text"
+                [(ngModel)]="editForm.cedula"
+                name="cedula"
+                placeholder="Número de cédula"
+              />
+            </div>
+            <div class="form-group">
+              <label>Tipo de Cliente</label>
+              <select [(ngModel)]="editForm.tipoCliente" name="tipoCliente">
+                <option value="Estándar">Estándar</option>
+                <option value="Premium">Premium</option>
+                <option value="Empresarial">Empresarial</option>
+              </select>
+            </div>
+            <div class="editar-actions">
+              <button type="button" class="btn-cancelar" (click)="cancelarEdicion()">← Cancelar</button>
+              <button type="submit" class="btn-guardar">Guardar cambios ✓</button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- BORRAR -->
+      @if (vistaActiva === 'borrar') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Selecciona un cliente para eliminar</span>
+            <span class="badge badge-danger">⚠️ Acción irreversible</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Contraseña</th>
+                <th>Cédula</th>
+                <th>Tipo de Cliente</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (c of clientes; track c.id) {
+                  <tr class="fila-danger">
+                    <td>{{ c.numero }}</td>
+                    <td class="td-id">{{ c.id }}</td>
+                    <td>{{ c.usuario }}</td>
+                    <td class="td-pass">{{ c.contrasena }}</td>
+                    <td class="td-cedula">{{ c.cedula }}</td>
+                    <td>
+                      <span class="tipo-badge" [attr.data-tipo]="c.tipoCliente">
+                        {{ c.tipoCliente }}
+                      </span>
+                    </td>
+                    <td>
+                      <button class="btn-accion btn-borrar" (click)="borrarCliente(c)" title="Eliminar">🗑️</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

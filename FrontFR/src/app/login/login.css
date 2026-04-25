@@ -1,0 +1,186 @@
+/* CONTENEDOR GENERAL */
+.login-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+  background-color: #F7E8B1;
+}
+
+/* HEADER (ARRIBA)       */
+.header {
+  width: 100%;
+  background-color: #937181;
+  color: #F7E8B1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 25px;
+  box-sizing: border-box;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+.roles {
+  display: flex;
+}
+
+.roles button {
+  margin-left: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background-color: #F7E8B1;
+  color: #937181;
+  transition: all 0.3s ease;
+}
+
+.roles button:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+.roles button.active {
+  background-color: transparent;
+  color: #F7E8B1;
+  border: 1px solid #F7E8B1;
+}
+
+/* CONTENIDO PRINCIPAL   */
+.main-content {
+  flex: 1;
+  display: flex;
+}
+
+/* CARRUSEL     */
+.carousel {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+
+  border-right: 5px solid rgba(147, 113, 129, 0.8);
+
+  box-shadow: 8px 0 25px rgba(0, 0, 0, 0.15);
+}
+
+/* imagen */
+.carousel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+
+  transition: opacity 0.6s ease-in-out;
+}
+
+.carousel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.5)
+  );
+
+  pointer-events: none;
+}
+
+/* LOGIN (DERECHA)       */
+.login-box {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CONTENIDO INTERNO */
+.login-box > div {
+  background-color: #937181;
+  padding: 40px 30px;
+  border-radius: 16px;
+  width: 340px;
+  text-align: center;
+  color: white;
+
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+
+  transition: transform 0.3s ease;
+}
+
+.login-box > div:hover {
+  transform: translateY(-3px);
+}
+
+/* TÍTULO */
+.login-box h2 {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* INPUTS */
+.login-box input,
+.login-box select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+
+.login-box input:focus {
+  box-shadow: 0 0 8px #F7E8B1;
+}
+
+/* BOTÓN */
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  background-color: #F7E8B1;
+  color: #937181;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* hover botón */
+.login-box button:hover {
+  background-color: #e6d89f;
+  transform: scale(1.03);
+}
+
+/* LINK */
+.link {
+  margin-top: 15px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #F7E8B1;
+  text-decoration: underline;
+}
+
+.link:hover {
+  opacity: 0.8;
+}
+
+/* GRID REGISTRO         */
+.register-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
