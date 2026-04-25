@@ -12,6 +12,10 @@
     (cerrarSesionEvent)="cambiarPantalla($event)">
   </app-admin-principal>
 
+  <app-cliente-principal
+    *ngIf="pantalla === 'cliente'"
+    (cerrarSesionEvent)="cambiarPantalla($event)">
+  </app-cliente-principal>
   <!-- FOOTER GLOBAL -->
   <footer class="footer">
     <div>MadeBy: UEBRAPIDISIMO</div>
