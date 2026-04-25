@@ -1,21 +1,61 @@
 <div class="app-container">
 
   <!-- LOGIN -->
-  <app-login
-    *ngIf="pantalla === 'login'"
-    (cambiarPantallaEvent)="cambiarPantalla($event)">
-  </app-login>
+  @if (pantalla === 'login') {
+    <app-login
+      (cambiarPantallaEvent)="cambiarPantalla($any($event))">
+    </app-login>
+  }
 
-  <!-- ADMIN -->
-  <app-admin-principal
-    *ngIf="pantalla === 'admin'"
-    (cerrarSesionEvent)="cambiarPantalla($event)">
-  </app-admin-principal>
+  <!-- ADMIN PRINCIPAL -->
+  @if (pantalla === 'admin') {
+    <app-admin-principal
+      (cerrarSesionEvent)="cambiarPantalla($any($event))">
+    </app-admin-principal>
+  }
+  <!-- CLIENTE -->
+  @if (pantalla === 'cliente-principal') {
+    <app-cliente-principal
+      (cerrarSesionEvent)="cambiarPantalla($any($event))">
+    </app-cliente-principal>
+  }
+  <!-- GESTIONAR PAQUETE -->
+  @if (pantalla === 'gestionar-paquete') {
+    <app-gestionar-paquete
+      (cerrarSesionEvent)="cambiarPantalla($any($event))">
+    </app-gestionar-paquete>
+  }
 
-  <app-cliente-principal
-    *ngIf="pantalla === 'cliente'"
-    (cerrarSesionEvent)="cambiarPantalla($event)">
-  </app-cliente-principal>
+  <!-- GESTIONAR manipulador -->
+  @if (pantalla === 'gestionar-manipulador') {
+    <app-gestionar-manipulador
+      (cerrarSesionEvent)="cambiarPantalla($any($event))">
+    </app-gestionar-manipulador>
+  }
+  <!-- GESTIONAR conductor -->
+  @if (pantalla === 'gestionar-conductor') {
+    <app-gestionar-conductor
+      (cerrarSesionEvent)="cambiarPantalla($any($event))">
+    </app-gestionar-conductor>
+  }
+  <!-- GESTIONAR cliente -->
+  @if (pantalla === 'gestionar-cliente') {
+    <app-gestionar-cliente
+      (cerrarSesionEvent)="cambiarPantalla($any($event))">
+    </app-gestionar-cliente>
+  }
+  <!-- Conductor -->
+  @if (pantalla === 'conductor.component') {
+    <app-conductor
+      (cerrarSesionEvent)="cambiarPantalla($any($event))">
+    </app-conductor>
+  }
+  <!-- Manipulador -->
+  @if (pantalla === 'manipulador.component') {
+    <app-manipulador
+      (cerrarSesionEvent)="cambiarPantalla($any($event))">
+    </app-manipulador>
+  }
   <!-- FOOTER GLOBAL -->
   <footer class="footer">
     <div>MadeBy: UEBRAPIDISIMO</div>

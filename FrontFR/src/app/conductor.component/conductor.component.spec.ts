@@ -1,0 +1,22 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ConductorComponent } from './conductor.component';
+
+describe('ConductorComponent', () => {
+  let component: ConductorComponent;
+  let fixture: ComponentFixture<ConductorComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ConductorComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ConductorComponent);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
