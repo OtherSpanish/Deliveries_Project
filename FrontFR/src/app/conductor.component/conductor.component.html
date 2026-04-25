@@ -1,0 +1,124 @@
+<div class="conductor-container">
+
+  <!-- HEADER -->
+  <header class="conductor-header">
+    <div class="header-left">
+      <span class="header-icon">🚗</span>
+      <div>
+        <p class="header-sub">Panel de Conductor</p>
+        <p class="header-title">Mis Entregas</p>
+      </div>
+    </div>
+    <button class="logout-btn" (click)="logout()">
+      🔓 Cerrar sesión
+    </button>
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="conductor-content">
+
+    <!-- IZQUIERDA: PANEL -->
+    <div class="conductor-panel">
+
+      <!-- TARJETAS DE RESUMEN -->
+      <div class="resumen-cards">
+        <div class="resumen-card card-pendiente">
+          <span class="resumen-num">{{ pedidosPendientes }}</span>
+          <span class="resumen-label">Pendientes</span>
+        </div>
+        <div class="resumen-card card-camino">
+          <span class="resumen-num">{{ pedidosEnCamino }}</span>
+          <span class="resumen-label">En camino</span>
+        </div>
+        <div class="resumen-card card-entregado">
+          <span class="resumen-num">{{ pedidosEntregados }}</span>
+          <span class="resumen-label">Entregados</span>
+        </div>
+      </div>
+
+      <h2>Acciones</h2>
+      <div class="buttons">
+        <button
+          [class.active]="vistaActiva === 'pedidos'"
+          (click)="setVista('pedidos')">
+          📋 Mis Pedidos
+        </button>
+      </div>
+    </div>
+
+    <!-- DERECHA: CONTENIDO -->
+    <div class="conductor-main">
+
+      <!-- ESTADO VACÍO -->
+      @if (vistaActiva === 'ninguna') {
+        <div class="empty-state">
+          <span class="empty-icon">🚚</span>
+          <p>Selecciona una acción del panel lateral</p>
+        </div>
+      }
+
+      <!-- ÉXITO -->
+      @if (mensajeExito) {
+        <div class="alert-success">✅ {{ mensajeExito }}</div>
+      }
+
+      <!-- PEDIDOS -->
+      @if (vistaActiva === 'pedidos') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Listado de Pedidos</span>
+            <span class="badge">{{ pedidos.length }} registros</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (p of pedidos; track p.id) {
+                  <tr>
+                    <td>{{ p.numero }}</td>
+                    <td class="td-id">{{ p.id }}</td>
+                    <td>{{ p.cliente }}</td>
+                    <td class="td-dir">{{ p.direccionOrigen }}</td>
+                    <td class="td-dir">{{ p.direccionDestino }}</td>
+                    <td>
+                      <span class="tipo-badge" [attr.data-tipo]="p.tipoPaquete">
+                        {{ p.tipoPaquete }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="estado-badge" [attr.data-estado]="p.estado">
+                        {{ p.estado }}
+                      </span>
+                    </td>
+                    <td>
+                      @if (p.estado !== 'Entregado') {
+                        <button
+                          class="btn-accion btn-entregar"
+                          (click)="marcarEntregado(p)"
+                          title="Marcar como entregado">
+                          ✅
+                        </button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

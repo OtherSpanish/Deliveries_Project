@@ -1,0 +1,274 @@
+<div class="gp-container">
+
+  <!-- HEADER -->
+  <header class="admin-header">
+    <div class="admin-user">Gestión de Paquetes</div>
+    <div class="admin-title">Paquete</div>
+    <button class="logout-btn" (click)="volver()">← Volver</button>
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="admin-content">
+
+    <!-- IZQUIERDA: BOTONES -->
+    <div class="admin-panel">
+      <h2>Acciones</h2>
+      <div class="buttons">
+        <button [class.active]="vistaActiva === 'mostrar'" (click)="setVista('mostrar')">
+          👁️ Mostrar
+        </button>
+        <button [class.active]="vistaActiva === 'actualizar' || vistaActiva === 'editar'" (click)="setVista('actualizar')">
+          ✏️ Actualizar
+        </button>
+        <button [class.active]="vistaActiva === 'crear'" (click)="setVista('crear')">
+          ➕ Crear
+        </button>
+        <button class="btn-tiempo" [class.active]="vistaActiva === 'tiempo'" (click)="setVista('tiempo')">
+          ⏱️ Ver Tiempo
+        </button>
+        <button class="btn-danger" [class.active]="vistaActiva === 'borrar'" (click)="setVista('borrar')">
+          🗑️ Borrar
+        </button>
+      </div>
+    </div>
+
+    <!-- DERECHA: CONTENIDO -->
+    <div class="gp-main">
+
+      <!-- ESTADO VACÍO -->
+      @if (vistaActiva === 'ninguna') {
+        <div class="empty-state">
+          <span class="empty-icon">📦</span>
+          <p>Selecciona una acción del panel lateral</p>
+        </div>
+      }
+
+      <!-- ÉXITO -->
+      @if (mensajeExito) {
+        <div class="alert-success">✅ {{ mensajeExito }}</div>
+      }
+
+      <!-- MOSTRAR -->
+      @if (vistaActiva === 'mostrar') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Listado de Paquetes</span>
+            <span class="badge">{{ paquetes.length }} registros</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th><th>ID</th><th>Tipo</th><th>Contenido</th><th>Dirección de Envío</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (p of paquetes; track p.id) {
+                  <tr>
+                    <td>{{ p.numero }}</td>
+                    <td class="td-id">{{ p.id }}</td>
+                    <td><span class="tipo-badge" [attr.data-tipo]="p.tipoPaquete">{{ p.tipoPaquete }}</span></td>
+                    <td>{{ p.contenido }}</td>
+                    <td>{{ p.direccionEnvio }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- ACTUALIZAR -->
+      @if (vistaActiva === 'actualizar') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Selecciona un paquete para editar</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th><th>ID</th><th>Tipo</th><th>Contenido</th><th>Dirección de Envío</th><th></th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (p of paquetes; track p.id) {
+                  <tr>
+                    <td>{{ p.numero }}</td>
+                    <td class="td-id">{{ p.id }}</td>
+                    <td><span class="tipo-badge" [attr.data-tipo]="p.tipoPaquete">{{ p.tipoPaquete }}</span></td>
+                    <td>{{ p.contenido }}</td>
+                    <td>{{ p.direccionEnvio }}</td>
+                    <td><button class="btn-accion btn-editar" (click)="iniciarEdicion(p)">✏️</button></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- EDITAR -->
+      @if (vistaActiva === 'editar' && paqueteEditando) {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Editando paquete</span>
+            <div class="header-chips">
+              <span class="chip">N° {{ paqueteEditando.numero }}</span>
+              <span class="chip">{{ paqueteEditando.id }}</span>
+              <span class="chip-note">N° e ID no editables</span>
+            </div>
+          </div>
+          <form class="editar-form" (ngSubmit)="guardarEdicion()">
+            <div class="form-group">
+              <label>Tipo de Paquete</label>
+              <select [(ngModel)]="editForm.tipoPaquete" name="tipoPaquete">
+                <option value="Normal">Normal</option>
+                <option value="Frágil">Frágil</option>
+                <option value="Pesado">Pesado</option>
+                <option value="Refrigerado">Refrigerado</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Contenido</label>
+              <input type="text" [(ngModel)]="editForm.contenido" name="contenido" placeholder="Contenido del paquete">
+            </div>
+            <div class="form-group">
+              <label>Dirección de Envío</label>
+              <input type="text" [(ngModel)]="editForm.direccionEnvio" name="direccionEnvio" placeholder="Dirección de destino">
+            </div>
+            <div class="editar-actions">
+              <button type="button" class="btn-cancelar" (click)="cancelarEdicion()">← Cancelar</button>
+              <button type="submit" class="btn-guardar">Guardar cambios ✓</button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- CREAR -->
+      @if (vistaActiva === 'crear') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Nuevo paquete</span>
+            <span class="chip-note">El ID se asigna automáticamente</span>
+          </div>
+          <form class="editar-form" (ngSubmit)="crearPaquete()">
+            <div class="form-group">
+              <label>Tipo de Paquete</label>
+              <select [(ngModel)]="crearForm.tipoPaquete" name="tipoPaquete">
+                <option value="Normal">Normal</option>
+                <option value="Frágil">Frágil</option>
+                <option value="Pesado">Pesado</option>
+                <option value="Refrigerado">Refrigerado</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Contenido</label>
+              <input
+                type="text"
+                [(ngModel)]="crearForm.contenido"
+                name="contenido"
+                placeholder="Contenido del paquete"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Dirección de Envío</label>
+              <input
+                type="text"
+                [(ngModel)]="crearForm.direccionEnvio"
+                name="direccionEnvio"
+                placeholder="Dirección de destino"
+                required
+              />
+            </div>
+            <div class="editar-actions">
+              <button type="button" class="btn-cancelar" (click)="setVista('ninguna')">← Cancelar</button>
+              <button type="submit" class="btn-guardar">Crear paquete ✓</button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- TIEMPO DE ENTREGA -->
+      @if (vistaActiva === 'tiempo') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Calcular tiempo de entrega</span>
+          </div>
+          <form class="editar-form" (ngSubmit)="calcularTiempo()">
+            <div class="form-group">
+              <label>Tipo de Paquete</label>
+              <select [(ngModel)]="tiempoForm.tipoPaquete" name="tipoPaquete">
+                <option value="Normal">Normal</option>
+                <option value="Frágil">Frágil</option>
+                <option value="Pesado">Pesado</option>
+                <option value="Refrigerado">Refrigerado</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Distancia al destino (km)</label>
+              <input
+                type="number"
+                [(ngModel)]="tiempoForm.distanciaKm"
+                name="distanciaKm"
+                placeholder="Ej: 250"
+                min="1"
+                required
+              />
+            </div>
+            <div class="editar-actions">
+              <button type="submit" class="btn-guardar">Calcular ⏱️</button>
+            </div>
+          </form>
+
+          @if (tiempoResultado) {
+            <div class="tiempo-resultado">
+              <span class="tiempo-icon">📦</span>
+              <div>
+                <p class="tiempo-label">Tiempo estimado de entrega</p>
+                <p class="tiempo-valor">{{ tiempoResultado }}</p>
+                <p class="tiempo-nota">
+                  Velocidad según tipo:
+                  Normal 80 km/h · Frágil 60 km/h · Pesado 50 km/h · Refrigerado 70 km/h
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- BORRAR -->
+      @if (vistaActiva === 'borrar') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Selecciona un paquete para eliminar</span>
+            <span class="badge badge-danger">⚠️ Acción irreversible</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th><th>ID</th><th>Tipo</th><th>Contenido</th><th>Dirección de Envío</th><th></th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (p of paquetes; track p.id) {
+                  <tr class="fila-danger">
+                    <td>{{ p.numero }}</td>
+                    <td class="td-id">{{ p.id }}</td>
+                    <td><span class="tipo-badge" [attr.data-tipo]="p.tipoPaquete">{{ p.tipoPaquete }}</span></td>
+                    <td>{{ p.contenido }}</td>
+                    <td>{{ p.direccionEnvio }}</td>
+                    <td><button class="btn-accion btn-borrar" (click)="borrarPaquete(p)" title="Eliminar">🗑️</button></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

@@ -8,7 +8,6 @@ import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 })
 export class AdminPrincipal implements OnInit {
 
-  // EVENTO para volver al login
   @Output() cerrarSesionEvent = new EventEmitter<string>();
 
   nombreAdmin: string = 'Admin';
@@ -27,11 +26,19 @@ export class AdminPrincipal implements OnInit {
   }
 
   gestionar(tipo: string) {
-    console.log("Gestionar:", tipo);
-    alert("Entrando a gestión de " + tipo);
+    if (tipo === 'paquete') {
+      this.cerrarSesionEvent.emit('gestionar-paquete');  // nombre exacto de la pantalla
+    }else if(tipo === 'manipulador'){
+      this.cerrarSesionEvent.emit('gestionar-manipulador');
+    }else if(tipo === 'conductor'){
+      this.cerrarSesionEvent.emit('gestionar-conductor');
+    } else if(tipo === 'cliente'){
+      this.cerrarSesionEvent.emit('gestionar-cliente');
+    }else {
+      console.log('Gestionar:', tipo);
+    }
   }
 
-  // LOGOUT
   logout() {
     this.cerrarSesionEvent.emit('login');
   }

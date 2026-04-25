@@ -71,15 +71,15 @@ export class Login implements OnInit {
 
     // OTROS ROLES
     if (this.rol === 'cliente') {
-      this.cambiarPantallaEvent.emit('cliente');
+      this.cambiarPantallaEvent.emit('cliente-principal');
     }
 
     if (this.rol === 'conductor') {
-      this.cambiarPantallaEvent.emit('conductor');
+      this.cambiarPantallaEvent.emit('conductor.component');
     }
 
     if (this.rol === 'manipulador') {
-      this.cambiarPantallaEvent.emit('manipulador');
+      this.cambiarPantallaEvent.emit('manipulador.component');
     }
 
     alert('Login como ' + this.rol);
