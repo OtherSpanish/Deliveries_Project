@@ -1,5 +1,6 @@
 package co.edu.unbosque.proyectomodulo.entity;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
@@ -36,7 +37,7 @@ public class Paquete {
 	private String direccionDeEnvio;
 
 	/** Tiempo estimado de entrega. */
-	private String tiempoDeEnvio;
+	private LocalDateTime tiempoDeEnvio;
 
 	/** Precio de envío. */
 	private String precioEnvio;
@@ -56,7 +57,7 @@ public class Paquete {
 	 * @param tiempoDeEnvio    tiempo estimado de entrega
 	 * @param precioEnvio      precio de envío
 	 */
-	public Paquete(String tipoPaquete, String contenido, String direccionDeEnvio, String tiempoDeEnvio,
+	public Paquete(String tipoPaquete, String contenido, String direccionDeEnvio, LocalDateTime tiempoDeEnvio,
 			String precioEnvio) {
 		this.tipoPaquete = tipoPaquete;
 		this.contenido = contenido;
@@ -142,7 +143,7 @@ public class Paquete {
 	 *
 	 * @return tiempo de entrega
 	 */
-	public String getTiempoDeEnvio() {
+	public LocalDateTime getTiempoDeEnvio() {
 		return tiempoDeEnvio;
 	}
 
@@ -151,7 +152,7 @@ public class Paquete {
 	 *
 	 * @param tiempoDeEnvio nuevo tiempo
 	 */
-	public void setTiempoDeEnvio(String tiempoDeEnvio) {
+	public void setTiempoDeEnvio(LocalDateTime tiempoDeEnvio) {
 		this.tiempoDeEnvio = tiempoDeEnvio;
 	}
 

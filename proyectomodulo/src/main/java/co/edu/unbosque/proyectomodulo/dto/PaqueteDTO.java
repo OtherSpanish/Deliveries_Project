@@ -1,7 +1,9 @@
 package co.edu.unbosque.proyectomodulo.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
+
 
 /**
  * Objeto de Transferencia de Datos (DTO) para la entidad {@code Paquete}.
@@ -25,7 +27,7 @@ public class PaqueteDTO {
 	private String direccionDeEnvio;
 
 	/** Tiempo estimado de entrega. */
-	private String tiempoDeEnvio;
+	private LocalDateTime tiempoDeEnvio;
 
 	/** Precio de envío con descuento aplicado. */
 	private String precioEnvio;
@@ -45,7 +47,7 @@ public class PaqueteDTO {
 	 * @param tiempoDeEnvio    tiempo estimado de entrega
 	 * @param precioEnvio      precio de envío
 	 */
-	public PaqueteDTO(String tipoPaquete, String contenido, String direccionDeEnvio, String tiempoDeEnvio,
+	public PaqueteDTO(String tipoPaquete, String contenido, String direccionDeEnvio, LocalDateTime tiempoDeEnvio,
 			String precioEnvio) {
 		super();
 		this.tipoPaquete = tipoPaquete;
@@ -132,7 +134,7 @@ public class PaqueteDTO {
 	 *
 	 * @return tiempo de entrega
 	 */
-	public String getTiempoDeEnvio() {
+	public LocalDateTime getTiempoDeEnvio() {
 		return tiempoDeEnvio;
 	}
 
@@ -141,7 +143,7 @@ public class PaqueteDTO {
 	 *
 	 * @param tiempoDeEnvio nuevo tiempo de entrega
 	 */
-	public void setTiempoDeEnvio(String tiempoDeEnvio) {
+	public void setTiempoDeEnvio(LocalDateTime tiempoDeEnvio) {
 		this.tiempoDeEnvio = tiempoDeEnvio;
 	}
 

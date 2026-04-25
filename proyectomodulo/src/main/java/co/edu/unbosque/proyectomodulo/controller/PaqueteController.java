@@ -85,22 +85,30 @@ public class PaqueteController {
 			int minuto = Integer.parseInt(formateadoMinuto);
 			int precio;
 			
+			if(hora > 22) {
+				hora = 8;
+			}
 			switch (tipoPaquete.toLowerCase()) {
 			case "carta": {
 				int dias = dia+1;
 				dia = dias;
+				hora = 8;
+				minuto = 00;
 				precio = 10000;
 				break;
 			}
 			case "alimenticios":{
 				int entrega = 6 + hora;
 				hora = entrega;
+				minuto = 00;
 				precio = 20000;
 				break;
 			}
 			case "no alimenticios":{
 				int dias = dia+1;
 				dia = dias;
+				hora = 8;
+				minuto = 00;
 				precio = 30000;
 				break;
 			}
@@ -108,9 +116,7 @@ public class PaqueteController {
 				return new ResponseEntity<>("Ingrese un tipo de paquete valido (carta, alimenticios, no alimenticios)",
 						HttpStatus.BAD_REQUEST);
 			}
-			LocalDateTime tiempoDeEnvioTesting = LocalDateTime.of(anio, mes, dia, hora, minuto);
-			DateTimeFormatter formatoFinal = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy");
-			String tiempoDeEnvio = tiempoDeEnvioTesting.format(formatoFinal);
+			LocalDateTime tiempoDeEnvio = LocalDateTime.of(anio, mes, dia, hora, minuto);
 			String precioEnvio = "";
 
 			switch (clienteService.getClienteLogueado().getTipoCliente().toLowerCase()) {
