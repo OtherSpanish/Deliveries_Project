@@ -300,9 +300,9 @@ td {
   background: rgba(147,113,129,0.15);
   color: #4a3645;
 }
-.tipo-badge[data-tipo="Frágil"]      { background: rgba(200,100,50,0.12); color: #7a3d1a; }
-.tipo-badge[data-tipo="Pesado"]      { background: rgba(74,54,69,0.15);   color: #4a3645; }
-.tipo-badge[data-tipo="Refrigerado"] { background: rgba(41,128,185,0.12); color: #1a4f72; }
+.tipo-badge[data-tipo="Carta"]          { background: rgba(90,120,200,0.15);  color: #2a3d8a; }
+.tipo-badge[data-tipo="Alimenticio"]    { background: rgba(50,160,80,0.15);   color: #1a5e30; }
+.tipo-badge[data-tipo="No Alimenticio"] { background: rgba(200,130,30,0.15);  color: #7a4a00; }
 .tipo-badge[data-tipo="Normal"]      { background: rgba(147,113,129,0.15); color: #4a3645; }
 
 /* ── BADGE ESTADO ── */
