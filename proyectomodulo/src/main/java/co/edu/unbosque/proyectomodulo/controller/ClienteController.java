@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
+import co.edu.unbosque.proyectomodulo.dto.TipoCliente;
 import co.edu.unbosque.proyectomodulo.service.ClienteService;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -81,7 +82,7 @@ public class ClienteController {
 	 */
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestParam String usuario, @RequestParam String contrasenia,
-			@RequestParam String cedula, @RequestParam String tipoCliente) {
+			@RequestParam String cedula, @RequestParam TipoCliente tipoCliente) {
 		ClienteDTO registrar = new ClienteDTO(usuario, contrasenia, cedula, tipoCliente);
 		int status = clienteService.create(registrar);
 		if (status == 0) {

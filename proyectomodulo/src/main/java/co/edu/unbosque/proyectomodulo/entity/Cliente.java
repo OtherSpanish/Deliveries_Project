@@ -1,15 +1,19 @@
 package co.edu.unbosque.proyectomodulo.entity;
 
+import java.util.Objects;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 /**
- * Entidad JPA que representa un cliente del sistema.
- * Extiende de {@link Persona}, heredando los atributos de autenticación
- * como usuario y contraseña, e incorpora información propia como la cédula
- * y el tipo de cliente.
+ * Entidad JPA que representa un cliente del sistema. Extiende de
+ * {@link Persona}, heredando los atributos de autenticación como usuario y
+ * contraseña, e incorpora información propia como la cédula y el tipo de
+ * cliente.
  *
- * <p>Se encuentra mapeada a la tabla {@code cliente} en la base de datos.</p>
+ * <p>
+ * Se encuentra mapeada a la tabla {@code cliente} en la base de datos.
+ * </p>
  *
  * @version 1.0
  */
@@ -21,84 +25,71 @@ public class Cliente extends Persona {
 	private String cedula;
 
 	/** Tipo de cliente (normal, premium, concurrente). */
-	private String tipoCliente;
+	private TipoCliente tipoCliente;
 
-	/**
-	 * Constructor por defecto.
-	 */
+
 	public Cliente() {
+		super();
 	}
 
-	/**
-	 * Constructor que inicializa la cédula y el tipo de cliente.
-	 *
-	 * @param cedula      cédula de identidad
-	 * @param tipoCliente tipo de cliente
-	 */
-	public Cliente(String cedula, String tipoCliente) {
+	public Cliente(String cedula, TipoCliente tipoCliente) {
 		super();
 		this.cedula = cedula;
 		this.tipoCliente = tipoCliente;
 	}
 
-	/**
-	 * Constructor que inicializa todos los atributos del cliente.
-	 *
-	 * @param usuario     nombre de usuario
-	 * @param contrasenia contraseña
-	 * @param cedula      cédula de identidad
-	 * @param tipoCliente tipo de cliente
-	 */
-	public Cliente(String usuario, String contrasenia, String cedula, String tipoCliente) {
+	public Cliente(String usuario, String contrasenia, String cedula, TipoCliente tipoCliente) {
 		super(usuario, contrasenia);
 		this.cedula = cedula;
 		this.tipoCliente = tipoCliente;
 	}
 
-	/**
-	 * Obtiene la cédula del cliente.
-	 *
-	 * @return cédula de identidad
-	 */
+	public Cliente(String usuario, String contrasenia) {
+		super(usuario, contrasenia);
+
+	}
+
 	public String getCedula() {
 		return cedula;
 	}
 
-	/**
-	 * Establece la cédula del cliente.
-	 *
-	 * @param cedula nueva cédula
-	 */
 	public void setCedula(String cedula) {
 		this.cedula = cedula;
 	}
 
-	/**
-	 * Obtiene el tipo de cliente.
-	 *
-	 * @return tipo de cliente
-	 */
-	public String getTipoCliente() {
+	public TipoCliente getTipoCliente() {
 		return tipoCliente;
 	}
 
-	/**
-	 * Establece el tipo de cliente.
-	 *
-	 * @param tipoCliente nuevo tipo de cliente
-	 */
-	public void setTipoCliente(String tipoCliente) {
+	public void setTipoCliente(TipoCliente tipoCliente) {
 		this.tipoCliente = tipoCliente;
 	}
 
-	/**
-	 * Devuelve una representación en cadena del objeto,
-	 * incluyendo los atributos heredados de {@link Persona}.
-	 *
-	 * @return cadena con los datos del cliente
-	 */
 	@Override
 	public String toString() {
-		return super.toString() + " |Cliente| \n - Cedula: " + cedula + "\n - Tipo de cliente: " + tipoCliente;
+		return "Cliente [cedula=" + cedula + ", tipoCliente=" + tipoCliente + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(cedula, tipoCliente);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cliente other = (Cliente) obj;
+		return Objects.equals(cedula, other.cedula) && Objects.equals(tipoCliente, other.tipoCliente);
+	}
+
 }

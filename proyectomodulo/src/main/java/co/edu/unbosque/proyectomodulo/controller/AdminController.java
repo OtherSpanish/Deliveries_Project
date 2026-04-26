@@ -24,8 +24,11 @@ import co.edu.unbosque.proyectomodulo.service.ConductorService;
 import co.edu.unbosque.proyectomodulo.service.ManipuladorPaquetesService;
 import co.edu.unbosque.proyectomodulo.service.PaqueteService;
 import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
+import co.edu.unbosque.proyectomodulo.dto.EstadoPaquete;
 import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
 import co.edu.unbosque.proyectomodulo.dto.PaqueteDTO;
+import co.edu.unbosque.proyectomodulo.dto.TipoCliente;
+import co.edu.unbosque.proyectomodulo.dto.TipoPaquete;
 
 /**
  * Controlador REST para la gestión de operaciones administrativas. Proporciona
@@ -254,19 +257,19 @@ public class AdminController {
 	 */
 	@PutMapping("/actualizarCliente")
 	public ResponseEntity<String> actualizarCliente(@RequestParam Long id, @RequestParam String usuario,
-			@RequestParam String contrasenia, @RequestParam String cedula, @RequestParam String tipoCliente) {
+			@RequestParam String contrasenia, @RequestParam String cedula, @RequestParam TipoCliente tipoCliente) {
 		ClienteDTO actualizar = new ClienteDTO(usuario, contrasenia, cedula, tipoCliente);
 		switch (tipoCliente) {
-		case "normal": {
-			tipoCliente = "normal";
+		case NORMAL: {
+			tipoCliente = TipoCliente.NORMAL;
 			break;
 		}
-		case "premium": {
-			tipoCliente = "premium";
+		case PREMIUM: {
+			tipoCliente = TipoCliente.PREMIUM;
 			break;
 		}
-		case "concurrente": {
-			tipoCliente = "concurrente";
+		case CONCURRENTE: {
+			tipoCliente = TipoCliente.CONCURRENTE;
 			break;
 		}
 		default: {
@@ -308,7 +311,7 @@ public class AdminController {
 	 *         no hay admin o cliente logueado.
 	 */
 	@PutMapping("/actualizarPaquete")
-	public ResponseEntity<String> actualizarPaquete(@RequestParam Long id, @RequestParam String tipoDePaquete,
+	public ResponseEntity<String> actualizarPaquete(@RequestParam Long id, @RequestParam TipoPaquete tipoPaquete,
 			@RequestParam String contenido, @RequestParam String direccionDeEnvio) {
 		LocalDateTime tiempoDeEnvio2 = LocalDateTime.now();
 		DateTimeFormatter formatoDias = DateTimeFormatter.ofPattern("dd");
@@ -331,7 +334,7 @@ public class AdminController {
 		if (!clienteService.isLogged()) {
 			return new ResponseEntity<>("Se necesita un cliente logueado", HttpStatus.BAD_REQUEST);
 		} else {
-			switch (tipoDePaquete.toLowerCase()) {
+			switch (tipoPaquete.toString().toLowerCase()) {
 			case "carta": {
 				int dias = dia + 1;
 				hora = 8;
@@ -360,16 +363,18 @@ public class AdminController {
 						HttpStatus.BAD_REQUEST);
 			}
 			LocalDateTime tiempoDeEnvio = LocalDateTime.of(anio, mes, dia, hora, minuto);
-			switch (clienteService.getClienteLogueado().getTipoCliente().toLowerCase()) {
-			case "normal": {
+			EstadoPaquete estadoPaquete = EstadoPaquete.PENDIENTE;
+			String clientePaquete = clienteService.getClienteLogueado().getUsuario();
+			switch (clienteService.getClienteLogueado().getTipoCliente()) {
+			case NORMAL: {
 				precioEnvio = "" + precio;
 				break;
 			}
-			case "concurrente": {
+			case CONCURRENTE: {
 				precioEnvio = "" + (precio - (precio * 0.10));
 				break;
 			}
-			case "premium": {
+			case PREMIUM: {
 				precioEnvio = "" + (precio - (precio * 0.30));
 				break;
 			}
@@ -377,8 +382,8 @@ public class AdminController {
 				return new ResponseEntity<>("Tipo de paquete no válido", HttpStatus.BAD_REQUEST);
 			}
 			}
-			PaqueteDTO actualizar = new PaqueteDTO(tipoDePaquete, contenido, direccionDeEnvio, tiempoDeEnvio,
-					precioEnvio);
+			PaqueteDTO actualizar = new PaqueteDTO(tipoPaquete, contenido, direccionDeEnvio, tiempoDeEnvio, precioEnvio, estadoPaquete, clientePaquete);
+
 			int status = pService.updateById(id, actualizar);
 			if (status == 0) {
 				return new ResponseEntity<>("Paquete actualizado", HttpStatus.ACCEPTED);

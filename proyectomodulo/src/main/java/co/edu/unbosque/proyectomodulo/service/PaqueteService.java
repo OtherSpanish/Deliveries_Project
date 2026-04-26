@@ -77,9 +77,8 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 		}
 
 		try {
-			LanzadorException.verificarTipoPaquete(data.getTipoPaquete());
 			LanzadorException.verificarDireccion(data.getDireccionDeEnvio());
-		} catch (TipoPaqueteException | DireccionException e) {
+		} catch (DireccionException e) {
 			return 1;
 		}
 
@@ -202,8 +201,7 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 
 			try {
 				LanzadorException.verificarDireccion(data.getDireccionDeEnvio());
-				LanzadorException.verificarTipoPaquete(data.getTipoPaquete());
-			} catch (DireccionException | TipoPaqueteException e) {
+			} catch (DireccionException  e) {
 				return 1;
 			}
 

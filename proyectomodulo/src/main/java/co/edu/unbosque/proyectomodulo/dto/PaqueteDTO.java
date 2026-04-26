@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-
 /**
  * Objeto de Transferencia de Datos (DTO) para la entidad {@code Paquete}.
  * Permite transportar la información de los paquetes entre las capas de la
@@ -18,7 +17,7 @@ public class PaqueteDTO {
 	private Long id;
 
 	/** Tipo de paquete (carta, alimenticios, no alimenticios). */
-	private String tipoPaquete;
+	private TipoPaquete tipoPaquete;
 
 	/** Descripción del contenido del paquete. */
 	private String contenido;
@@ -32,167 +31,108 @@ public class PaqueteDTO {
 	/** Precio de envío con descuento aplicado. */
 	private String precioEnvio;
 
-	/**
-	 * Constructor por defecto.
-	 */
+	private EstadoPaquete estadoPaquete;
+
+	private String clientePaquete;
+
 	public PaqueteDTO() {
+		super();
 	}
 
-	/**
-	 * Constructor que inicializa los atributos principales del paquete.
-	 *
-	 * @param tipoPaquete      tipo de paquete
-	 * @param contenido        descripción del contenido
-	 * @param direccionDeEnvio dirección de destino
-	 * @param tiempoDeEnvio    tiempo estimado de entrega
-	 * @param precioEnvio      precio de envío
-	 */
-	public PaqueteDTO(String tipoPaquete, String contenido, String direccionDeEnvio, LocalDateTime tiempoDeEnvio,
-			String precioEnvio) {
+	public PaqueteDTO(TipoPaquete tipoPaquete, String contenido, String direccionDeEnvio, LocalDateTime tiempoDeEnvio,
+			String precioEnvio, EstadoPaquete estadoPaquete, String clientePaquete) {
 		super();
 		this.tipoPaquete = tipoPaquete;
 		this.contenido = contenido;
 		this.direccionDeEnvio = direccionDeEnvio;
 		this.tiempoDeEnvio = tiempoDeEnvio;
 		this.precioEnvio = precioEnvio;
+		this.estadoPaquete = estadoPaquete;
+		this.clientePaquete = clientePaquete;
 	}
 
-	/**
-	 * Obtiene el identificador del paquete.
-	 *
-	 * @return identificador único
-	 */
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * Establece el identificador del paquete.
-	 *
-	 * @param id nuevo identificador
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/**
-	 * Obtiene el tipo de paquete.
-	 *
-	 * @return tipo de paquete
-	 */
-	public String getTipoPaquete() {
+	public TipoPaquete getTipoPaquete() {
 		return tipoPaquete;
 	}
 
-	/**
-	 * Establece el tipo de paquete.
-	 *
-	 * @param tipoPaquete nuevo tipo de paquete
-	 */
-	public void setTipoPaquete(String tipoPaquete) {
+	public void setTipoPaquete(TipoPaquete tipoPaquete) {
 		this.tipoPaquete = tipoPaquete;
 	}
 
-	/**
-	 * Obtiene el contenido del paquete.
-	 *
-	 * @return descripción del contenido
-	 */
 	public String getContenido() {
 		return contenido;
 	}
 
-	/**
-	 * Establece el contenido del paquete.
-	 *
-	 * @param contenido nueva descripción
-	 */
 	public void setContenido(String contenido) {
 		this.contenido = contenido;
 	}
 
-	/**
-	 * Obtiene la dirección de envío.
-	 *
-	 * @return dirección de destino
-	 */
 	public String getDireccionDeEnvio() {
 		return direccionDeEnvio;
 	}
 
-	/**
-	 * Establece la dirección de envío.
-	 *
-	 * @param direccionDeEnvio nueva dirección
-	 */
 	public void setDireccionDeEnvio(String direccionDeEnvio) {
 		this.direccionDeEnvio = direccionDeEnvio;
 	}
 
-	/**
-	 * Obtiene el tiempo estimado de entrega.
-	 *
-	 * @return tiempo de entrega
-	 */
 	public LocalDateTime getTiempoDeEnvio() {
 		return tiempoDeEnvio;
 	}
 
-	/**
-	 * Establece el tiempo estimado de entrega.
-	 *
-	 * @param tiempoDeEnvio nuevo tiempo de entrega
-	 */
 	public void setTiempoDeEnvio(LocalDateTime tiempoDeEnvio) {
 		this.tiempoDeEnvio = tiempoDeEnvio;
 	}
 
-	/**
-	 * Obtiene el precio de envío.
-	 *
-	 * @return precio de envío
-	 */
 	public String getPrecioEnvio() {
 		return precioEnvio;
 	}
 
-	/**
-	 * Establece el precio de envío.
-	 *
-	 * @param precioEnvio nuevo precio
-	 */
 	public void setPrecioEnvio(String precioEnvio) {
 		this.precioEnvio = precioEnvio;
 	}
 
-	/**
-	 * Devuelve una representación en cadena del objeto.
-	 *
-	 * @return cadena con los datos del paquete formateados
-	 */
+	public EstadoPaquete getEstadoPaquete() {
+		return estadoPaquete;
+	}
+
+	public void setEstadoPaquete(EstadoPaquete estadoPaquete) {
+		this.estadoPaquete = estadoPaquete;
+	}
+
+	public String getClientePaquete() {
+		return clientePaquete;
+	}
+
+	public void setClientePaquete(String clientePaquete) {
+		this.clientePaquete = clientePaquete;
+	}
+
 	@Override
 	public String toString() {
-		return "=== |PaqueteDTO| === \n - id: " + id + "\n - Tipo de paquete: " + tipoPaquete + "\n - Contenido: "
-				+ contenido + "\n - Direccion a enviar: " + direccionDeEnvio + "\n - Tiempo De Entrega :"
-				+ tiempoDeEnvio + "\n - Precio de envio: " + precioEnvio + "\n================\n";
+		return "PaqueteDTO [id=" + id + ", tipoPaquete=" + tipoPaquete + ", contenido=" + contenido
+				+ ", direccionDeEnvio=" + direccionDeEnvio + ", tiempoDeEnvio=" + tiempoDeEnvio + ", precioEnvio="
+				+ precioEnvio + ", estadoPaquete=" + estadoPaquete + ", clientePaquete=" + clientePaquete + ", getId()="
+				+ getId() + ", getTipoPaquete()=" + getTipoPaquete() + ", getContenido()=" + getContenido()
+				+ ", getDireccionDeEnvio()=" + getDireccionDeEnvio() + ", getTiempoDeEnvio()=" + getTiempoDeEnvio()
+				+ ", getPrecioEnvio()=" + getPrecioEnvio() + ", getEstadoPaquete()=" + getEstadoPaquete()
+				+ ", getClientePaquete()=" + getClientePaquete() + ", getClass()=" + getClass() + ", hashCode()="
+				+ hashCode() + ", toString()=" + super.toString() + "]";
 	}
 
-	/**
-	 * Calcula el código hash del objeto basado en sus atributos.
-	 *
-	 * @return valor hash del objeto
-	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(contenido, direccionDeEnvio, id, precioEnvio, tiempoDeEnvio, tipoPaquete);
+		return Objects.hash(clientePaquete, contenido, direccionDeEnvio, estadoPaquete, id, precioEnvio, tiempoDeEnvio,
+				tipoPaquete);
 	}
 
-	/**
-	 * Compara este objeto con otro para determinar si son iguales.
-	 *
-	 * @param obj objeto a comparar
-	 * @return {@code true} si los objetos son iguales, {@code false} en caso contrario
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -202,8 +142,11 @@ public class PaqueteDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		PaqueteDTO other = (PaqueteDTO) obj;
-		return Objects.equals(contenido, other.contenido) && Objects.equals(direccionDeEnvio, other.direccionDeEnvio)
-				&& id == other.id && Objects.equals(precioEnvio, other.precioEnvio)
-				&& Objects.equals(tiempoDeEnvio, other.tiempoDeEnvio) && Objects.equals(tipoPaquete, other.tipoPaquete);
+		return Objects.equals(clientePaquete, other.clientePaquete) && Objects.equals(contenido, other.contenido)
+				&& Objects.equals(direccionDeEnvio, other.direccionDeEnvio)
+				&& Objects.equals(estadoPaquete, other.estadoPaquete) && Objects.equals(id, other.id)
+				&& Objects.equals(precioEnvio, other.precioEnvio) && Objects.equals(tiempoDeEnvio, other.tiempoDeEnvio)
+				&& Objects.equals(tipoPaquete, other.tipoPaquete);
 	}
+
 }
