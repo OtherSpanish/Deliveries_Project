@@ -5,8 +5,8 @@ import java.util.Objects;
 /**
  * Objeto de Transferencia de Datos (DTO) para la entidad
  * {@code ManipuladorPaquete}. Permite transportar la información de los
- * manipuladores de paquetes entre las diferentes capas de la aplicación
- * sin exponer directamente la entidad del modelo.
+ * manipuladores de paquetes entre las diferentes capas de la aplicación sin
+ * exponer directamente la entidad del modelo.
  *
  * @version 1.0
  */
@@ -131,7 +131,8 @@ public class ManipuladorPaqueteDTO {
 	 * Compara este objeto con otro para determinar si son iguales.
 	 *
 	 * @param obj objeto a comparar
-	 * @return {@code true} si los objetos son iguales, {@code false} en caso contrario
+	 * @return {@code true} si los objetos son iguales, {@code false} en caso
+	 *         contrario
 	 */
 	@Override
 	public boolean equals(Object obj) {

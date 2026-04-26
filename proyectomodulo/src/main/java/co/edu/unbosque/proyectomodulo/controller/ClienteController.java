@@ -1,7 +1,5 @@
 package co.edu.unbosque.proyectomodulo.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +40,8 @@ public class ClienteController {
 	 *
 	 * @param usuario     nombre de usuario del cliente.
 	 * @param contrasenia contraseña del cliente.
-	 * @return {@code 200 OK} si el login es exitoso,
-	 *         {@code 401 Unauthorized} si las credenciales son incorrectas.
+	 * @return {@code 200 OK} si el login es exitoso, {@code 401 Unauthorized} si
+	 *         las credenciales son incorrectas.
 	 */
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestParam String usuario, @RequestParam String contrasenia) {
@@ -88,11 +86,14 @@ public class ClienteController {
 		if (status == 0) {
 			return new ResponseEntity<>("Usuario registrado", HttpStatus.CREATED);
 		} else if (status == 1) {
-			return new ResponseEntity<>("Ingrese correctamente el tipo de usuario (normal, premium)", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Ingrese correctamente el tipo de usuario (normal, premium)",
+					HttpStatus.BAD_REQUEST);
 		} else if (status == 2) {
-			return new ResponseEntity<>("El Nombre de usuario ya se encuentra registrado, intenta de nuevo", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("El Nombre de usuario ya se encuentra registrado, intenta de nuevo",
+					HttpStatus.BAD_REQUEST);
 		} else if (status == 3) {
-			return new ResponseEntity<>("Ningun usuario puede estar ingresado en este momento, intenta de nuevo", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Ningun usuario puede estar ingresado en este momento, intenta de nuevo",
+					HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>("Error al crear", HttpStatus.CONFLICT);
 		}
@@ -101,7 +102,8 @@ public class ClienteController {
 	/**
 	 * Consulta el descuento asociado a un tipo de cliente específico.
 	 *
-	 * @param tipoCliente tipo de cliente a consultar (normal, premium, concurrente).
+	 * @param tipoCliente tipo de cliente a consultar (normal, premium,
+	 *                    concurrente).
 	 * @return {@code 200 OK} con el porcentaje de descuento del tipo de cliente,
 	 *         {@code 404 Not Found} si no existe un cliente de ese tipo,
 	 *         {@code 400 Bad Request} si el tipo de cliente no es válido.
@@ -109,21 +111,26 @@ public class ClienteController {
 	@GetMapping("/tipocliente")
 	public ResponseEntity<String> tipoDeClienteSoy() {
 		return new ResponseEntity<>(
-				"El cliente de tipo normal tiene: 0% de descuento en todos sus pedidos.\nEl cliente de tipo concurrente tiene: 10% de descuento en todos sus pedidos.\nEl cliente de tipo premium tiene: 30% de descuento en todos sus pedidos." ,HttpStatus.OK);
+				"El cliente de tipo normal tiene: 0% de descuento en todos sus pedidos.\nEl cliente de tipo concurrente tiene: 10% de descuento en todos sus pedidos.\nEl cliente de tipo premium tiene: 30% de descuento en todos sus pedidos.",
+				HttpStatus.OK);
 	}
 
 	/**
 	 * Calcula y muestra el precio final de un producto según el tipo de cliente,
 	 * aplicando el descuento correspondiente.
 	 *
-	 * @param producto    tipo de producto a consultar (carta, alimenticios, no alimenticios).
+	 * @param producto    tipo de producto a consultar (carta, alimenticios, no
+	 *                    alimenticios).
 	 * @param tipoCliente tipo de cliente (normal, premium, concurrente).
-	 * @return {@code 200 OK} con el precio base, descuento y precio final del producto,
-	 *         {@code 400 Bad Request} si el producto o tipo de cliente no es válido.
+	 * @return {@code 200 OK} con el precio base, descuento y precio final del
+	 *         producto, {@code 400 Bad Request} si el producto o tipo de cliente no
+	 *         es válido.
 	 */
 	@GetMapping("/precioproducto")
 	public ResponseEntity<String> mostrarPrecio() {
-		
-		return new ResponseEntity<>("Producto: Carta | Precio base: $ 5000 \nProducto: No Alimenticios | Precio base: $ 8000 \nProducto: Alimenticios | Precio base: $ 10000 \n" , HttpStatus.OK);
+
+		return new ResponseEntity<>(
+				"Producto: Carta | Precio base: $ 5000 \nProducto: No Alimenticios | Precio base: $ 8000 \nProducto: Alimenticios | Precio base: $ 10000 \n",
+				HttpStatus.OK);
 	}
 }

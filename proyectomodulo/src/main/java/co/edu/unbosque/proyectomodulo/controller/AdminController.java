@@ -2,8 +2,6 @@ package co.edu.unbosque.proyectomodulo.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
 import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
 import co.edu.unbosque.proyectomodulo.service.AdminService;
 import co.edu.unbosque.proyectomodulo.service.ClienteService;
@@ -74,7 +70,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el admin no está ingresado o la lista está
 	 *         vacía.
 	 */
-	@GetMapping("/mostrarConductores")
+	@GetMapping("/mostrarconductores")
 	public ResponseEntity<String> mostrarConductores() {
 		String conductores = cService.getAll();
 		if (conductores == null) {
@@ -91,7 +87,7 @@ public class AdminController {
 	 *         {@code 401 Unauthorized} si el admin no está ingresado,
 	 *         {@code 400 Bad Request} si la lista está vacía.
 	 */
-	@GetMapping("/mostrarAdmin")
+	@GetMapping("/mostraradmin")
 	public ResponseEntity<String> mostrarAdmins() {
 		String admins = aService.getAll();
 		if (admins == null) {
@@ -108,7 +104,7 @@ public class AdminController {
 	 *         {@code 401 Unauthorized} si no hay admin logueado,
 	 *         {@code 400 Bad Request} si la lista está vacía.
 	 */
-	@GetMapping("/mostrarCliente")
+	@GetMapping("/mostrarcliente")
 	public ResponseEntity<String> mostrarClientes() {
 		String clientes = clienteService.getAll();
 		if (clientes == null) {
@@ -125,7 +121,7 @@ public class AdminController {
 	 *         {@code 401 Unauthorized} si no hay admin logueado,
 	 *         {@code 400 Bad Request} si la lista está vacía.
 	 */
-	@GetMapping("/mostrarPaquete")
+	@GetMapping("/mostrarpaquete")
 	public ResponseEntity<String> mostrarPaquetes() {
 		String paquetes = pService.getAll();
 		if (paquetes == null) {
@@ -142,7 +138,7 @@ public class AdminController {
 	 *         {@code 401 Unauthorized} si no hay admin logueado,
 	 *         {@code 400 Bad Request} si la lista está vacía.
 	 */
-	@GetMapping("/mostrarManipulador")
+	@GetMapping("/mostrarmanipulador")
 	public ResponseEntity<String> mostrarManipulador() {
 		String manipuladores = mService.getAll();
 		if (manipuladores == null) {
@@ -198,7 +194,7 @@ public class AdminController {
 	 *         si el tipo de vehículo es inválido o el usuario ya existe,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PostMapping("/crearConductor")
+	@PostMapping("/crearconductor")
 	public ResponseEntity<String> crearConductor(@RequestParam String usuario, @RequestParam String contrasenia,
 			@RequestParam String tipoVehiculo) {
 		ConductorDTO nuevo = new ConductorDTO(usuario, contrasenia, tipoVehiculo);
@@ -225,7 +221,7 @@ public class AdminController {
 	 *         si el ingreso es inválido, {@code 401 Unauthorized} si no hay admin
 	 *         logueado.
 	 */
-	@PostMapping("/crearManipulador")
+	@PostMapping("/crearmanipulador")
 	public ResponseEntity<String> crearManipulador(@RequestParam String usuario, @RequestParam String contrasenia,
 			@RequestParam int tiempoDeTrabajo) {
 		ManipuladorPaqueteDTO nuevo = new ManipuladorPaqueteDTO(usuario, contrasenia, tiempoDeTrabajo);
@@ -255,7 +251,7 @@ public class AdminController {
 	 *         o cédula ya existen, o no se pudo actualizar,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PutMapping("/actualizarCliente")
+	@PutMapping("/actualizarcliente")
 	public ResponseEntity<String> actualizarCliente(@RequestParam Long id, @RequestParam String usuario,
 			@RequestParam String contrasenia, @RequestParam String cedula, @RequestParam TipoCliente tipoCliente) {
 		ClienteDTO actualizar = new ClienteDTO(usuario, contrasenia, cedula, tipoCliente);
@@ -268,10 +264,7 @@ public class AdminController {
 			tipoCliente = TipoCliente.PREMIUM;
 			break;
 		}
-		case CONCURRENTE: {
-			tipoCliente = TipoCliente.CONCURRENTE;
-			break;
-		}
+
 		default: {
 			return new ResponseEntity<>("Tipo de cliente invalido (normal, premium, concurrente)",
 					HttpStatus.BAD_REQUEST);
@@ -310,7 +303,7 @@ public class AdminController {
 	 *         cliente logueado o no se pudo actualizar, {@code 401 Unauthorized} si
 	 *         no hay admin o cliente logueado.
 	 */
-	@PutMapping("/actualizarPaquete")
+	@PutMapping("/actualizarpaquete")
 	public ResponseEntity<String> actualizarPaquete(@RequestParam Long id, @RequestParam TipoPaquete tipoPaquete,
 			@RequestParam String contenido, @RequestParam String direccionDeEnvio) {
 		LocalDateTime tiempoDeEnvio2 = LocalDateTime.now();
@@ -383,7 +376,8 @@ public class AdminController {
 				return new ResponseEntity<>("Tipo de paquete no válido", HttpStatus.BAD_REQUEST);
 			}
 			}
-			PaqueteDTO actualizar = new PaqueteDTO(tipoPaquete, contenido, direccionDeEnvio, tiempoDeEnvio, precioEnvio, estadoPaquete, nameCliente);
+			PaqueteDTO actualizar = new PaqueteDTO(tipoPaquete, contenido, direccionDeEnvio, tiempoDeEnvio, precioEnvio,
+					estadoPaquete, nameCliente);
 
 			int status = pService.updateById(id, actualizar);
 			if (status == 0) {
@@ -415,7 +409,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya
 	 *         existe, {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PutMapping("/actualizarConductor")
+	@PutMapping("/actualizarconductor")
 	public ResponseEntity<String> actualizarConductor(@RequestParam Long id, @RequestParam String usuario,
 			@RequestParam String contrasenia, @RequestParam String tipoDeVehiculo) {
 		ConductorDTO actualizar = new ConductorDTO(usuario, contrasenia, tipoDeVehiculo);
@@ -443,7 +437,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya
 	 *         existe, {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@PutMapping("/actualizarManipulador")
+	@PutMapping("/actualizarmanipulador")
 	public ResponseEntity<String> actualizarManipulador(@RequestParam Long id, @RequestParam String usuario,
 			@RequestParam String contrasenia, @RequestParam int tiempoDeTrabajo) {
 		ManipuladorPaqueteDTO actualizar = new ManipuladorPaqueteDTO(usuario, contrasenia, tiempoDeTrabajo);
@@ -468,7 +462,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el borrado es inválido,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@DeleteMapping("/borrarConductor")
+	@DeleteMapping("/borrarconductor")
 	public ResponseEntity<String> borrarConductor(@RequestParam Long id) {
 		int status = cService.deleteById(id);
 		if (status == 0) {
@@ -489,7 +483,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el borrado es inválido,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@DeleteMapping("/borrarCliente")
+	@DeleteMapping("/borrarcliente")
 	public ResponseEntity<String> borrarCliente(@RequestParam Long id) {
 		int status = clienteService.deleteById(id);
 		if (status == 0) {
@@ -510,7 +504,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el borrado es inválido,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@DeleteMapping("/borrarPaquete")
+	@DeleteMapping("/borrarpaquete")
 	public ResponseEntity<String> borrarPaquete(@RequestParam Long id) {
 		int status = pService.deleteById(id);
 		if (status == 0) {
@@ -531,7 +525,7 @@ public class AdminController {
 	 *         {@code 400 Bad Request} si el borrado es inválido,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
-	@DeleteMapping("/borrarManipulador")
+	@DeleteMapping("/borrarmanipulador")
 	public ResponseEntity<String> borrarManipulador(@RequestParam Long id) {
 		int status = mService.deleteById(id);
 		if (status == 0) {
@@ -543,6 +537,5 @@ public class AdminController {
 		}
 		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 	}
-	
-	
+
 }

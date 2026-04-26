@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.unbosque.proyectomodulo.dto.EstadoPaquete;
 import co.edu.unbosque.proyectomodulo.dto.PaqueteDTO;
-import co.edu.unbosque.proyectomodulo.dto.TipoCliente;
 import co.edu.unbosque.proyectomodulo.dto.TipoPaquete;
 import co.edu.unbosque.proyectomodulo.service.ClienteService;
 import co.edu.unbosque.proyectomodulo.service.PaqueteService;
@@ -129,10 +128,6 @@ public class PaqueteController {
 				precioEnvio = "" + precio;
 				break;
 			}
-			case CONCURRENTE: {
-				precioEnvio = "" + (precio - (precio * 0.10));
-				break;
-			}
 			case PREMIUM: {
 				precioEnvio = "" + (precio - (precio * 0.30));
 				break;
@@ -140,7 +135,8 @@ public class PaqueteController {
 			default:
 				return new ResponseEntity<>("Tipo de usuario invalido", HttpStatus.BAD_REQUEST);
 			}
-			PaqueteDTO nuevo = new PaqueteDTO(tipoPaquete, contenido, direccionAEnviar, tiempoDeEnvio, precioEnvio, estadoPaquete, clientePaquete);
+			PaqueteDTO nuevo = new PaqueteDTO(tipoPaquete, contenido, direccionAEnviar, tiempoDeEnvio, precioEnvio,
+					estadoPaquete, clientePaquete);
 			int status = paqueteService.create(nuevo);
 			if (status == 0) {
 				return new ResponseEntity<>("Paquete creado", HttpStatus.CREATED);
@@ -167,7 +163,7 @@ public class PaqueteController {
 	 * @return {@code 200 OK} con el tiempo de entrega del tipo de paquete,
 	 * 
 	 */
-	@GetMapping("/tiempoPaquete")
+	@GetMapping("/tiempopaquete")
 	public ResponseEntity<String> demoraDePaquete() {
 		return new ResponseEntity<>(
 				"El paquete de tipo: Alimenticios se demora un tiempo máximo de: 6 horas\nEl paquete de tipo: No Alimenticios se demora un tiempo máximo de: 24 horas\nEl paquete de tipo: Carta se demora un tiempo máximo de: 72 horas",

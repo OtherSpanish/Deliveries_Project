@@ -225,5 +225,4 @@ public class ConductorService implements CRUDOPERATION<ConductorDTO> {
 		return conductorLogueado != null;
 	}
 
-
 }
