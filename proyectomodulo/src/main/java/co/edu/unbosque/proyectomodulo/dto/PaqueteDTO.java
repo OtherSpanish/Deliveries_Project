@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 /**
  * Objeto de Transferencia de Datos (DTO) para la entidad {@code Paquete}.
  * Permite transportar la información de los paquetes entre las capas de la
@@ -17,6 +20,7 @@ public class PaqueteDTO {
 	private Long id;
 
 	/** Tipo de paquete (carta, alimenticios, no alimenticios). */
+	@Enumerated(EnumType.STRING)
 	private TipoPaquete tipoPaquete;
 
 	/** Descripción del contenido del paquete. */
@@ -30,7 +34,8 @@ public class PaqueteDTO {
 
 	/** Precio de envío con descuento aplicado. */
 	private String precioEnvio;
-
+	
+	@Enumerated(EnumType.STRING)
 	private EstadoPaquete estadoPaquete;
 
 	private String clientePaquete;

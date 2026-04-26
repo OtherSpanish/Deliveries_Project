@@ -122,7 +122,7 @@ public class PaqueteController {
 			}
 			LocalDateTime tiempoDeEnvio = LocalDateTime.of(anio, mes, dia, hora, minuto);
 			String precioEnvio = "";
-			EstadoPaquete estadoPaquete = EstadoPaquete.PENDIENTE;
+			EstadoPaquete estadoPaquete = EstadoPaquete.EN_BODEGA;
 			String clientePaquete = clienteService.getClienteLogueado().getUsuario();
 			switch (clienteService.getClienteLogueado().getTipoCliente()) {
 			case NORMAL: {

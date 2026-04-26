@@ -3,12 +3,9 @@ package co.edu.unbosque.proyectomodulo.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import co.edu.unbosque.proyectomodulo.entity.Paquete;
-import jakarta.transaction.Transactional;
 
 /**
  * Repositorio JPA para la entidad {@link Paquete}.
@@ -27,4 +24,5 @@ public interface PaqueteRepository extends CrudRepository<Paquete, Long> {
 	 *         o vacío si no existe ningún paquete con ese tipo.
 	 */
 	Optional<List<Paquete>> findByTipoPaquete(String tipoPaquete);
+	
 }

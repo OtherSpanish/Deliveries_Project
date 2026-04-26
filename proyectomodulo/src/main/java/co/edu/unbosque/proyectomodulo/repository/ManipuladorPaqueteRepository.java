@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import co.edu.unbosque.proyectomodulo.entity.ManipuladorPaquete;
 
+
 /**
  * Repositorio JPA para la entidad {@link ManipuladorPaquete}.
  * Extiende de {@link CrudRepository}, proporcionando operaciones CRUD básicas
@@ -22,4 +23,7 @@ public interface ManipuladorPaqueteRepository extends CrudRepository<Manipulador
 	 * @return {@link Optional} con el manipulador encontrado, o vacío si no existe
 	 */
 	Optional<ManipuladorPaquete> findByUsuario(String usuario);
+	
+	
+
 }

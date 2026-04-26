@@ -3,6 +3,8 @@ package co.edu.unbosque.proyectomodulo.entity;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
 /**
@@ -25,6 +27,7 @@ public class Cliente extends Persona {
 	private String cedula;
 
 	/** Tipo de cliente (normal, premium, concurrente). */
+	@Enumerated(EnumType.STRING)
 	private TipoCliente tipoCliente;
 
 

@@ -363,18 +363,19 @@ public class AdminController {
 						HttpStatus.BAD_REQUEST);
 			}
 			LocalDateTime tiempoDeEnvio = LocalDateTime.of(anio, mes, dia, hora, minuto);
-			EstadoPaquete estadoPaquete = EstadoPaquete.PENDIENTE;
-			String clientePaquete = clienteService.getClienteLogueado().getUsuario();
-			switch (clienteService.getClienteLogueado().getTipoCliente()) {
-			case NORMAL: {
+			EstadoPaquete estadoPaquete = EstadoPaquete.DESPACHADO;
+			String estadoCliente = clienteService.getClienteStatus(id).toLowerCase();
+			String nameCliente = clienteService.getClienteNombre(id);
+			switch (estadoCliente) {
+			case "normal": {
 				precioEnvio = "" + precio;
 				break;
 			}
-			case CONCURRENTE: {
+			case "concurrente": {
 				precioEnvio = "" + (precio - (precio * 0.10));
 				break;
 			}
-			case PREMIUM: {
+			case "premium": {
 				precioEnvio = "" + (precio - (precio * 0.30));
 				break;
 			}
@@ -382,7 +383,7 @@ public class AdminController {
 				return new ResponseEntity<>("Tipo de paquete no válido", HttpStatus.BAD_REQUEST);
 			}
 			}
-			PaqueteDTO actualizar = new PaqueteDTO(tipoPaquete, contenido, direccionDeEnvio, tiempoDeEnvio, precioEnvio, estadoPaquete, clientePaquete);
+			PaqueteDTO actualizar = new PaqueteDTO(tipoPaquete, contenido, direccionDeEnvio, tiempoDeEnvio, precioEnvio, estadoPaquete, nameCliente);
 
 			int status = pService.updateById(id, actualizar);
 			if (status == 0) {
@@ -542,4 +543,6 @@ public class AdminController {
 		}
 		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 	}
+	
+	
 }

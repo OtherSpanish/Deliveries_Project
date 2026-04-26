@@ -23,4 +23,5 @@ public interface ConductorRepository extends CrudRepository<Conductor, Long> {
 	 *         o vacío si no existe ningún conductor con ese usuario.
 	 */
 	Optional<Conductor> findByUsuario(String usuario);
+
 }

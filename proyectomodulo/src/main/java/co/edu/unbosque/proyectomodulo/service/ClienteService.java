@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 
 
 import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
+import co.edu.unbosque.proyectomodulo.dto.TipoCliente;
 import co.edu.unbosque.proyectomodulo.entity.Cliente;
 import co.edu.unbosque.proyectomodulo.exceptions.CedulaException;
 import co.edu.unbosque.proyectomodulo.exceptions.LanzadorException;
@@ -94,7 +95,7 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 		Optional<Cliente> encontrado = clienteRep.findByUsuario(data.getUsuario());
 
 		if (encontrado.isPresent()) {
-			return 1;
+			return 2;
 		}
 		try {
 			LanzadorException.verificarCedulaValida(data.getCedula());
@@ -106,7 +107,6 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 		ClienteDTO dto = mapper.map(entity, ClienteDTO.class);
         Gson gson = new Gson();
         String json = gson.toJson(dto);
-		gson.toJson(json, ClienteDTO.class);
 		return 0;
 	}
 
@@ -248,5 +248,16 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 		return clienteLogueado;
 	}
 
-
+	public String getClienteStatus(Long id) {
+		Optional<Cliente> encontrado = clienteRep.findById(id);
+		ClienteDTO temp = mapper.map(encontrado.get(), ClienteDTO.class);
+		TipoCliente status = temp.getTipoCliente();
+		return "" + status;
+	}
+	public String getClienteNombre(Long id) {
+		Optional<Cliente> encontrado = clienteRep.findById(id);
+		ClienteDTO temp = mapper.map(encontrado.get(), ClienteDTO.class);
+		String status = temp.getUsuario();
+		return status;
+	}
 }

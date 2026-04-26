@@ -2,6 +2,9 @@ package co.edu.unbosque.proyectomodulo.dto;
 
 import java.util.Objects;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 /**
  * Objeto de transferencia de datos (DTO) para la entidad Cliente. Se utiliza
  * para transportar información de clientes entre las capas de la aplicación sin
@@ -24,6 +27,7 @@ public class ClienteDTO {
 	private String cedula;
 
 	/** Tipo de cliente (normal, premium, concurrente). */
+	@Enumerated(EnumType.STRING)
 	private TipoCliente tipoCliente;
 
 	/**

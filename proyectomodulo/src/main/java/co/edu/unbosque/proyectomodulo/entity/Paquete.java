@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,6 +32,7 @@ public class Paquete {
 	private Long id;
 
 	/** Tipo de paquete (carta, alimenticios, no alimenticios). */
+	@Enumerated(EnumType.STRING)
 	private TipoPaquete tipoPaquete;
 
 	/** Contenido del paquete. */
@@ -44,6 +47,7 @@ public class Paquete {
 	/** Precio de envío. */
 	private String precioEnvio;
 
+	@Enumerated(EnumType.STRING)
 	private EstadoPaquete estadoPaquete;
 
 	private String clientePaquete;
