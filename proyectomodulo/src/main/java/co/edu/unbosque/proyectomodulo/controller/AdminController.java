@@ -1,5 +1,7 @@
 package co.edu.unbosque.proyectomodulo.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +24,16 @@ import co.edu.unbosque.proyectomodulo.service.ConductorService;
 import co.edu.unbosque.proyectomodulo.service.ManipuladorPaquetesService;
 import co.edu.unbosque.proyectomodulo.service.PaqueteService;
 import co.edu.unbosque.proyectomodulo.dto.ConductorDTO;
+import co.edu.unbosque.proyectomodulo.dto.EstadoPaquete;
 import co.edu.unbosque.proyectomodulo.dto.ManipuladorPaqueteDTO;
 import co.edu.unbosque.proyectomodulo.dto.PaqueteDTO;
+import co.edu.unbosque.proyectomodulo.dto.TipoCliente;
+import co.edu.unbosque.proyectomodulo.dto.TipoPaquete;
 
 /**
- * Controlador REST para la gestión de operaciones administrativas.
- * Proporciona endpoints para administrar conductores, clientes, paquetes,
- * manipuladores y administradores del sistema.
+ * Controlador REST para la gestión de operaciones administrativas. Proporciona
+ * endpoints para administrar conductores, clientes, paquetes, manipuladores y
+ * administradores del sistema.
  *
  * <p>
  * Todos los endpoints están bajo el prefijo {@code /admin} y permiten
@@ -66,14 +71,15 @@ public class AdminController {
 	 * Obtiene la lista de todos los conductores registrados.
 	 *
 	 * @return {@code 202 Accepted} con la lista de conductores,
-	 *         {@code 400 Bad Request} si el admin no está ingresado o la lista está vacía.
+	 *         {@code 400 Bad Request} si el admin no está ingresado o la lista está
+	 *         vacía.
 	 */
 	@GetMapping("/mostrarConductores")
 	public ResponseEntity<String> mostrarConductores() {
 		String conductores = cService.getAll();
 		if (conductores == null) {
 			return new ResponseEntity<>("Admin no ingresado", HttpStatus.UNAUTHORIZED);
-		}  else {
+		} else {
 			return new ResponseEntity<>("" + conductores, HttpStatus.ACCEPTED);
 		}
 	}
@@ -152,8 +158,8 @@ public class AdminController {
 	 * @param usuarioAdmin         nombre de usuario del administrador.
 	 * @param contraseniaAdmin     contraseña del administrador.
 	 * @param codigoAdminverificar código de verificación del administrador.
-	 * @return {@code 201 Created} si el login es exitoso,
-	 *         {@code 400 Bad Request} si las credenciales son inválidas.
+	 * @return {@code 201 Created} si el login es exitoso, {@code 400 Bad Request}
+	 *         si las credenciales son inválidas.
 	 */
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestParam String usuarioAdmin, @RequestParam String contraseniaAdmin,
@@ -181,14 +187,15 @@ public class AdminController {
 		aService.logoutadmin();
 		return new ResponseEntity<>("Sesion cerrada", HttpStatus.OK);
 	}
+
 	/**
 	 * Crea un nuevo conductor en el sistema.
 	 *
 	 * @param usuario      nombre de usuario del conductor.
 	 * @param contrasenia  contraseña del conductor.
 	 * @param tipoVehiculo tipo de vehículo del conductor (carro, moto, camion).
-	 * @return {@code 201 Created} si se crea exitosamente,
-	 *         {@code 400 Bad Request} si el tipo de vehículo es inválido o el usuario ya existe,
+	 * @return {@code 201 Created} si se crea exitosamente, {@code 400 Bad Request}
+	 *         si el tipo de vehículo es inválido o el usuario ya existe,
 	 *         {@code 401 Unauthorized} si no hay admin logueado.
 	 */
 	@PostMapping("/crearConductor")
@@ -214,9 +221,9 @@ public class AdminController {
 	 * @param usuario         nombre de usuario del manipulador.
 	 * @param contrasenia     contraseña del manipulador.
 	 * @param tiempoDeTrabajo tiempo de trabajo en horas del manipulador.
-	 * @return {@code 201 Created} si se crea exitosamente,
-	 *         {@code 400 Bad Request} si el ingreso es inválido,
-	 *         {@code 401 Unauthorized} si no hay admin logueado.
+	 * @return {@code 201 Created} si se crea exitosamente, {@code 400 Bad Request}
+	 *         si el ingreso es inválido, {@code 401 Unauthorized} si no hay admin
+	 *         logueado.
 	 */
 	@PostMapping("/crearManipulador")
 	public ResponseEntity<String> crearManipulador(@RequestParam String usuario, @RequestParam String contrasenia,
@@ -250,19 +257,19 @@ public class AdminController {
 	 */
 	@PutMapping("/actualizarCliente")
 	public ResponseEntity<String> actualizarCliente(@RequestParam Long id, @RequestParam String usuario,
-			@RequestParam String contrasenia, @RequestParam String cedula, @RequestParam String tipoCliente) {
+			@RequestParam String contrasenia, @RequestParam String cedula, @RequestParam TipoCliente tipoCliente) {
 		ClienteDTO actualizar = new ClienteDTO(usuario, contrasenia, cedula, tipoCliente);
 		switch (tipoCliente) {
-		case "normal": {
-			tipoCliente = "normal";
+		case NORMAL: {
+			tipoCliente = TipoCliente.NORMAL;
 			break;
 		}
-		case "premium": {
-			tipoCliente = "premium";
+		case PREMIUM: {
+			tipoCliente = TipoCliente.PREMIUM;
 			break;
 		}
-		case "concurrente": {
-			tipoCliente = "concurrente";
+		case CONCURRENTE: {
+			tipoCliente = TipoCliente.CONCURRENTE;
 			break;
 		}
 		default: {
@@ -294,44 +301,72 @@ public class AdminController {
 	 * actualmente logueado.
 	 *
 	 * @param id               identificador del paquete a actualizar.
-	 * @param tipoDePaquete    nuevo tipo de paquete (carta, alimenticios, no alimenticios).
+	 * @param tipoDePaquete    nuevo tipo de paquete (carta, alimenticios, no
+	 *                         alimenticios).
 	 * @param contenido        nuevo contenido del paquete.
 	 * @param direccionDeEnvio nueva dirección de envío.
 	 * @return {@code 202 Accepted} si se actualiza exitosamente,
-	 *         {@code 400 Bad Request} si el tipo de paquete es inválido, no hay cliente
-	 *         logueado o no se pudo actualizar,
-	 *         {@code 401 Unauthorized} si no hay admin o cliente logueado.
+	 *         {@code 400 Bad Request} si el tipo de paquete es inválido, no hay
+	 *         cliente logueado o no se pudo actualizar, {@code 401 Unauthorized} si
+	 *         no hay admin o cliente logueado.
 	 */
 	@PutMapping("/actualizarPaquete")
-	public ResponseEntity<String> actualizarPaquete(@RequestParam Long id, @RequestParam String tipoDePaquete,
+	public ResponseEntity<String> actualizarPaquete(@RequestParam Long id, @RequestParam TipoPaquete tipoPaquete,
 			@RequestParam String contenido, @RequestParam String direccionDeEnvio) {
-		String tiempoDeEnvio = "";
+		LocalDateTime tiempoDeEnvio2 = LocalDateTime.now();
+		DateTimeFormatter formatoDias = DateTimeFormatter.ofPattern("dd");
+		DateTimeFormatter formatoMeses = DateTimeFormatter.ofPattern("MM");
+		DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH");
+		DateTimeFormatter formatoMinuto = DateTimeFormatter.ofPattern("HH");
+		DateTimeFormatter formatoAnio = DateTimeFormatter.ofPattern("uuuu");
+		String formateadoHora = tiempoDeEnvio2.format(formatoHora);
+		String formateadoDias = tiempoDeEnvio2.format(formatoDias);
+		String formateadoMeses = tiempoDeEnvio2.format(formatoMeses);
+		String formateadoAnio = tiempoDeEnvio2.format(formatoAnio);
+		String formateadoMinuto = tiempoDeEnvio2.format(formatoMinuto);
+		int anio = Integer.parseInt(formateadoAnio);
+		int hora = Integer.parseInt(formateadoHora);
+		int dia = Integer.parseInt(formateadoDias);
+		int mes = Integer.parseInt(formateadoMeses);
+		int minuto = Integer.parseInt(formateadoMinuto);
 		String precioEnvio = "";
 		int precio;
 		if (!clienteService.isLogged()) {
 			return new ResponseEntity<>("Se necesita un cliente logueado", HttpStatus.BAD_REQUEST);
 		} else {
-			switch (tipoDePaquete.toLowerCase()) {
+			switch (tipoPaquete.toString().toLowerCase()) {
 			case "carta": {
-				tiempoDeEnvio = "72 horas";
+				int dias = dia + 1;
+				hora = 8;
+				minuto = 00;
+				dia = dias;
 				precio = 10000;
 				break;
 			}
 			case "alimenticios": {
-				tiempoDeEnvio = "6 horas";
+				int entrega = 6 + hora;
+				hora = entrega;
+				minuto = 00;
 				precio = 20000;
 				break;
 			}
 			case "no alimenticios": {
-				tiempoDeEnvio = "24 horas";
+				int dias = dia + 1;
+				hora = 8;
+				minuto = 00;
+				dia = dias;
 				precio = 30000;
 				break;
 			}
-			default: {
-				return new ResponseEntity<>("Tipo de paquete no válido", HttpStatus.BAD_REQUEST);
-				}
+			default:
+				return new ResponseEntity<>("Ingrese un tipo de paquete valido (carta, alimenticios, no alimenticios)",
+						HttpStatus.BAD_REQUEST);
 			}
-			switch (clienteService.getClienteLogueado().getTipoCliente().toLowerCase()) {
+			LocalDateTime tiempoDeEnvio = LocalDateTime.of(anio, mes, dia, hora, minuto);
+			EstadoPaquete estadoPaquete = EstadoPaquete.DESPACHADO;
+			String estadoCliente = clienteService.getClienteStatus(id).toLowerCase();
+			String nameCliente = clienteService.getClienteNombre(id);
+			switch (estadoCliente) {
 			case "normal": {
 				precioEnvio = "" + precio;
 				break;
@@ -348,20 +383,23 @@ public class AdminController {
 				return new ResponseEntity<>("Tipo de paquete no válido", HttpStatus.BAD_REQUEST);
 			}
 			}
-			PaqueteDTO actualizar = new PaqueteDTO(tipoDePaquete, contenido, direccionDeEnvio, tiempoDeEnvio, precioEnvio);
+			PaqueteDTO actualizar = new PaqueteDTO(tipoPaquete, contenido, direccionDeEnvio, tiempoDeEnvio, precioEnvio, estadoPaquete, nameCliente);
+
 			int status = pService.updateById(id, actualizar);
 			if (status == 0) {
 				return new ResponseEntity<>("Paquete actualizado", HttpStatus.ACCEPTED);
 			} else if (status == 1) {
-				return new ResponseEntity<>("No se pudo actualizar el paquete, verifique la direccion (mayor de 5 caracteres) y el tipo de paquete (carta, no comestibles, comestibles)", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(
+						"No se pudo actualizar el paquete, verifique la direccion (mayor de 5 caracteres) y el tipo de paquete (carta, no comestibles, comestibles)",
+						HttpStatus.BAD_REQUEST);
 			} else if (status == 2) {
 				return new ResponseEntity<>("Debe iniciar sesion un admin y un cliente", HttpStatus.UNAUTHORIZED);
-			} else if(status == 3) {
+			} else if (status == 3) {
 				return new ResponseEntity<>("Debe iniciar sesion un cliente", HttpStatus.UNAUTHORIZED);
-			} else if(status == 4) {
+			} else if (status == 4) {
 				return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
 			}
-			
+
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
 	}
@@ -374,8 +412,8 @@ public class AdminController {
 	 * @param contrasenia    nueva contraseña.
 	 * @param tipoDeVehiculo nuevo tipo de vehículo.
 	 * @return {@code 202 Accepted} si se actualiza exitosamente,
-	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya existe,
-	 *         {@code 401 Unauthorized} si no hay admin logueado.
+	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya
+	 *         existe, {@code 401 Unauthorized} si no hay admin logueado.
 	 */
 	@PutMapping("/actualizarConductor")
 	public ResponseEntity<String> actualizarConductor(@RequestParam Long id, @RequestParam String usuario,
@@ -402,8 +440,8 @@ public class AdminController {
 	 * @param contrasenia     nueva contraseña.
 	 * @param tiempoDeTrabajo nuevo tiempo de trabajo en horas.
 	 * @return {@code 202 Accepted} si se actualiza exitosamente,
-	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya existe,
-	 *         {@code 401 Unauthorized} si no hay admin logueado.
+	 *         {@code 400 Bad Request} si no se pudo actualizar o el usuario ya
+	 *         existe, {@code 401 Unauthorized} si no hay admin logueado.
 	 */
 	@PutMapping("/actualizarManipulador")
 	public ResponseEntity<String> actualizarManipulador(@RequestParam Long id, @RequestParam String usuario,
@@ -505,4 +543,6 @@ public class AdminController {
 		}
 		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 	}
+	
+	
 }

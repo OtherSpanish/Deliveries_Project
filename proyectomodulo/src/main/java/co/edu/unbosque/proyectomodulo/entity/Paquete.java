@@ -1,19 +1,24 @@
 package co.edu.unbosque.proyectomodulo.entity;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 /**
- * Entidad JPA que representa un paquete en el sistema.
- * Contiene información como tipo, contenido, dirección de envío,
- * tiempo estimado de entrega y precio.
+ * Entidad JPA que representa un paquete en el sistema. Contiene información
+ * como tipo, contenido, dirección de envío, tiempo estimado de entrega y
+ * precio.
  *
- * <p>Se encuentra mapeada a la tabla {@code paquete} en la base de datos.</p>
+ * <p>
+ * Se encuentra mapeada a la tabla {@code paquete} en la base de datos.
+ * </p>
  *
  * @version 1.0
  */
@@ -24,10 +29,11 @@ public class Paquete {
 	/** Identificador único del paquete, generado automáticamente. */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 
 	/** Tipo de paquete (carta, alimenticios, no alimenticios). */
-	private String tipoPaquete;
+	@Enumerated(EnumType.STRING)
+	private TipoPaquete tipoPaquete;
 
 	/** Contenido del paquete. */
 	private String contenido;
@@ -36,167 +42,95 @@ public class Paquete {
 	private String direccionDeEnvio;
 
 	/** Tiempo estimado de entrega. */
-	private String tiempoDeEnvio;
+	private LocalDateTime tiempoDeEnvio;
 
 	/** Precio de envío. */
 	private String precioEnvio;
 
-	/**
-	 * Constructor por defecto.
-	 */
+	@Enumerated(EnumType.STRING)
+	private EstadoPaquete estadoPaquete;
+
+	private String clientePaquete;
+
+
 	public Paquete() {
+		super();
 	}
 
-	/**
-	 * Constructor que inicializa los atributos principales del paquete.
-	 *
-	 * @param tipoPaquete      tipo de paquete
-	 * @param contenido        contenido
-	 * @param direccionDeEnvio dirección de destino
-	 * @param tiempoDeEnvio    tiempo estimado de entrega
-	 * @param precioEnvio      precio de envío
-	 */
-	public Paquete(String tipoPaquete, String contenido, String direccionDeEnvio, String tiempoDeEnvio,
-			String precioEnvio) {
+	public Paquete(TipoPaquete tipoPaquete, String contenido, String direccionDeEnvio,
+			LocalDateTime tiempoDeEnvio, String precioEnvio, EstadoPaquete estadoPaquete, String clientePaquete) {
+		super();
 		this.tipoPaquete = tipoPaquete;
 		this.contenido = contenido;
 		this.direccionDeEnvio = direccionDeEnvio;
 		this.tiempoDeEnvio = tiempoDeEnvio;
 		this.precioEnvio = precioEnvio;
+		this.estadoPaquete = estadoPaquete;
+		this.clientePaquete = clientePaquete;
 	}
 
-	/**
-	 * Obtiene el identificador del paquete.
-	 *
-	 * @return identificador único
-	 */
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * Establece el identificador del paquete.
-	 *
-	 * @param id nuevo identificador
-	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/**
-	 * Obtiene el tipo de paquete.
-	 *
-	 * @return tipo de paquete
-	 */
-	public String getTipoPaquete() {
+	public TipoPaquete getTipoPaquete() {
 		return tipoPaquete;
 	}
 
-	/**
-	 * Establece el tipo de paquete.
-	 *
-	 * @param tipoPaquete nuevo tipo
-	 */
-	public void setTipoPaquete(String tipoPaquete) {
+	public void setTipoPaquete(TipoPaquete tipoPaquete) {
 		this.tipoPaquete = tipoPaquete;
 	}
 
-	/**
-	 * Obtiene el contenido del paquete.
-	 *
-	 * @return contenido
-	 */
 	public String getContenido() {
 		return contenido;
 	}
 
-	/**
-	 * Establece el contenido del paquete.
-	 *
-	 * @param contenido nuevo contenido
-	 */
 	public void setContenido(String contenido) {
 		this.contenido = contenido;
 	}
 
-	/**
-	 * Obtiene la dirección de envío.
-	 *
-	 * @return dirección de destino
-	 */
 	public String getDireccionDeEnvio() {
 		return direccionDeEnvio;
 	}
 
-	/**
-	 * Establece la dirección de envío.
-	 *
-	 * @param direccionDeEnvio nueva dirección
-	 */
 	public void setDireccionDeEnvio(String direccionDeEnvio) {
 		this.direccionDeEnvio = direccionDeEnvio;
 	}
 
-	/**
-	 * Obtiene el tiempo estimado de entrega.
-	 *
-	 * @return tiempo de entrega
-	 */
-	public String getTiempoDeEnvio() {
+	public LocalDateTime getTiempoDeEnvio() {
 		return tiempoDeEnvio;
 	}
 
-	/**
-	 * Establece el tiempo estimado de entrega.
-	 *
-	 * @param tiempoDeEnvio nuevo tiempo
-	 */
-	public void setTiempoDeEnvio(String tiempoDeEnvio) {
+	public void setTiempoDeEnvio(LocalDateTime tiempoDeEnvio) {
 		this.tiempoDeEnvio = tiempoDeEnvio;
 	}
 
-	/**
-	 * Obtiene el precio de envío.
-	 *
-	 * @return precio de envío
-	 */
 	public String getPrecioEnvio() {
 		return precioEnvio;
 	}
 
-	/**
-	 * Establece el precio de envío.
-	 *
-	 * @param precioEnvio nuevo precio
-	 */
 	public void setPrecioEnvio(String precioEnvio) {
 		this.precioEnvio = precioEnvio;
 	}
 
-	/**
-	 * Calcula el código hash basado en el identificador único.
-	 *
-	 * @return valor hash
-	 */
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
+	public EstadoPaquete getEstadoPaquete() {
+		return estadoPaquete;
 	}
 
-	/**
-	 * Compara este objeto con otro basado en su identificador.
-	 *
-	 * @param obj objeto a comparar
-	 * @return {@code true} si tienen el mismo id, {@code false} en caso contrario
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null || getClass() != obj.getClass())
-			return false;
-		Paquete other = (Paquete) obj;
-		return id == other.id;
+	public void setEstadoPaquete(EstadoPaquete estadoPaquete) {
+		this.estadoPaquete = estadoPaquete;
+	}
+
+	public String getClientePaquete() {
+		return clientePaquete;
+	}
+
+	public void setClientePaquete(String clientePaquete) {
+		this.clientePaquete = clientePaquete;
 	}
 
 	/**
@@ -206,13 +140,33 @@ public class Paquete {
 	 */
 	@Override
 	public String toString() {
-		return "=== |Paquete| ===\n"
-				+ " - ID: " + id + "\n"
-				+ " - Tipo: " + tipoPaquete + "\n"
-				+ " - Contenido: " + contenido + "\n"
-				+ " - Dirección: " + direccionDeEnvio + "\n"
-				+ " - Tiempo: " + tiempoDeEnvio + "\n"
-				+ " - Precio: " + precioEnvio + "\n"
-				+ "================\n";
+		return "=== |Paquete| ===\n" + " - ID: " + id + "\n" + " - Tipo: " + tipoPaquete + "\n" + " - Contenido: "
+				+ contenido + "\n" + " - Dirección: " + direccionDeEnvio + "\n" + " - Tiempo: " + tiempoDeEnvio + "\n"
+				+ " - Precio: " + precioEnvio + "\n" + "================\n";
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(clientePaquete, contenido, direccionDeEnvio, estadoPaquete, id, precioEnvio, tiempoDeEnvio,
+				tipoPaquete);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Paquete other = (Paquete) obj;
+		return Objects.equals(clientePaquete, other.clientePaquete) && Objects.equals(contenido, other.contenido)
+				&& Objects.equals(direccionDeEnvio, other.direccionDeEnvio)
+				&& Objects.equals(estadoPaquete, other.estadoPaquete) && Objects.equals(id, other.id)
+				&& Objects.equals(precioEnvio, other.precioEnvio) && Objects.equals(tiempoDeEnvio, other.tiempoDeEnvio)
+				&& Objects.equals(tipoPaquete, other.tipoPaquete);
+	}
+
+	
+	
 }

@@ -3,11 +3,12 @@ package co.edu.unbosque.proyectomodulo.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fatboyindustrial.gsonjavatime.Converters;
+import com.google.gson.GsonBuilder;
 import com.google.gson.Gson;
 
 import co.edu.unbosque.proyectomodulo.dto.PaqueteDTO;
@@ -71,24 +72,21 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 */
 	@Override
 	public int create(PaqueteDTO data) {
-
 		if (!clienteService.isLogged()) {
 			return 2;
 		}
 
 		try {
-			LanzadorException.verificarTipoPaquete(data.getTipoPaquete());
 			LanzadorException.verificarDireccion(data.getDireccionDeEnvio());
-		} catch (TipoPaqueteException | DireccionException e) {
+		} catch (DireccionException e) {
 			return 1;
 		}
 
+		Gson gson = Converters.registerLocalDateTime(new GsonBuilder()).create();
 		Paquete entity = mapper.map(data, Paquete.class);
 		paqueteRep.save(entity);
 		PaqueteDTO dto = mapper.map(entity, PaqueteDTO.class);
-        Gson gson = new Gson();
         String json = gson.toJson(dto);
-		gson.toJson(json, PaqueteDTO.class);
 		return 0;
 	}
 
@@ -103,7 +101,7 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	@Override
 	public String getAll() {
 		
-		Gson gson = new Gson();
+		Gson gson = Converters.registerLocalDateTime(new GsonBuilder()).create();
 		if (!(adminService.isLoggedadmin() || conductorService.isLogged() || mService.isLogged())) {
 			return null;
 		}
@@ -125,7 +123,7 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 *         o {@code null} si el usuario no tiene los permisos requeridos
 	 */
 	public String getAllManipuladorPaquetes() {
-		Gson gson = new Gson();
+		Gson gson = Converters.registerLocalDateTime(new GsonBuilder()).create();
 
 		if (!(mService.isLogged() || adminService.isLoggedadmin())) {
 			return null;
@@ -203,8 +201,7 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 
 			try {
 				LanzadorException.verificarDireccion(data.getDireccionDeEnvio());
-				LanzadorException.verificarTipoPaquete(data.getTipoPaquete());
-			} catch (DireccionException | TipoPaqueteException e) {
+			} catch (DireccionException  e) {
 				return 1;
 			}
 
@@ -269,4 +266,5 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 
 		return dtoList;
 	}
+	
 }

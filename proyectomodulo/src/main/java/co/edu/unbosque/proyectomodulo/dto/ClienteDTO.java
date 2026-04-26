@@ -2,6 +2,9 @@ package co.edu.unbosque.proyectomodulo.dto;
 
 import java.util.Objects;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 /**
  * Objeto de transferencia de datos (DTO) para la entidad Cliente. Se utiliza
  * para transportar información de clientes entre las capas de la aplicación sin
@@ -24,7 +27,8 @@ public class ClienteDTO {
 	private String cedula;
 
 	/** Tipo de cliente (normal, premium, concurrente). */
-	private String tipoCliente;
+	@Enumerated(EnumType.STRING)
+	private TipoCliente tipoCliente;
 
 	/**
 	 * Constructor por defecto de {@code ClienteDTO}.
@@ -32,15 +36,7 @@ public class ClienteDTO {
 	public ClienteDTO() {
 	}
 
-	/**
-	 * Constructor con todos los campos del cliente.
-	 *
-	 * @param usuario     nombre de usuario del cliente.
-	 * @param contrasenia contraseña del cliente.
-	 * @param cedula      cédula de identidad del cliente.
-	 * @param tipoCliente tipo de cliente (normal, premium, concurrente).
-	 */
-	public ClienteDTO(String usuario, String contrasenia, String cedula, String tipoCliente) {
+	public ClienteDTO(String usuario, String contrasenia, String cedula, TipoCliente tipoCliente) {
 		super();
 		this.usuario = usuario;
 		this.contrasenia = contrasenia;
@@ -48,125 +44,57 @@ public class ClienteDTO {
 		this.tipoCliente = tipoCliente;
 	}
 
-	/**
-	 * Obtiene el identificador único del cliente.
-	 *
-	 * @return id del cliente.
-	 */
 	public long getId() {
 		return id;
 	}
 
-	/**
-	 * Establece el identificador único del cliente.
-	 *
-	 * @param id nuevo id del cliente.
-	 */
 	public void setId(long id) {
 		this.id = id;
 	}
 
-	/**
-	 * Obtiene el nombre de usuario del cliente.
-	 *
-	 * @return nombre de usuario.
-	 */
 	public String getUsuario() {
 		return usuario;
 	}
 
-	/**
-	 * Establece el nombre de usuario del cliente.
-	 *
-	 * @param usuario nuevo nombre de usuario.
-	 */
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
 
-	/**
-	 * Obtiene la contraseña del cliente.
-	 *
-	 * @return contraseña del cliente.
-	 */
 	public String getContrasenia() {
 		return contrasenia;
 	}
 
-	/**
-	 * Establece la contraseña del cliente.
-	 *
-	 * @param contrasenia nueva contraseña.
-	 */
 	public void setContrasenia(String contrasenia) {
 		this.contrasenia = contrasenia;
 	}
 
-	/**
-	 * Obtiene la cédula de identidad del cliente.
-	 *
-	 * @return cédula del cliente.
-	 */
 	public String getCedula() {
 		return cedula;
 	}
 
-	/**
-	 * Establece la cédula de identidad del cliente.
-	 *
-	 * @param cedula nueva cédula del cliente.
-	 */
 	public void setCedula(String cedula) {
 		this.cedula = cedula;
 	}
 
-	/**
-	 * Obtiene el tipo de cliente.
-	 *
-	 * @return tipo de cliente (normal, premium, concurrente).
-	 */
-	public String getTipoCliente() {
+	public TipoCliente getTipoCliente() {
 		return tipoCliente;
 	}
 
-	/**
-	 * Establece el tipo de cliente.
-	 *
-	 * @param tipoCliente nuevo tipo de cliente (normal, premium, concurrente).
-	 */
-	public void setTipoCliente(String tipoCliente) {
+	public void setTipoCliente(TipoCliente tipoCliente) {
 		this.tipoCliente = tipoCliente;
 	}
 
-	/**
-	 * Retorna una representación en cadena del objeto {@code ClienteDTO}.
-	 *
-	 * @return cadena con los datos del cliente formateados.
-	 */
 	@Override
 	public String toString() {
-		return "=== |ClienteDTO| === \n - Id: " + id + "\n - Usuario: " + usuario + "\n - Contraseña: " + contrasenia
-				+ "\n - Cédula: " + cedula + "\n - Tipo de cliente: " + tipoCliente + "\n================\n";
+		return "ClienteDTO [id=" + id + ", usuario=" + usuario + ", contrasenia=" + contrasenia + ", cedula=" + cedula
+				+ ", tipoCliente=" + tipoCliente + "]";
 	}
 
-	/**
-	 * Calcula el código hash del objeto {@code ClienteDTO} basado en todos sus campos.
-	 *
-	 * @return valor hash calculado a partir de {@code cedula}, {@code contrasenia},
-	 *         {@code id}, {@code tipoCliente} y {@code usuario}.
-	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(cedula, contrasenia, id, tipoCliente, usuario);
 	}
 
-	/**
-	 * Compara este objeto {@code ClienteDTO} con otro para determinar si son iguales.
-	 * Dos instancias son iguales si todos sus campos coinciden.
-	 *
-	 * @param obj objeto a comparar.
-	 * @return {@code true} si los objetos son iguales, {@code false} en caso contrario.
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -179,4 +107,5 @@ public class ClienteDTO {
 		return Objects.equals(cedula, other.cedula) && Objects.equals(contrasenia, other.contrasenia) && id == other.id
 				&& Objects.equals(tipoCliente, other.tipoCliente) && Objects.equals(usuario, other.usuario);
 	}
+
 }

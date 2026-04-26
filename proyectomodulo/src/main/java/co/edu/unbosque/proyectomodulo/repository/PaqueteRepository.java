@@ -24,4 +24,5 @@ public interface PaqueteRepository extends CrudRepository<Paquete, Long> {
 	 *         o vacío si no existe ningún paquete con ese tipo.
 	 */
 	Optional<List<Paquete>> findByTipoPaquete(String tipoPaquete);
+	
 }

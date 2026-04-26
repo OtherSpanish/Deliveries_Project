@@ -35,4 +35,6 @@ public interface ClienteRepository extends CrudRepository<Cliente, Long> {
 	Optional<List<Cliente>> findByTipoCliente(String tipoCliente);
 	
 	Optional<Cliente> findByCedula (String cedula);
+	
+	
 }
