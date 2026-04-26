@@ -127,7 +127,8 @@ public class ConductorDTO {
 	}
 
 	/**
-	 * Calcula el código hash del objeto {@code ConductorDTO} basado en todos sus campos.
+	 * Calcula el código hash del objeto {@code ConductorDTO} basado en todos sus
+	 * campos.
 	 *
 	 * @return valor hash calculado a partir de {@code contrasenia}, {@code id},
 	 *         {@code tipoVehiculo} y {@code usuario}.
@@ -138,11 +139,12 @@ public class ConductorDTO {
 	}
 
 	/**
-	 * Compara este objeto {@code ConductorDTO} con otro para determinar si son iguales.
-	 * Dos instancias son iguales si todos sus campos coinciden.
+	 * Compara este objeto {@code ConductorDTO} con otro para determinar si son
+	 * iguales. Dos instancias son iguales si todos sus campos coinciden.
 	 *
 	 * @param obj objeto a comparar.
-	 * @return {@code true} si los objetos son iguales, {@code false} en caso contrario.
+	 * @return {@code true} si los objetos son iguales, {@code false} en caso
+	 *         contrario.
 	 */
 	@Override
 	public boolean equals(Object obj) {

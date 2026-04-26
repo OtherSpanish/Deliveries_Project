@@ -1,6 +1,5 @@
 package co.edu.unbosque.proyectomodulo.controller;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.edu.unbosque.proyectomodulo.dto.PaqueteDTO;
 import co.edu.unbosque.proyectomodulo.service.ConductorService;
 import co.edu.unbosque.proyectomodulo.service.PaqueteService;
 

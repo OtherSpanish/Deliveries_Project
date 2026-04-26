@@ -15,14 +15,12 @@ import co.edu.unbosque.proyectomodulo.dto.PaqueteDTO;
 import co.edu.unbosque.proyectomodulo.entity.Paquete;
 import co.edu.unbosque.proyectomodulo.exceptions.DireccionException;
 import co.edu.unbosque.proyectomodulo.exceptions.LanzadorException;
-import co.edu.unbosque.proyectomodulo.exceptions.TipoPaqueteException;
 import co.edu.unbosque.proyectomodulo.repository.PaqueteRepository;
 
 /**
- * Servicio que gestiona las operaciones CRUD y consultas
- * para la entidad {@link Paquete}. Controla el acceso según
- * el tipo de usuario autenticado (administrador, cliente,
- * conductor o manipulador de paquetes).
+ * Servicio que gestiona las operaciones CRUD y consultas para la entidad
+ * {@link Paquete}. Controla el acceso según el tipo de usuario autenticado
+ * (administrador, cliente, conductor o manipulador de paquetes).
  *
  * @version 1.0
  */
@@ -61,14 +59,14 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	}
 
 	/**
-	 * Crea un nuevo paquete en el sistema.
-	 * Requiere que el cliente tenga sesión activa y valida el tipo
-	 * de paquete y la dirección de envío antes de persistir.
+	 * Crea un nuevo paquete en el sistema. Requiere que el cliente tenga sesión
+	 * activa y valida el tipo de paquete y la dirección de envío antes de
+	 * persistir.
 	 *
 	 * @param data objeto {@link PaqueteDTO} con los datos del paquete a crear
-	 * @return {@code 0} si el paquete fue creado exitosamente,
-	 *         {@code 1} si los datos no pasan la validación,
-	 *         {@code 2} si el cliente no tiene sesión activa
+	 * @return {@code 0} si el paquete fue creado exitosamente, {@code 1} si los
+	 *         datos no pasan la validación, {@code 2} si el cliente no tiene sesión
+	 *         activa
 	 */
 	@Override
 	public int create(PaqueteDTO data) {
@@ -86,21 +84,21 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 		Paquete entity = mapper.map(data, Paquete.class);
 		paqueteRep.save(entity);
 		PaqueteDTO dto = mapper.map(entity, PaqueteDTO.class);
-        String json = gson.toJson(dto);
+		String json = gson.toJson(dto);
 		return 0;
 	}
 
 	/**
-	 * Retorna la lista de todos los paquetes registrados en el sistema.
-	 * Solo accesible para administradores, conductores o manipuladores
-	 * de paquetes con sesión activa.
+	 * Retorna la lista de todos los paquetes registrados en el sistema. Solo
+	 * accesible para administradores, conductores o manipuladores de paquetes con
+	 * sesión activa.
 	 *
-	 * @return lista de {@link PaqueteDTO} con todos los paquetes,
-	 *         o {@code null} si ningún usuario autorizado tiene sesión activa
+	 * @return lista de {@link PaqueteDTO} con todos los paquetes, o {@code null} si
+	 *         ningún usuario autorizado tiene sesión activa
 	 */
 	@Override
 	public String getAll() {
-		
+
 		Gson gson = Converters.registerLocalDateTime(new GsonBuilder()).create();
 		if (!(adminService.isLoggedadmin() || conductorService.isLogged() || mService.isLogged())) {
 			return null;
@@ -109,18 +107,16 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 		List<Paquete> entityList = (List<Paquete>) paqueteRep.findAll();
 		List<PaqueteDTO> dtoList = new ArrayList<>();
 
-		entityList.forEach(entity ->
-			dtoList.add(mapper.map(entity, PaqueteDTO.class))
-		);
+		entityList.forEach(entity -> dtoList.add(mapper.map(entity, PaqueteDTO.class)));
 		return gson.toJson(dtoList);
 	}
 
 	/**
-	 * Retorna la lista de todos los paquetes para uso exclusivo de
-	 * manipuladores de paquetes o administradores con sesión activa.
+	 * Retorna la lista de todos los paquetes para uso exclusivo de manipuladores de
+	 * paquetes o administradores con sesión activa.
 	 *
-	 * @return lista de {@link PaqueteDTO} con todos los paquetes,
-	 *         o {@code null} si el usuario no tiene los permisos requeridos
+	 * @return lista de {@link PaqueteDTO} con todos los paquetes, o {@code null} si
+	 *         el usuario no tiene los permisos requeridos
 	 */
 	public String getAllManipuladorPaquetes() {
 		Gson gson = Converters.registerLocalDateTime(new GsonBuilder()).create();
@@ -132,21 +128,19 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 		List<Paquete> entityList = (List<Paquete>) paqueteRep.findAll();
 		List<PaqueteDTO> dtoList = new ArrayList<>();
 
-		entityList.forEach(entity ->
-			dtoList.add(mapper.map(entity, PaqueteDTO.class))
-		);
+		entityList.forEach(entity -> dtoList.add(mapper.map(entity, PaqueteDTO.class)));
 
 		return gson.toJson(dtoList);
 	}
 
 	/**
-	 * Elimina un paquete del sistema por su identificador.
-	 * Requiere autenticación de administrador.
+	 * Elimina un paquete del sistema por su identificador. Requiere autenticación
+	 * de administrador.
 	 *
 	 * @param id identificador único del paquete a eliminar
-	 * @return {@code 0} si el paquete fue eliminado exitosamente,
-	 *         {@code 1} si no se encontró el paquete con el ID indicado,
-	 *         {@code 2} si el administrador no tiene sesión activa
+	 * @return {@code 0} si el paquete fue eliminado exitosamente, {@code 1} si no
+	 *         se encontró el paquete con el ID indicado, {@code 2} si el
+	 *         administrador no tiene sesión activa
 	 */
 	@Override
 	public int deleteById(Long id) {
@@ -166,22 +160,22 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	}
 
 	/**
-	 * Actualiza los datos de un paquete existente identificado por su ID.
-	 * Requiere sesión activa simultánea de cliente y administrador,
-	 * además de que los nuevos datos superen la validación de tipo y dirección.
+	 * Actualiza los datos de un paquete existente identificado por su ID. Requiere
+	 * sesión activa simultánea de cliente y administrador, además de que los nuevos
+	 * datos superen la validación de tipo y dirección.
 	 *
 	 * @param id   identificador único del paquete a actualizar
 	 * @param data objeto {@link PaqueteDTO} con los nuevos datos del paquete
-	 * @return {@code 0} si el paquete fue actualizado exitosamente,
-	 *         {@code 1} si no se encontró el paquete o los datos son inválidos,
-	 *         {@code 2} si no se cuenta con los permisos requeridos
+	 * @return {@code 0} si el paquete fue actualizado exitosamente, {@code 1} si no
+	 *         se encontró el paquete o los datos son inválidos, {@code 2} si no se
+	 *         cuenta con los permisos requeridos
 	 */
 	public int updateById(Long id, PaqueteDTO data) {
 
 		if (!(adminService.isLoggedadmin() && clienteService.isLogged())) {
 			return 2;
 		}
-		if(!clienteService.isLogged()) {
+		if (!clienteService.isLogged()) {
 			return 3;
 		}
 		if (!adminService.isLoggedadmin()) {
@@ -201,7 +195,7 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 
 			try {
 				LanzadorException.verificarDireccion(data.getDireccionDeEnvio());
-			} catch (DireccionException  e) {
+			} catch (DireccionException e) {
 				return 1;
 			}
 
@@ -238,20 +232,19 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 
 	/**
 	 * Busca y retorna todos los paquetes que coincidan con el tipo especificado.
-	 * Los tipos válidos son: {@code "carta"}, {@code "alimenticios"}
-	 * y {@code "no alimenticios"}.
+	 * Los tipos válidos son: {@code "carta"}, {@code "alimenticios"} y
+	 * {@code "no alimenticios"}.
 	 *
 	 * @param tipoPaquete cadena que representa el tipo de paquete a buscar
-	 * @return lista de {@link PaqueteDTO} que coinciden con el tipo indicado,
-	 *         lista vacía si no hay coincidencias,
-	 *         o {@code null} si el tipo proporcionado no es válido
+	 * @return lista de {@link PaqueteDTO} que coinciden con el tipo indicado, lista
+	 *         vacía si no hay coincidencias, o {@code null} si el tipo
+	 *         proporcionado no es válido
 	 */
 	public List<PaqueteDTO> findByTipoPaquete(String tipoPaquete) {
 
 		Optional<List<Paquete>> encontrados = paqueteRep.findByTipoPaquete(tipoPaquete);
 
-		if (!(tipoPaquete.equals("carta")
-				|| tipoPaquete.equals("alimenticios")
+		if (!(tipoPaquete.equals("carta") || tipoPaquete.equals("alimenticios")
 				|| tipoPaquete.equals("no alimenticios"))) {
 			return null;
 		}
@@ -259,12 +252,10 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 		List<PaqueteDTO> dtoList = new ArrayList<>();
 
 		if (encontrados.isPresent() && !encontrados.get().isEmpty()) {
-			encontrados.get().forEach(entity ->
-				dtoList.add(mapper.map(entity, PaqueteDTO.class))
-			);
+			encontrados.get().forEach(entity -> dtoList.add(mapper.map(entity, PaqueteDTO.class)));
 		}
 
 		return dtoList;
 	}
-	
+
 }

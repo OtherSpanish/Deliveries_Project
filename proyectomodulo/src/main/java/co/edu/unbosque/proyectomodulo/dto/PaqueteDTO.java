@@ -1,6 +1,5 @@
 package co.edu.unbosque.proyectomodulo.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -34,7 +33,7 @@ public class PaqueteDTO {
 
 	/** Precio de envío con descuento aplicado. */
 	private String precioEnvio;
-	
+
 	@Enumerated(EnumType.STRING)
 	private EstadoPaquete estadoPaquete;
 
@@ -122,14 +121,9 @@ public class PaqueteDTO {
 
 	@Override
 	public String toString() {
-		return "PaqueteDTO [id=" + id + ", tipoPaquete=" + tipoPaquete + ", contenido=" + contenido
+		return super.toString() + "PaqueteDTO [id=" + id + ", tipoPaquete=" + tipoPaquete + ", contenido=" + contenido
 				+ ", direccionDeEnvio=" + direccionDeEnvio + ", tiempoDeEnvio=" + tiempoDeEnvio + ", precioEnvio="
-				+ precioEnvio + ", estadoPaquete=" + estadoPaquete + ", clientePaquete=" + clientePaquete + ", getId()="
-				+ getId() + ", getTipoPaquete()=" + getTipoPaquete() + ", getContenido()=" + getContenido()
-				+ ", getDireccionDeEnvio()=" + getDireccionDeEnvio() + ", getTiempoDeEnvio()=" + getTiempoDeEnvio()
-				+ ", getPrecioEnvio()=" + getPrecioEnvio() + ", getEstadoPaquete()=" + getEstadoPaquete()
-				+ ", getClientePaquete()=" + getClientePaquete() + ", getClass()=" + getClass() + ", hashCode()="
-				+ hashCode() + ", toString()=" + super.toString() + "]";
+				+ precioEnvio + ", estadoPaquete=" + estadoPaquete + ", clientePaquete=" + clientePaquete + "]";
 	}
 
 	@Override
