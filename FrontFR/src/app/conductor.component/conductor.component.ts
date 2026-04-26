@@ -23,9 +23,7 @@ export class ConductorComponent {
     );
   }
 
-  get pedidosPendientes(): number {
-    return this.paqueteService.getAll().filter(p => p.estado === 'Pendiente').length;
-  }
+
 
   get pedidosEnCamino(): number {
     return this.paqueteService.getAll().filter(p => p.estado === 'En camino' || p.estado === 'Despachado').length;
