@@ -22,10 +22,6 @@
 
       <!-- TARJETAS DE RESUMEN -->
       <div class="resumen-cards">
-        <div class="resumen-card card-pendiente">
-          <span class="resumen-num">{{ pedidosPendientes }}</span>
-          <span class="resumen-label">Pendientes</span>
-        </div>
         <div class="resumen-card card-camino">
           <span class="resumen-num">{{ pedidosEnCamino }}</span>
           <span class="resumen-label">En camino</span>
@@ -76,8 +72,7 @@
                 <th>N°</th>
                 <th>ID</th>
                 <th>Cliente</th>
-                <th>Origen</th>
-                <th>Destino</th>
+                <th>Dirección de Envío</th>
                 <th>Tipo</th>
                 <th>Estado</th>
                 <th></th>
@@ -89,8 +84,7 @@
                     <td>{{ p.numero }}</td>
                     <td class="td-id">{{ p.id }}</td>
                     <td>{{ p.cliente }}</td>
-                    <td class="td-dir">{{ p.direccionOrigen }}</td>
-                    <td class="td-dir">{{ p.direccionDestino }}</td>
+                    <td class="td-dir">{{ p.direccionEnvio }}</td>
                     <td>
                       <span class="tipo-badge" [attr.data-tipo]="p.tipoPaquete">
                         {{ p.tipoPaquete }}

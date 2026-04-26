@@ -1,4 +1,7 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { PaqueteService, Paquete } from '../paquete.service';
+
+export type VistaCliente = 'ninguna' | 'carta' | 'alimenticio' | 'no-alimenticio' | 'mis-pedidos';
 
 @Component({
   selector: 'app-cliente-principal',
@@ -7,14 +10,25 @@ import { Component, EventEmitter, Output, OnInit } from '@angular/core';
   styleUrls: ['./cliente-principal.css'],
 })
 export class ClientePrincipal implements OnInit {
-  // EVENTO para volver al login
   @Output() cerrarSesionEvent = new EventEmitter<string>();
 
   nombreCliente: string = 'Cliente';
 
-  imagenes: string[] = ['paquete_carta.png', 'paquete_balon.png'];
-
+  imagenes: string[] = ['login_pic_1.png', 'login_pic_2.png'];
   indiceImagen: number = 0;
+
+  vistaActiva: VistaCliente = 'ninguna';
+  mensajeExito: string = '';
+
+  cartaForm = { remitente: '', destinatario: '', direccionEnvio: '', descripcion: '' };
+  alimenticioForm = { contenido: '', pesoKg: 0, requiereRefrigeracion: false, direccionEnvio: '' };
+  noAlimenticioForm = { contenido: '', pesoKg: 0, esFragil: false, direccionEnvio: '' };
+
+  constructor(private paqueteService: PaqueteService) {}
+
+  get misPedidos(): Paquete[] {
+    return this.paqueteService.getAll().filter(p => p.cliente === this.nombreCliente);
+  }
 
   ngOnInit() {
     setInterval(() => {
@@ -22,14 +36,60 @@ export class ClientePrincipal implements OnInit {
     }, 5000);
   }
 
-  pedir(tipo: string) {
-    console.log('Pedir:', tipo);
-    alert('Entrando a pedido de ' + tipo);
+  setVista(vista: VistaCliente): void {
+    this.vistaActiva = vista;
+    this.mensajeExito = '';
+    this.cartaForm         = { remitente: '', destinatario: '', direccionEnvio: '', descripcion: '' };
+    this.alimenticioForm   = { contenido: '', pesoKg: 0, requiereRefrigeracion: false, direccionEnvio: '' };
+    this.noAlimenticioForm = { contenido: '', pesoKg: 0, esFragil: false, direccionEnvio: '' };
   }
 
-  // LOGOUT
-  logout() {
+  enviarCarta(): void {
+    if (!this.cartaForm.remitente || !this.cartaForm.destinatario || !this.cartaForm.direccionEnvio) {
+      alert('Por favor completa todos los campos obligatorios.');
+      return;
+    }
+    const nuevo = this.paqueteService.agregar({
+      tipoPaquete:    'Carta',
+      contenido:      'Carta de ' + this.cartaForm.remitente + ' para ' + this.cartaForm.destinatario,
+      direccionEnvio: this.cartaForm.direccionEnvio,
+      cliente:        this.nombreCliente,
+    });
+    this.mensajeExito = 'Carta registrada correctamente. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
+    this.cartaForm = { remitente: '', destinatario: '', direccionEnvio: '', descripcion: '' };
+  }
+
+  enviarAlimenticio(): void {
+    if (!this.alimenticioForm.contenido || !this.alimenticioForm.direccionEnvio || this.alimenticioForm.pesoKg <= 0) {
+      alert('Por favor completa todos los campos obligatorios.');
+      return;
+    }
+    const nuevo = this.paqueteService.agregar({
+      tipoPaquete:    'Alimenticio',
+      contenido:      this.alimenticioForm.contenido,
+      direccionEnvio: this.alimenticioForm.direccionEnvio,
+      cliente:        this.nombreCliente,
+    });
+    this.mensajeExito = 'Paquete alimenticio registrado. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
+    this.alimenticioForm = { contenido: '', pesoKg: 0, requiereRefrigeracion: false, direccionEnvio: '' };
+  }
+
+  enviarNoAlimenticio(): void {
+    if (!this.noAlimenticioForm.contenido || !this.noAlimenticioForm.direccionEnvio || this.noAlimenticioForm.pesoKg <= 0) {
+      alert('Por favor completa todos los campos obligatorios.');
+      return;
+    }
+    const nuevo = this.paqueteService.agregar({
+      tipoPaquete:    'No Alimenticio',
+      contenido:      this.noAlimenticioForm.contenido,
+      direccionEnvio: this.noAlimenticioForm.direccionEnvio,
+      cliente:        this.nombreCliente,
+    });
+    this.mensajeExito = 'Paquete no alimenticio registrado. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
+    this.noAlimenticioForm = { contenido: '', pesoKg: 0, esFragil: false, direccionEnvio: '' };
+  }
+
+  logout(): void {
     this.cerrarSesionEvent.emit('login');
   }
 }
-

@@ -2,42 +2,205 @@
 
   <!-- HEADER -->
   <header class="client-header">
-
-    <div class="client-user">
-      Hola, {{nombreCliente}}
-    </div>
-
-    <div class="client-title">
-      client Dashboard
-    </div>
-
-    <button class="logout-btn" (click)="logout()">
-      Logout
-    </button>
-
+    <div class="client-user">Hola, {{ nombreCliente }}</div>
+    <div class="client-title">Client Dashboard</div>
+    <button class="logout-btn" (click)="logout()">Logout</button>
   </header>
 
   <!-- CONTENIDO -->
   <div class="client-content">
 
-    <!-- IZQUIERDA: GESTIÓN -->
+    <!-- IZQUIERDA: PANEL -->
     <div class="client-panel">
-
-      <h2>Pedir Paquete</h2>
-
+      <h2>Enviar Paquete</h2>
       <div class="buttons">
-        <button (click)="pedir('carta')">Pedir Carta</button>
-        <button (click)="pedir('producto no alimentcio')">Pedir Producto No Alimenticio</button>
-        <button (click)="pedir('producto alimenticio')">Pedir Producto Alimenticio</button>
+        <button [class.active]="vistaActiva === 'carta'" (click)="setVista('carta')">
+          ✉️ Carta
+        </button>
+        <button [class.active]="vistaActiva === 'alimenticio'" (click)="setVista('alimenticio')">
+          🍎 Producto Alimenticio
+        </button>
+        <button [class.active]="vistaActiva === 'no-alimenticio'" (click)="setVista('no-alimenticio')">
+          📦 Producto No Alimenticio
+        </button>
+        <button class="btn-pedidos" [class.active]="vistaActiva === 'mis-pedidos'" (click)="setVista('mis-pedidos')">
+          📋 Mis Pedidos
+        </button>
       </div>
-
     </div>
 
-    <!-- DERECHA: CARRUSEL -->
-    <div class="client-carousel">
-      <img [src]="imagenes[indiceImagen]" alt="paquete">
-    </div>
+    <!-- DERECHA: CONTENIDO DINÁMICO -->
+    <div class="client-main">
 
+      <!-- CARRUSEL (estado vacío) -->
+      @if (vistaActiva === 'ninguna') {
+        <div class="client-carousel">
+          <img [src]="imagenes[indiceImagen]" alt="paquete">
+          <div class="carousel-overlay">
+            <p class="carousel-msg">Selecciona un tipo de envío para comenzar</p>
+          </div>
+        </div>
+      }
+
+      <!-- ÉXITO -->
+      @if (mensajeExito) {
+        <div class="alert-success">✅ {{ mensajeExito }}</div>
+      }
+
+      <!-- FORMULARIO CARTA -->
+      @if (vistaActiva === 'carta') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>✉️ Enviar Carta</span>
+            <span class="chip-note">Tipo: Carta</span>
+          </div>
+          <form class="editar-form" (ngSubmit)="enviarCarta()">
+            <div class="form-group">
+              <label>Remitente <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="cartaForm.remitente" name="remitente"
+                     placeholder="Tu nombre completo" required />
+            </div>
+            <div class="form-group">
+              <label>Destinatario <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="cartaForm.destinatario" name="destinatario"
+                     placeholder="Nombre del destinatario" required />
+            </div>
+            <div class="form-group">
+              <label>Dirección de Envío <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="cartaForm.direccionEnvio" name="direccionEnvio"
+                     placeholder="Dirección de destino" required />
+            </div>
+            <div class="form-group">
+              <label>Descripción (opcional)</label>
+              <input type="text" [(ngModel)]="cartaForm.descripcion" name="descripcion"
+                     placeholder="Descripción breve del contenido" />
+            </div>
+            <div class="editar-actions">
+              <button type="button" class="btn-cancelar" (click)="setVista('ninguna')">← Cancelar</button>
+              <button type="submit" class="btn-guardar">Enviar Carta ✉️</button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- FORMULARIO ALIMENTICIO -->
+      @if (vistaActiva === 'alimenticio') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>🍎 Enviar Producto Alimenticio</span>
+            <span class="chip-note">Tipo: Alimenticio</span>
+          </div>
+          <form class="editar-form" (ngSubmit)="enviarAlimenticio()">
+            <div class="form-group">
+              <label>Contenido <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="alimenticioForm.contenido" name="contenido"
+                     placeholder="Ej: Frutas, lácteos, conservas..." required />
+            </div>
+            <div class="form-group">
+              <label>Peso aproximado (kg) <span class="required">*</span></label>
+              <input type="number" [(ngModel)]="alimenticioForm.pesoKg" name="pesoKg"
+                     placeholder="Ej: 2.5" min="0.1" step="0.1" required />
+            </div>
+            <div class="form-group form-check">
+              <label class="check-label">
+                <input type="checkbox" [(ngModel)]="alimenticioForm.requiereRefrigeracion" name="requiereRefrigeracion" />
+                <span>¿Requiere refrigeración?</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label>Dirección de Envío <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="alimenticioForm.direccionEnvio" name="direccionEnvio"
+                     placeholder="Dirección de destino" required />
+            </div>
+            <div class="editar-actions">
+              <button type="button" class="btn-cancelar" (click)="setVista('ninguna')">← Cancelar</button>
+              <button type="submit" class="btn-guardar">Registrar Envío 🍎</button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- FORMULARIO NO ALIMENTICIO -->
+      @if (vistaActiva === 'no-alimenticio') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>📦 Enviar Producto No Alimenticio</span>
+            <span class="chip-note">Tipo: No Alimenticio</span>
+          </div>
+          <form class="editar-form" (ngSubmit)="enviarNoAlimenticio()">
+            <div class="form-group">
+              <label>Contenido <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="noAlimenticioForm.contenido" name="contenido"
+                     placeholder="Ej: Ropa, electrónica, libros..." required />
+            </div>
+            <div class="form-group">
+              <label>Peso aproximado (kg) <span class="required">*</span></label>
+              <input type="number" [(ngModel)]="noAlimenticioForm.pesoKg" name="pesoKg"
+                     placeholder="Ej: 1.5" min="0.1" step="0.1" required />
+            </div>
+            <div class="form-group form-check">
+              <label class="check-label">
+                <input type="checkbox" [(ngModel)]="noAlimenticioForm.esFragil" name="esFragil" />
+                <span>¿El producto es frágil? (manejo especial)</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label>Dirección de Envío <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="noAlimenticioForm.direccionEnvio" name="direccionEnvio"
+                     placeholder="Dirección de destino" required />
+            </div>
+            <div class="editar-actions">
+              <button type="button" class="btn-cancelar" (click)="setVista('ninguna')">← Cancelar</button>
+              <button type="submit" class="btn-guardar">Registrar Envío 📦</button>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- MIS PEDIDOS -->
+      @if (vistaActiva === 'mis-pedidos') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>📋 Mis Pedidos</span>
+            <span class="badge">{{ misPedidos.length }} registros</span>
+          </div>
+          <div class="tabla-scroll">
+            <table>
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Contenido</th>
+                <th>Dirección de Envío</th>
+                <th>Estado</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (p of misPedidos; track p.id) {
+                  <tr>
+                    <td>{{ p.numero }}</td>
+                    <td class="td-id">{{ p.id }}</td>
+                    <td>
+                      <span class="tipo-badge" [attr.data-tipo]="p.tipoPaquete">
+                        {{ p.tipoPaquete }}
+                      </span>
+                    </td>
+                    <td>{{ p.contenido }}</td>
+                    <td>{{ p.direccionEnvio }}</td>
+                    <td>
+                      <span class="estado-badge" [attr.data-estado]="p.estado">
+                        {{ p.estado }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+    </div>
   </div>
-
 </div>

@@ -20,7 +20,6 @@ import { ManipuladorComponent } from './manipulador.component/manipulador.compon
     Login,
     AdminPrincipal,
     ClientePrincipal,
-    ClientePrincipal,
     GestionarPaquete,
     GestionarManipulador,
     GestionarConductor,
