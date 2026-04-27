@@ -47,26 +47,38 @@ public class Paquete {
 	/** Precio de envío. */
 	private String precioEnvio;
 
+	private String destinatario;
+
 	@Enumerated(EnumType.STRING)
 	private EstadoPaquete estadoPaquete;
 
 	private String clientePaquete;
 
+	private float pesoKg;
+
+	private boolean esFragil;
+
+	private boolean requiereRefrigeracion;
 
 	public Paquete() {
 		super();
 	}
 
-	public Paquete(TipoPaquete tipoPaquete, String contenido, String direccionDeEnvio,
-			LocalDateTime tiempoDeEnvio, String precioEnvio, EstadoPaquete estadoPaquete, String clientePaquete) {
+	public Paquete(TipoPaquete tipoPaquete, String contenido, String direccionDeEnvio, LocalDateTime tiempoDeEnvio,
+			String precioEnvio, String destinatario, EstadoPaquete estadoPaquete, String clientePaquete, float pesoKg,
+			boolean esFragil, boolean requiereRefrigeracion) {
 		super();
 		this.tipoPaquete = tipoPaquete;
 		this.contenido = contenido;
 		this.direccionDeEnvio = direccionDeEnvio;
 		this.tiempoDeEnvio = tiempoDeEnvio;
 		this.precioEnvio = precioEnvio;
+		this.destinatario = destinatario;
 		this.estadoPaquete = estadoPaquete;
 		this.clientePaquete = clientePaquete;
+		this.pesoKg = pesoKg;
+		this.esFragil = esFragil;
+		this.requiereRefrigeracion = requiereRefrigeracion;
 	}
 
 	public Long getId() {
@@ -117,6 +129,14 @@ public class Paquete {
 		this.precioEnvio = precioEnvio;
 	}
 
+	public String getDestinatario() {
+		return destinatario;
+	}
+
+	public void setDestinatario(String destinatario) {
+		this.destinatario = destinatario;
+	}
+
 	public EstadoPaquete getEstadoPaquete() {
 		return estadoPaquete;
 	}
@@ -133,22 +153,43 @@ public class Paquete {
 		this.clientePaquete = clientePaquete;
 	}
 
-	/**
-	 * Devuelve una representación en cadena del objeto.
-	 *
-	 * @return cadena con los datos del paquete
-	 */
+	public float getPesoKg() {
+		return pesoKg;
+	}
+
+	public void setPesoKg(float pesoKg) {
+		this.pesoKg = pesoKg;
+	}
+
+	public boolean isEsFragil() {
+		return esFragil;
+	}
+
+	public void setEsFragil(boolean esFragil) {
+		this.esFragil = esFragil;
+	}
+
+	public boolean isRequiereRefrigeracion() {
+		return requiereRefrigeracion;
+	}
+
+	public void setRequiereRefrigeracion(boolean requiereRefrigeracion) {
+		this.requiereRefrigeracion = requiereRefrigeracion;
+	}
+
 	@Override
 	public String toString() {
-		return "=== |Paquete| ===\n" + " - ID: " + id + "\n" + " - Tipo: " + tipoPaquete + "\n" + " - Contenido: "
-				+ contenido + "\n" + " - Dirección: " + direccionDeEnvio + "\n" + " - Tiempo: " + tiempoDeEnvio + "\n"
-				+ " - Precio: " + precioEnvio + "\n" + "================\n";
+		return "Paquete [id=" + id + ", tipoPaquete=" + tipoPaquete + ", contenido=" + contenido + ", direccionDeEnvio="
+				+ direccionDeEnvio + ", tiempoDeEnvio=" + tiempoDeEnvio + ", precioEnvio=" + precioEnvio
+				+ ", destinatario=" + destinatario + ", estadoPaquete=" + estadoPaquete + ", clientePaquete="
+				+ clientePaquete + ", pesoKg=" + pesoKg + ", esFragil=" + esFragil + ", requiereRefrigeracion="
+				+ requiereRefrigeracion + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(clientePaquete, contenido, direccionDeEnvio, estadoPaquete, id, precioEnvio, tiempoDeEnvio,
-				tipoPaquete);
+		return Objects.hash(clientePaquete, contenido, destinatario, direccionDeEnvio, esFragil, estadoPaquete, id,
+				pesoKg, precioEnvio, requiereRefrigeracion, tiempoDeEnvio, tipoPaquete);
 	}
 
 	@Override
@@ -161,12 +202,13 @@ public class Paquete {
 			return false;
 		Paquete other = (Paquete) obj;
 		return Objects.equals(clientePaquete, other.clientePaquete) && Objects.equals(contenido, other.contenido)
-				&& Objects.equals(direccionDeEnvio, other.direccionDeEnvio)
-				&& Objects.equals(estadoPaquete, other.estadoPaquete) && Objects.equals(id, other.id)
-				&& Objects.equals(precioEnvio, other.precioEnvio) && Objects.equals(tiempoDeEnvio, other.tiempoDeEnvio)
-				&& Objects.equals(tipoPaquete, other.tipoPaquete);
+				&& Objects.equals(destinatario, other.destinatario)
+				&& Objects.equals(direccionDeEnvio, other.direccionDeEnvio) && esFragil == other.esFragil
+				&& estadoPaquete == other.estadoPaquete && Objects.equals(id, other.id)
+				&& Float.floatToIntBits(pesoKg) == Float.floatToIntBits(other.pesoKg)
+				&& Objects.equals(precioEnvio, other.precioEnvio)
+				&& requiereRefrigeracion == other.requiereRefrigeracion
+				&& Objects.equals(tiempoDeEnvio, other.tiempoDeEnvio) && tipoPaquete == other.tipoPaquete;
 	}
 
-	
-	
 }

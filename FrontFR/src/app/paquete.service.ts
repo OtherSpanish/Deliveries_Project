@@ -8,6 +8,7 @@ export interface Paquete {
   direccionEnvio: string;
   estado:  'En bodega' | 'Despachado' | 'En camino' | 'Entregado';
   cliente: string;
+
 }
 
 @Injectable({

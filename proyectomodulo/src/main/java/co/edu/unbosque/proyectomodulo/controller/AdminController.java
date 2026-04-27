@@ -155,7 +155,7 @@ public class AdminController {
 
 	@PutMapping("/actualizarpaquete")
 	public ResponseEntity<String> actualizarPaquete(@RequestParam Long id, @RequestParam TipoPaquete tipoPaquete,
-			@RequestParam String contenido, @RequestParam String direccionDeEnvio) {
+			@RequestParam String contenido, @RequestParam String direccionDeEnvio, @RequestParam String destinatario, @RequestParam float pesoKg, @RequestParam boolean esFragil, @RequestParam boolean requiereRefrigeracion) {
 		if (!clienteService.isLogged()) {
 			return new ResponseEntity<>("Se necesita un cliente logueado", HttpStatus.BAD_REQUEST);
 		}
@@ -206,7 +206,7 @@ public class AdminController {
 			return new ResponseEntity<>("Tipo de cliente no valido", HttpStatus.BAD_REQUEST);
 		}
 		int status = pService.updateById(id, new PaqueteDTO(tipoPaquete, contenido, direccionDeEnvio, tiempoDeEnvio,
-				precioEnvio, EstadoPaquete.DESPACHADO, nameCliente));
+				precioEnvio, EstadoPaquete.DESPACHADO, nameCliente, destinatario, pesoKg, esFragil, requiereRefrigeracion));
 		switch (status) {
 		case 0:
 			return new ResponseEntity<>("Paquete actualizado", HttpStatus.OK);

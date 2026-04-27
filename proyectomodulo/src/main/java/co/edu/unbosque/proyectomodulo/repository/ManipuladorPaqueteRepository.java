@@ -24,6 +24,6 @@ public interface ManipuladorPaqueteRepository extends CrudRepository<Manipulador
 	 */
 	Optional<ManipuladorPaquete> findByUsuario(String usuario);
 	
-	
+
 
 }
