@@ -257,5 +257,9 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 
 		return dtoList;
 	}
+	public List<Paquete> paquetesPorCliente(String clientePaquete) {
+	    return paqueteRep.findByClientePaquete(clientePaquete);
+	}
+
 
 }
