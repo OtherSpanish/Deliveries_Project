@@ -115,7 +115,10 @@ export class GestionarPaquete {
   }
 
   crearPaquete(): void {
-    if (!this.crearForm.contenido.trim() || !this.crearForm.direccionEnvio.trim()) return;
+    if (!this.crearForm.contenido.trim() || !this.crearForm.direccionEnvio.trim()) {
+      alert('Por favor completa todos los campos antes de crear el paquete.');
+      return;
+    }
     const tipoBE = this.crearForm.tipoPaquete === 'Carta' ? 'CARTA'
                  : this.crearForm.tipoPaquete === 'Alimenticio' ? 'ALIMENTICIO'
                  : 'NO_ALIMENTICIO';

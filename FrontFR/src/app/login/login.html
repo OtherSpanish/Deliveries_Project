@@ -51,13 +51,9 @@
         <h2>Registro</h2>
 
         <form>
-          <div class="register-grid">
+          <div class="register-stack">
             <input type="text" placeholder="Usuario" [(ngModel)]="usuario" name="r_usuario">
             <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="r_password">
-            <input type="text" placeholder="Nombre" [(ngModel)]="nombre" name="nombre">
-
-            <input type="text" placeholder="Cédula" [(ngModel)]="cedula" name="cedula">
-
             <select [(ngModel)]="tipoCliente" name="tipoCliente">
               <option value="" disabled selected>Tipo de cliente</option>
               <option value="normal">Normal</option>
