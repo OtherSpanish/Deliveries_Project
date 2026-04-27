@@ -32,6 +32,10 @@ export class ClientePrincipal implements OnInit {
   }
 
   ngOnInit() {
+    const usuarioGuardado = localStorage.getItem('usuario_logueado');
+    if (usuarioGuardado) {
+      this.nombreCliente = usuarioGuardado;
+    }
     setInterval(() => {
       this.indiceImagen = (this.indiceImagen + 1) % this.imagenes.length;
     }, 5000);
@@ -102,6 +106,7 @@ export class ClientePrincipal implements OnInit {
 
   logout(): void {
     this.api.clienteLogout().subscribe({ error: () => {} });
+    localStorage.removeItem('usuario_logueado');
     this.cerrarSesionEvent.emit('login');
   }
 }

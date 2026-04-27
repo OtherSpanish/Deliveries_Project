@@ -14,8 +14,8 @@ export class AdminPrincipal implements OnInit {
   nombreAdmin: string = 'Admin';
 
   imagenes: string[] = [
-    'paquete_carta.png',
-    'paquete_balon.png'
+    'login_pic_1.png',
+    'login_pic_2.png'
   ];
 
   indiceImagen: number = 0;

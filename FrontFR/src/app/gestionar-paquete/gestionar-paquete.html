@@ -149,7 +149,7 @@
             <span>Nuevo paquete</span>
             <span class="chip-note">El ID se asigna automáticamente</span>
           </div>
-          <form class="editar-form" (ngSubmit)="crearPaquete()">
+          <form class="editar-form" (ngSubmit)="crearPaquete()" novalidate>
             <div class="form-group">
               <label>Tipo de Paquete</label>
               <select [(ngModel)]="crearForm.tipoPaquete" name="tipoPaquete">
