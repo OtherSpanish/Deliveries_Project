@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 
-import co.edu.unbosque.proyectomodulo.entity.Cliente;
 import co.edu.unbosque.proyectomodulo.entity.Paquete;
 
 /**
@@ -25,7 +24,5 @@ public interface PaqueteRepository extends CrudRepository<Paquete, Long> {
 	 *         o vacío si no existe ningún paquete con ese tipo.
 	 */
 	Optional<List<Paquete>> findByTipoPaquete(String tipoPaquete);
-	
-	List<Paquete> findByClientePaquete(String clienteNombre);
 	
 }
