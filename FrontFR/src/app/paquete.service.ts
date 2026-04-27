@@ -15,6 +15,8 @@ export interface Paquete {
 })
 export class PaqueteService {
 
+  private readonly STORAGE_KEY = 'paquetes_historial';
+
   private paquetes: Paquete[] = [
     { numero: 1,  id: 'PKT-001', tipoPaquete: 'Carta',          contenido: 'Documentos legales',       direccionEnvio: 'Cl 100 # 15-45, Medellín',     estado: 'En camino',  cliente: 'jperez'     },
     { numero: 2,  id: 'PKT-002', tipoPaquete: 'Alimenticio',    contenido: 'Frutas tropicales',         direccionEnvio: 'Cra 7 # 32-18, Bogotá',        estado: 'En bodega',  cliente: 'mgarcia'    },
@@ -30,8 +32,35 @@ export class PaqueteService {
     { numero: 12, id: 'PKT-012', tipoPaquete: 'No Alimenticio', contenido: 'Maquinaria industrial',     direccionEnvio: 'Zona Franca, Cartagena',        estado: 'Despachado', cliente: 'mgarcia'    },
   ];
 
+  constructor() {
+    this.cargarDesdeStorage();
+  }
+
+  private cargarDesdeStorage(): void {
+    try {
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      if (raw) {
+        const guardados: Paquete[] = JSON.parse(raw);
+        // Mergeamos: mantenemos los paquetes base y añadimos los persistidos que no existan ya
+        const idsBase = new Set(this.paquetes.map(p => p.id));
+        const extras = guardados.filter(p => !idsBase.has(p.id));
+        this.paquetes = [...this.paquetes, ...extras];
+      }
+    } catch { /* si localStorage falla, usamos datos base */ }
+  }
+
+  private guardarEnStorage(): void {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.paquetes));
+    } catch { /* ignorar si storage no disponible */ }
+  }
+
   getAll(): Paquete[] {
     return this.paquetes;
+  }
+
+  getPedidosDeCliente(usuario: string): Paquete[] {
+    return this.paquetes.filter(p => p.cliente === usuario);
   }
 
   agregar(p: Omit<Paquete, 'numero' | 'id' | 'estado'>): Paquete {
@@ -45,6 +74,7 @@ export class PaqueteService {
       ...p,
     };
     this.paquetes.push(nuevo);
+    this.guardarEnStorage();
     return nuevo;
   }
 
@@ -52,14 +82,17 @@ export class PaqueteService {
     const idx = this.paquetes.findIndex(p => p.id === id);
     if (idx !== -1) {
       this.paquetes[idx] = { ...this.paquetes[idx], ...cambios };
+      this.guardarEnStorage();
     }
   }
 
   eliminar(id: string): void {
     this.paquetes = this.paquetes.filter(p => p.id !== id);
+    this.guardarEnStorage();
   }
 
   setPaquetes(paquetes: Paquete[]): void {
     this.paquetes = paquetes;
+    this.guardarEnStorage();
   }
 }

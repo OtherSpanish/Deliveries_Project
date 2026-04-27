@@ -177,10 +177,10 @@
   opacity: 0.8;
 }
 
-/* GRID REGISTRO         */
-.register-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+/* STACK REGISTRO        */
+.register-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   margin-bottom: 15px;
 }

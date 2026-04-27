@@ -51,7 +51,10 @@ export class Login implements OnInit {
     }
     if (this.rol === 'cliente') {
       this.api.clienteLogin(this.usuario, this.password).subscribe({
-        next: () => this.cambiarPantallaEvent.emit('cliente-principal'),
+        next: () => {
+          localStorage.setItem('usuario_logueado', this.usuario);
+          this.cambiarPantallaEvent.emit('cliente-principal');
+        },
         error: () => alert('Credenciales incorrectas'),
       });
       return;
@@ -73,13 +76,13 @@ export class Login implements OnInit {
   }
 
   registrar() {
-    if (!this.usuario || !this.password || !this.nombre || !this.cedula || !this.tipoCliente) {
+    if (!this.usuario || !this.password || !this.tipoCliente) {
       alert('Completa todos los campos');
       return;
     }
     // El backend espera NORMAL o PREMIUM en mayúsculas
     const tipo = this.tipoCliente.toUpperCase();
-    this.api.clienteRegistrar(this.usuario, this.password, this.cedula, tipo).subscribe({
+    this.api.clienteRegistrar(this.usuario, this.password, '', tipo).subscribe({
       next: () => {
         alert('Usuario registrado correctamente');
         this.usuario = ''; this.password = ''; this.nombre = '';
