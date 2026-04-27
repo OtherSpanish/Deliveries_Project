@@ -20,9 +20,6 @@
         <button [class.active]="vistaActiva === 'actualizar' || vistaActiva === 'editar'" (click)="setVista('actualizar')">
           ✏️ Actualizar
         </button>
-        <button [class.active]="vistaActiva === 'crear'" (click)="setVista('crear')">
-          ➕ Crear
-        </button>
         <button class="btn-tiempo" [class.active]="vistaActiva === 'tiempo'" (click)="setVista('tiempo')">
           ⏱️ Ver Tiempo
         </button>
