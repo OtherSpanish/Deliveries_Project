@@ -59,7 +59,7 @@ public class LanzadorException {
 			throw new TipoVehiculoException();
 		}
 		String t = tipo.trim().toLowerCase();
-		if (!(t.equals("carro") || t.equals("moto") || t.equals("camion"))) {
+		if (!(t.equals("carro") || t.equals("moto") || t.equals("camion") || t.equals("camión"))) {
 			throw new TipoVehiculoException();
 		}
 	}
@@ -80,7 +80,7 @@ public class LanzadorException {
 		String t = direccion.trim().toLowerCase();
 
 		if (!(t.startsWith("calle") || t.startsWith("carrera") || t.startsWith("avenida") || t.startsWith("cl")
-				|| t.startsWith("cra") || t.startsWith("av"))) {
+				|| t.startsWith("cra") || t.startsWith("av") || t.startsWith("cll"))) {
 			throw new DireccionException();
 		}
 
@@ -110,7 +110,7 @@ public class LanzadorException {
 	 *                              o iguales a 0.
 	 */
 	public static void verificarHoraDeTrabajo(int horasTrabajo) throws HoraTrabajoException {
-		if (horasTrabajo >= 9 || horasTrabajo <= 0) {
+		if (horasTrabajo >= 9 || horasTrabajo < 2) {
 			throw new HoraTrabajoException();
 		}
 	}

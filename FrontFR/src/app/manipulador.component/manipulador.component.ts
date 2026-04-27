@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { PaqueteService, Paquete } from '../paquete.service';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-manipulador',
@@ -14,7 +15,7 @@ export class ManipuladorComponent {
   vistaActiva: 'ninguna' | 'paquetes' = 'ninguna';
   mensajeExito = '';
 
-  constructor(private paqueteService: PaqueteService) {}
+  constructor(private paqueteService: PaqueteService, private api: ApiService) {}
 
   get paquetes(): Paquete[] {
     return this.paqueteService.getAll();
@@ -35,6 +36,26 @@ export class ManipuladorComponent {
   setVista(vista: 'ninguna' | 'paquetes'): void {
     this.vistaActiva = vista;
     this.mensajeExito = '';
+    if (vista === 'paquetes') {
+      this.api.manipuladorMostrarPaquetes().subscribe({
+        next: (data) => {
+          try {
+            const lista = JSON.parse(data);
+            lista.forEach((p: any) => {
+              if (!this.paqueteService.getAll().find(x => x.id === String(p.id))) {
+                this.paqueteService.agregar({
+                  tipoPaquete: p.tipoPaquete === 'CARTA' ? 'Carta' : p.tipoPaquete === 'ALIMENTICIO' ? 'Alimenticio' : 'No Alimenticio',
+                  contenido: p.contenido,
+                  direccionEnvio: p.direccionDeEnvio,
+                  cliente: p.clientePaquete,
+                });
+              }
+            });
+          } catch { /* usa datos locales */ }
+        },
+        error: () => { /* usa datos locales */ }
+      });
+    }
   }
 
   marcarDespachado(paquete: Paquete): void {
@@ -45,6 +66,7 @@ export class ManipuladorComponent {
   }
 
   logout(): void {
+    this.api.manipuladorLogout().subscribe({ error: () => {} });
     this.cerrarSesionEvent.emit('login');
   }
 }

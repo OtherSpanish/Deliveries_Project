@@ -125,10 +125,11 @@ public class AdminDTO {
 	}
 
 	/**
-	 * Calcula el código hash del objeto {@code AdminDTO} basado en todos sus campos.
+	 * Calcula el código hash del objeto {@code AdminDTO} basado en todos sus
+	 * campos.
 	 *
-	 * @return valor hash calculado a partir de {@code codigoAdmin}, {@code contrasenia},
-	 *         {@code id} y {@code usuario}.
+	 * @return valor hash calculado a partir de {@code codigoAdmin},
+	 *         {@code contrasenia}, {@code id} y {@code usuario}.
 	 */
 	@Override
 	public int hashCode() {
@@ -140,7 +141,8 @@ public class AdminDTO {
 	 * Dos instancias son iguales si todos sus campos coinciden.
 	 *
 	 * @param obj objeto a comparar.
-	 * @return {@code true} si los objetos son iguales, {@code false} en caso contrario.
+	 * @return {@code true} si los objetos son iguales, {@code false} en caso
+	 *         contrario.
 	 */
 	@Override
 	public boolean equals(Object obj) {

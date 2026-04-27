@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-admin-principal',
@@ -19,6 +20,8 @@ export class AdminPrincipal implements OnInit {
 
   indiceImagen: number = 0;
 
+  constructor(private api: ApiService) {}
+
   ngOnInit() {
     setInterval(() => {
       this.indiceImagen = (this.indiceImagen + 1) % this.imagenes.length;
@@ -27,19 +30,20 @@ export class AdminPrincipal implements OnInit {
 
   gestionar(tipo: string) {
     if (tipo === 'paquete') {
-      this.cerrarSesionEvent.emit('gestionar-paquete');  // nombre exacto de la pantalla
-    }else if(tipo === 'manipulador'){
+      this.cerrarSesionEvent.emit('gestionar-paquete');
+    } else if (tipo === 'manipulador') {
       this.cerrarSesionEvent.emit('gestionar-manipulador');
-    }else if(tipo === 'conductor'){
+    } else if (tipo === 'conductor') {
       this.cerrarSesionEvent.emit('gestionar-conductor');
-    } else if(tipo === 'cliente'){
+    } else if (tipo === 'cliente') {
       this.cerrarSesionEvent.emit('gestionar-cliente');
-    }else {
+    } else {
       console.log('Gestionar:', tipo);
     }
   }
 
   logout() {
+    this.api.adminLogout().subscribe({ error: () => {} });
     this.cerrarSesionEvent.emit('login');
   }
 }

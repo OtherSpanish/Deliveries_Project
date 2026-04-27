@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { PaqueteService, Paquete } from '../paquete.service';
+import { ApiService } from '../services/api.service';
 
 export type VistaCliente = 'ninguna' | 'carta' | 'alimenticio' | 'no-alimenticio' | 'mis-pedidos';
 
@@ -24,7 +25,7 @@ export class ClientePrincipal implements OnInit {
   alimenticioForm = { contenido: '', pesoKg: 0, requiereRefrigeracion: false, direccionEnvio: '' };
   noAlimenticioForm = { contenido: '', pesoKg: 0, esFragil: false, direccionEnvio: '' };
 
-  constructor(private paqueteService: PaqueteService) {}
+  constructor(private paqueteService: PaqueteService, private api: ApiService) {}
 
   get misPedidos(): Paquete[] {
     return this.paqueteService.getAll().filter(p => p.cliente === this.nombreCliente);
@@ -49,14 +50,18 @@ export class ClientePrincipal implements OnInit {
       alert('Por favor completa todos los campos obligatorios.');
       return;
     }
-    const nuevo = this.paqueteService.agregar({
-      tipoPaquete:    'Carta',
-      contenido:      'Carta de ' + this.cartaForm.remitente + ' para ' + this.cartaForm.destinatario,
-      direccionEnvio: this.cartaForm.direccionEnvio,
-      cliente:        this.nombreCliente,
+    const contenido = 'Carta de ' + this.cartaForm.remitente + ' para ' + this.cartaForm.destinatario;
+    this.api.paqueteCrear('CARTA', contenido, this.cartaForm.direccionEnvio).subscribe({
+      next: (msg) => {
+        // Tambien agregar al servicio local para que mis-pedidos lo muestre
+        const nuevo = this.paqueteService.agregar({
+          tipoPaquete: 'Carta', contenido, direccionEnvio: this.cartaForm.direccionEnvio, cliente: this.nombreCliente,
+        });
+        this.mensajeExito = 'Carta registrada correctamente. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
+        this.cartaForm = { remitente: '', destinatario: '', direccionEnvio: '', descripcion: '' };
+      },
+      error: (err) => alert(err?.error || 'Error al registrar la carta'),
     });
-    this.mensajeExito = 'Carta registrada correctamente. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
-    this.cartaForm = { remitente: '', destinatario: '', direccionEnvio: '', descripcion: '' };
   }
 
   enviarAlimenticio(): void {
@@ -64,14 +69,17 @@ export class ClientePrincipal implements OnInit {
       alert('Por favor completa todos los campos obligatorios.');
       return;
     }
-    const nuevo = this.paqueteService.agregar({
-      tipoPaquete:    'Alimenticio',
-      contenido:      this.alimenticioForm.contenido,
-      direccionEnvio: this.alimenticioForm.direccionEnvio,
-      cliente:        this.nombreCliente,
+    this.api.paqueteCrear('ALIMENTICIO', this.alimenticioForm.contenido, this.alimenticioForm.direccionEnvio).subscribe({
+      next: (msg) => {
+        const nuevo = this.paqueteService.agregar({
+          tipoPaquete: 'Alimenticio', contenido: this.alimenticioForm.contenido,
+          direccionEnvio: this.alimenticioForm.direccionEnvio, cliente: this.nombreCliente,
+        });
+        this.mensajeExito = 'Paquete alimenticio registrado. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
+        this.alimenticioForm = { contenido: '', pesoKg: 0, requiereRefrigeracion: false, direccionEnvio: '' };
+      },
+      error: (err) => alert(err?.error || 'Error al registrar el paquete'),
     });
-    this.mensajeExito = 'Paquete alimenticio registrado. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
-    this.alimenticioForm = { contenido: '', pesoKg: 0, requiereRefrigeracion: false, direccionEnvio: '' };
   }
 
   enviarNoAlimenticio(): void {
@@ -79,17 +87,21 @@ export class ClientePrincipal implements OnInit {
       alert('Por favor completa todos los campos obligatorios.');
       return;
     }
-    const nuevo = this.paqueteService.agregar({
-      tipoPaquete:    'No Alimenticio',
-      contenido:      this.noAlimenticioForm.contenido,
-      direccionEnvio: this.noAlimenticioForm.direccionEnvio,
-      cliente:        this.nombreCliente,
+    this.api.paqueteCrear('NO_ALIMENTICIO', this.noAlimenticioForm.contenido, this.noAlimenticioForm.direccionEnvio).subscribe({
+      next: (msg) => {
+        const nuevo = this.paqueteService.agregar({
+          tipoPaquete: 'No Alimenticio', contenido: this.noAlimenticioForm.contenido,
+          direccionEnvio: this.noAlimenticioForm.direccionEnvio, cliente: this.nombreCliente,
+        });
+        this.mensajeExito = 'Paquete no alimenticio registrado. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
+        this.noAlimenticioForm = { contenido: '', pesoKg: 0, esFragil: false, direccionEnvio: '' };
+      },
+      error: (err) => alert(err?.error || 'Error al registrar el paquete'),
     });
-    this.mensajeExito = 'Paquete no alimenticio registrado. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
-    this.noAlimenticioForm = { contenido: '', pesoKg: 0, esFragil: false, direccionEnvio: '' };
   }
 
   logout(): void {
+    this.api.clienteLogout().subscribe({ error: () => {} });
     this.cerrarSesionEvent.emit('login');
   }
 }
