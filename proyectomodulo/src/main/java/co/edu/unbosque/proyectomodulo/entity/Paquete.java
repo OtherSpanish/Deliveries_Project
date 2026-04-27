@@ -49,6 +49,7 @@ public class Paquete {
 
 	private String destinatario;
 
+	
 	@Enumerated(EnumType.STRING)
 	private EstadoPaquete estadoPaquete;
 
