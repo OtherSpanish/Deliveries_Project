@@ -23,13 +23,17 @@ public class ConductorController {
     @PostMapping("/login")
     public ResponseEntity<String> loginConductor(@RequestParam String usuario, @RequestParam String contrasenia) {
         int status = cService.login(usuario, contrasenia);
-        if (status == 0) return new ResponseEntity<>("Conductor ingresado", HttpStatus.OK);
+        if (status == 0) {
+        	return new ResponseEntity<>("Conductor ingresado", HttpStatus.OK);
+        }        	
         return new ResponseEntity<>("Credenciales invalidas", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
-        if (!cService.isLogged()) return new ResponseEntity<>("No hay sesion iniciada", HttpStatus.BAD_REQUEST);
+        if (!cService.isLogged()) {
+        	return new ResponseEntity<>("No hay sesion iniciada", HttpStatus.BAD_REQUEST);
+        }        	
         cService.logout();
         return new ResponseEntity<>("Sesion cerrada", HttpStatus.OK);
     }
@@ -37,7 +41,10 @@ public class ConductorController {
     @GetMapping("/mostrarpedidos")
     public ResponseEntity<String> mostrarTodo() {
         String paquetes = pService.getAll();
-        if (paquetes == null) return new ResponseEntity<>("Se necesita ingresar un conductor o un admin", HttpStatus.UNAUTHORIZED);
+        if (paquetes == null) {
+        	return new ResponseEntity<>("Se necesita ingresar un conductor o un admin", HttpStatus.UNAUTHORIZED);
+        }
+        	
         return new ResponseEntity<>(paquetes, HttpStatus.OK);
     }
 }

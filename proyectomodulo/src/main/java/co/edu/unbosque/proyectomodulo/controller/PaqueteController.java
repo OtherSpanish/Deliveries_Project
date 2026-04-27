@@ -47,27 +47,32 @@ public class PaqueteController {
 		int minuto = Integer.parseInt(ahora.format(DateTimeFormatter.ofPattern("mm")));
 		int precio;
 
-		if (hora > 22)
-			hora = 8;
+		if (hora > 22) {
+			hora = 8;			
+		}
 
 		switch (tipoPaquete) {
-		case CARTA:
+		case CARTA:{
 			dia += 1;
 			hora = 8;
 			minuto = 0;
 			precio = 10000;
 			break;
-		case ALIMENTICIO:
+		}
+			
+		case ALIMENTICIO: {
 			hora += 6;
 			minuto = 0;
 			precio = 20000;
-			break;
-		case NO_ALIMENTICIO:
+			break;			
+		}
+		case NO_ALIMENTICIO: {
 			dia += 1;
 			hora = 8;
 			minuto = 0;
 			precio = 30000;
-			break;
+			break;			
+		}
 		default:
 			return new ResponseEntity<>("Ingrese un tipo de paquete valido (CARTA, ALIMENTICIO, NO_ALIMENTICIO)",
 					HttpStatus.BAD_REQUEST);
@@ -78,14 +83,15 @@ public class PaqueteController {
 		String clientePaquete = clienteService.getClienteLogueado().getUsuario();
 		String precioEnvio;
 
-		// Bug fix: añadir caso CONCURRENTE
 		switch (clienteService.getClienteLogueado().getTipoCliente()) {
-		case NORMAL:
+		case NORMAL: {
 			precioEnvio = String.valueOf(precio);
-			break;
-		case PREMIUM:
+			break;			
+		}
+		case PREMIUM: {
 			precioEnvio = String.valueOf(precio - (precio * 0.30));
 			break;
+		}
 		default:
 			return new ResponseEntity<>("Tipo de usuario invalido", HttpStatus.BAD_REQUEST);
 		}

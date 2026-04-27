@@ -31,15 +31,17 @@ public class ClienteController {
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestParam String usuario, @RequestParam String contrasenia) {
 		int status = clienteService.login(usuario, contrasenia);
-		if (status == 0)
-			return new ResponseEntity<>("Login exitoso", HttpStatus.OK);
+		if (status == 0) {
+			return new ResponseEntity<>("Login exitoso", HttpStatus.OK);			
+		}
 		return new ResponseEntity<>("Credenciales incorrectas", HttpStatus.UNAUTHORIZED);
 	}
 
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout() {
-		if (!clienteService.isLogged())
-			return new ResponseEntity<>("No hay sesion iniciada", HttpStatus.BAD_REQUEST);
+		if (!clienteService.isLogged()) {
+			return new ResponseEntity<>("No hay sesion iniciada", HttpStatus.BAD_REQUEST);			
+		}
 		clienteService.logout();
 		return new ResponseEntity<>("Sesion cerrada", HttpStatus.OK);
 	}
@@ -49,15 +51,21 @@ public class ClienteController {
 			@RequestParam String cedula, @RequestParam TipoCliente tipoCliente) {
 		int status = clienteService.create(new ClienteDTO(usuario, contrasenia, cedula, tipoCliente));
 		switch (status) {
-		case 0:
+		case 0: {
 			return new ResponseEntity<>("Usuario registrado", HttpStatus.CREATED);
-		case 1:
+		}
+			
+		case 1: {
 			return new ResponseEntity<>("Ingrese correctamente el tipo de usuario (NORMAL, PREMIUM)",
 					HttpStatus.BAD_REQUEST);
-		case 2:
+		}
+			
+		case 2: {		
 			return new ResponseEntity<>("El Nombre de usuario ya se encuentra registrado", HttpStatus.BAD_REQUEST);
-		case 3:
+		}
+		case 3: {
 			return new ResponseEntity<>("Ningun usuario puede estar ingresado en este momento", HttpStatus.BAD_REQUEST);
+		}
 		default:
 			return new ResponseEntity<>("Error al crear", HttpStatus.CONFLICT);
 		}
