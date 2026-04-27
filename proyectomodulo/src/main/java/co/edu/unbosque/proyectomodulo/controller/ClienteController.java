@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
 import co.edu.unbosque.proyectomodulo.dto.TipoCliente;
+import co.edu.unbosque.proyectomodulo.entity.Cliente;
+import co.edu.unbosque.proyectomodulo.entity.Paquete;
 import co.edu.unbosque.proyectomodulo.service.ClienteService;
+import co.edu.unbosque.proyectomodulo.service.PaqueteService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -36,6 +40,8 @@ public class ClienteController {
 	/** Servicio para operaciones relacionadas con clientes. */
 	@Autowired
 	private ClienteService clienteService;
+	@Autowired
+	private PaqueteService paqueteService;
 
 	/**
 	 * Inicia sesión como cliente en el sistema.
@@ -123,7 +129,10 @@ public class ClienteController {
 	 */
 	@GetMapping("/precioproducto")
 	public ResponseEntity<String> mostrarPrecio() {
-		
 		return new ResponseEntity<>("Producto: Carta | Precio base: $ 5000 \nProducto: No Alimenticios | Precio base: $ 8000 \nProducto: Alimenticios | Precio base: $ 10000 \n" , HttpStatus.OK);
+	}
+	@GetMapping("/paquetesporcliente")
+	public ResponseEntity<List<Paquete>> PaquetesPorCliente() {
+		return new ResponseEntity<>(paqueteService.paquetesPorCliente(clienteService.getClienteLogueado().getUsuario()), HttpStatus.OK);
 	}
 }

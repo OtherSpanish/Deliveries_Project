@@ -101,14 +101,14 @@ public class PaqueteController {
 				precio = 10000;
 				break;
 			}
-			case "alimenticios": {
+			case "alimenticio": {
 				int entrega = 6 + hora;
 				hora = entrega;
 				minuto = 00;
 				precio = 20000;
 				break;
 			}
-			case "no alimenticios": {
+			case "no alimenticio": {
 				int dias = dia + 1;
 				dia = dias;
 				hora = 8;
