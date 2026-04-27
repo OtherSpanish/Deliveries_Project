@@ -39,12 +39,14 @@ public class PaqueteDTO {
 
 	private String clientePaquete;
 
+	private String destinatario;
+
 	public PaqueteDTO() {
 		super();
 	}
 
 	public PaqueteDTO(TipoPaquete tipoPaquete, String contenido, String direccionDeEnvio, LocalDateTime tiempoDeEnvio,
-			String precioEnvio, EstadoPaquete estadoPaquete, String clientePaquete) {
+			String precioEnvio, EstadoPaquete estadoPaquete, String clientePaquete, String destinatario) {
 		super();
 		this.tipoPaquete = tipoPaquete;
 		this.contenido = contenido;
@@ -53,6 +55,7 @@ public class PaqueteDTO {
 		this.precioEnvio = precioEnvio;
 		this.estadoPaquete = estadoPaquete;
 		this.clientePaquete = clientePaquete;
+		this.destinatario = destinatario;
 	}
 
 	public Long getId() {
@@ -119,17 +122,26 @@ public class PaqueteDTO {
 		this.clientePaquete = clientePaquete;
 	}
 
+	public String getDestinatario() {
+		return destinatario;
+	}
+
+	public void setDestinatario(String destinatario) {
+		this.destinatario = destinatario;
+	}
+
 	@Override
 	public String toString() {
-		return super.toString() + "PaqueteDTO [id=" + id + ", tipoPaquete=" + tipoPaquete + ", contenido=" + contenido
+		return "PaqueteDTO [id=" + id + ", tipoPaquete=" + tipoPaquete + ", contenido=" + contenido
 				+ ", direccionDeEnvio=" + direccionDeEnvio + ", tiempoDeEnvio=" + tiempoDeEnvio + ", precioEnvio="
-				+ precioEnvio + ", estadoPaquete=" + estadoPaquete + ", clientePaquete=" + clientePaquete + "]";
+				+ precioEnvio + ", estadoPaquete=" + estadoPaquete + ", clientePaquete=" + clientePaquete
+				+ ", destinatario=" + destinatario + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(clientePaquete, contenido, direccionDeEnvio, estadoPaquete, id, precioEnvio, tiempoDeEnvio,
-				tipoPaquete);
+		return Objects.hash(clientePaquete, contenido, destinatario, direccionDeEnvio, estadoPaquete, id, precioEnvio,
+				tiempoDeEnvio, tipoPaquete);
 	}
 
 	@Override
@@ -142,10 +154,10 @@ public class PaqueteDTO {
 			return false;
 		PaqueteDTO other = (PaqueteDTO) obj;
 		return Objects.equals(clientePaquete, other.clientePaquete) && Objects.equals(contenido, other.contenido)
-				&& Objects.equals(direccionDeEnvio, other.direccionDeEnvio)
-				&& Objects.equals(estadoPaquete, other.estadoPaquete) && Objects.equals(id, other.id)
-				&& Objects.equals(precioEnvio, other.precioEnvio) && Objects.equals(tiempoDeEnvio, other.tiempoDeEnvio)
-				&& Objects.equals(tipoPaquete, other.tipoPaquete);
+				&& Objects.equals(destinatario, other.destinatario)
+				&& Objects.equals(direccionDeEnvio, other.direccionDeEnvio) && estadoPaquete == other.estadoPaquete
+				&& Objects.equals(id, other.id) && Objects.equals(precioEnvio, other.precioEnvio)
+				&& Objects.equals(tiempoDeEnvio, other.tiempoDeEnvio) && tipoPaquete == other.tipoPaquete;
 	}
 
 }

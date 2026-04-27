@@ -1,12 +1,16 @@
 package co.edu.unbosque.proyectomodulo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
 import co.edu.unbosque.proyectomodulo.dto.TipoCliente;
+import co.edu.unbosque.proyectomodulo.entity.Paquete;
 import co.edu.unbosque.proyectomodulo.service.ClienteService;
+import co.edu.unbosque.proyectomodulo.service.PaqueteService;
 
 /**
  * Controlador REST para operaciones de clientes. Permite autenticación,
@@ -21,6 +25,8 @@ public class ClienteController {
 
 	@Autowired
 	private ClienteService clienteService;
+	@Autowired
+	private PaqueteService pService;
 
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestParam String usuario, @RequestParam String contrasenia) {
@@ -66,4 +72,11 @@ public class ClienteController {
 	public ResponseEntity<String> mostrarPrecio() {
 		return new ResponseEntity<>("Carta: $10.000 | Alimenticios: $20.000 | No Alimenticios: $30.000", HttpStatus.OK);
 	}
+	
+	@GetMapping("/clientePaquete")
+	public ResponseEntity<List<Paquete>> clientePorPaquete() {
+		String clientePorPaquete =  clienteService.getClienteLogueado().getUsuario();
+		return new ResponseEntity<>(pService.paquetesPorCliente(clientePorPaquete), HttpStatus.OK);
+	}
+	
 }

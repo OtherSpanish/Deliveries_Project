@@ -30,7 +30,7 @@ public class PaqueteController {
      */
     @PostMapping("/crear")
     public ResponseEntity<String> crearPaquete(@RequestParam TipoPaquete tipoPaquete,
-            @RequestParam String contenido, @RequestParam String direccionAEnviar) {
+            @RequestParam String contenido, @RequestParam String direccionAEnviar, @RequestParam String destinatario) {
         if (clienteService.getClienteLogueado() == null) {
             return new ResponseEntity<>("Se debe ingresar un usuario", HttpStatus.UNAUTHORIZED);
         }
@@ -79,7 +79,7 @@ public class PaqueteController {
         }
 
         PaqueteDTO nuevo = new PaqueteDTO(tipoPaquete, contenido, direccionAEnviar,
-                tiempoDeEnvio, precioEnvio, estadoPaquete, clientePaquete);
+                tiempoDeEnvio, precioEnvio, estadoPaquete, clientePaquete, destinatario);
         int status = paqueteService.create(nuevo);
         switch (status) {
             case 0: return new ResponseEntity<>("Paquete creado", HttpStatus.CREATED);
