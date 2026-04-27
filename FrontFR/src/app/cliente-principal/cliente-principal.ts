@@ -21,7 +21,7 @@ export class ClientePrincipal implements OnInit {
   vistaActiva: VistaCliente = 'ninguna';
   mensajeExito: string = '';
 
-  cartaForm = { remitente: '', destinatario: '', direccionEnvio: '', descripcion: '' };
+  cartaForm = { remitente: '', destinatario: '', direccionEnvio: '', contenido: '' };
   alimenticioForm = { contenido: '', pesoKg: 0, requiereRefrigeracion: false, direccionEnvio: '' };
   noAlimenticioForm = { contenido: '', pesoKg: 0, esFragil: false, direccionEnvio: '' };
 
@@ -40,17 +40,17 @@ export class ClientePrincipal implements OnInit {
   setVista(vista: VistaCliente): void {
     this.vistaActiva = vista;
     this.mensajeExito = '';
-    this.cartaForm         = { remitente: '', destinatario: '', direccionEnvio: '', descripcion: '' };
+    this.cartaForm         = { remitente: '', destinatario: '', direccionEnvio: '', contenido: '' };
     this.alimenticioForm   = { contenido: '', pesoKg: 0, requiereRefrigeracion: false, direccionEnvio: '' };
     this.noAlimenticioForm = { contenido: '', pesoKg: 0, esFragil: false, direccionEnvio: '' };
   }
 
   enviarCarta(): void {
-    if (!this.cartaForm.remitente || !this.cartaForm.destinatario || !this.cartaForm.direccionEnvio) {
+    if (!this.cartaForm.remitente || !this.cartaForm.destinatario || !this.cartaForm.direccionEnvio || !this.cartaForm.contenido) {
       alert('Por favor completa todos los campos obligatorios.');
       return;
     }
-    const contenido = 'Carta de ' + this.cartaForm.remitente + ' para ' + this.cartaForm.destinatario;
+    const contenido = this.cartaForm.contenido;
     this.api.paqueteCrear('CARTA', contenido, this.cartaForm.direccionEnvio).subscribe({
       next: (msg) => {
         // Tambien agregar al servicio local para que mis-pedidos lo muestre
@@ -58,7 +58,7 @@ export class ClientePrincipal implements OnInit {
           tipoPaquete: 'Carta', contenido, direccionEnvio: this.cartaForm.direccionEnvio, cliente: this.nombreCliente,
         });
         this.mensajeExito = 'Carta registrada correctamente. Tu pedido ' + nuevo.id + ' ya está en el sistema.';
-        this.cartaForm = { remitente: '', destinatario: '', direccionEnvio: '', descripcion: '' };
+        this.cartaForm = { remitente: '', destinatario: '', direccionEnvio: '', contenido: '' };
       },
       error: (err) => alert(err?.error || 'Error al registrar la carta'),
     });
