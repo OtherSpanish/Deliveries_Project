@@ -12,12 +12,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.Gson;
 
 import co.edu.unbosque.proyectomodulo.dto.PaqueteDTO;
-import co.edu.unbosque.proyectomodulo.entity.Cliente;
 import co.edu.unbosque.proyectomodulo.entity.Paquete;
 import co.edu.unbosque.proyectomodulo.exceptions.DireccionException;
 import co.edu.unbosque.proyectomodulo.exceptions.LanzadorException;
-import co.edu.unbosque.proyectomodulo.exceptions.TipoPaqueteException;
-import co.edu.unbosque.proyectomodulo.repository.ClienteRepository;
 import co.edu.unbosque.proyectomodulo.repository.PaqueteRepository;
 
 /**
@@ -33,7 +30,7 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	/** Repositorio para acceso a datos de paquetes. */
 	@Autowired
 	private PaqueteRepository paqueteRep;
-	
+
 	/** Mapper para conversión entre entidades y DTOs. */
 	@Autowired
 	private ModelMapper mapper;
@@ -260,8 +257,5 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 
 		return dtoList;
 	}
-	public List<Paquete> paquetesPorCliente(String clientePaquete) {
-	    return paqueteRep.findByClientePaquete(clientePaquete);
-	}
-	
+
 }

@@ -78,69 +78,16 @@ public class PaqueteController {
                 return new ResponseEntity<>("Tipo de usuario invalido", HttpStatus.BAD_REQUEST);
         }
 
-			if (hora > 22) {
-				hora = 8;
-			}
-			switch (tipoPaquete.toString().toLowerCase()) {
-			case "carta": {
-				int dias = dia + 1;
-				dia = dias;
-				hora = 8;
-				minuto = 00;
-				precio = 10000;
-				break;
-			}
-			case "alimenticio": {
-				int entrega = 6 + hora;
-				hora = entrega;
-				minuto = 00;
-				precio = 20000;
-				break;
-			}
-			case "no alimenticio": {
-				int dias = dia + 1;
-				dia = dias;
-				hora = 8;
-				minuto = 00;
-				precio = 30000;
-				break;
-			}
-			default:
-				return new ResponseEntity<>("Ingrese un tipo de paquete valido (carta, alimenticios, no alimenticios)",
-						HttpStatus.BAD_REQUEST);
-			}
-			LocalDateTime tiempoDeEnvio = LocalDateTime.of(anio, mes, dia, hora, minuto);
-			String precioEnvio = "";
-			EstadoPaquete estadoPaquete = EstadoPaquete.EN_BODEGA;
-			String clientePaquete = clienteService.getClienteLogueado().getUsuario();
-			switch (clienteService.getClienteLogueado().getTipoCliente()) {
-			case NORMAL: {
-				precioEnvio = "" + precio;
-				break;
-			}
-			case CONCURRENTE: {
-				precioEnvio = "" + (precio - (precio * 0.10));
-				break;
-			}
-			case PREMIUM: {
-				precioEnvio = "" + (precio - (precio * 0.30));
-				break;
-			}
-			default:
-				return new ResponseEntity<>("Tipo de usuario invalido", HttpStatus.BAD_REQUEST);
-			}
-			PaqueteDTO nuevo = new PaqueteDTO(tipoPaquete, contenido, direccionAEnviar, tiempoDeEnvio, precioEnvio, estadoPaquete, clientePaquete);
-			int status = paqueteService.create(nuevo);
-			if (status == 0) {
-				return new ResponseEntity<>("Paquete creado", HttpStatus.CREATED);
-			} else if (status == 1) {
-				return new ResponseEntity<>("Tipo invalido", HttpStatus.BAD_REQUEST);
-			} else if (status == 2) {
-				return new ResponseEntity<>("Debe iniciar sesion", HttpStatus.UNAUTHORIZED);
-			}
-			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
-		}
-	}
+        PaqueteDTO nuevo = new PaqueteDTO(tipoPaquete, contenido, direccionAEnviar,
+                tiempoDeEnvio, precioEnvio, estadoPaquete, clientePaquete);
+        int status = paqueteService.create(nuevo);
+        switch (status) {
+            case 0: return new ResponseEntity<>("Paquete creado", HttpStatus.CREATED);
+            case 1: return new ResponseEntity<>("Tipo invalido", HttpStatus.BAD_REQUEST);
+            case 2: return new ResponseEntity<>("Debe iniciar sesion", HttpStatus.UNAUTHORIZED);
+            default: return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
+        }
+    }
 
     /**
      * Retorna los tiempos de entrega estimados por tipo de paquete.
