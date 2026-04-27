@@ -54,12 +54,19 @@ public class Paquete {
 
 	private String clientePaquete;
 
+	private float pesoKg;
+
+	private boolean esFragil;
+
+	private boolean requiereRefrigeracion;
+
 	public Paquete() {
 		super();
 	}
 
 	public Paquete(TipoPaquete tipoPaquete, String contenido, String direccionDeEnvio, LocalDateTime tiempoDeEnvio,
-			String precioEnvio, String destinatario, EstadoPaquete estadoPaquete, String clientePaquete) {
+			String precioEnvio, String destinatario, EstadoPaquete estadoPaquete, String clientePaquete, float pesoKg,
+			boolean esFragil, boolean requiereRefrigeracion) {
 		super();
 		this.tipoPaquete = tipoPaquete;
 		this.contenido = contenido;
@@ -69,6 +76,9 @@ public class Paquete {
 		this.destinatario = destinatario;
 		this.estadoPaquete = estadoPaquete;
 		this.clientePaquete = clientePaquete;
+		this.pesoKg = pesoKg;
+		this.esFragil = esFragil;
+		this.requiereRefrigeracion = requiereRefrigeracion;
 	}
 
 	public Long getId() {
@@ -143,18 +153,43 @@ public class Paquete {
 		this.clientePaquete = clientePaquete;
 	}
 
+	public float getPesoKg() {
+		return pesoKg;
+	}
+
+	public void setPesoKg(float pesoKg) {
+		this.pesoKg = pesoKg;
+	}
+
+	public boolean isEsFragil() {
+		return esFragil;
+	}
+
+	public void setEsFragil(boolean esFragil) {
+		this.esFragil = esFragil;
+	}
+
+	public boolean isRequiereRefrigeracion() {
+		return requiereRefrigeracion;
+	}
+
+	public void setRequiereRefrigeracion(boolean requiereRefrigeracion) {
+		this.requiereRefrigeracion = requiereRefrigeracion;
+	}
+
 	@Override
 	public String toString() {
 		return "Paquete [id=" + id + ", tipoPaquete=" + tipoPaquete + ", contenido=" + contenido + ", direccionDeEnvio="
 				+ direccionDeEnvio + ", tiempoDeEnvio=" + tiempoDeEnvio + ", precioEnvio=" + precioEnvio
 				+ ", destinatario=" + destinatario + ", estadoPaquete=" + estadoPaquete + ", clientePaquete="
-				+ clientePaquete + "]";
+				+ clientePaquete + ", pesoKg=" + pesoKg + ", esFragil=" + esFragil + ", requiereRefrigeracion="
+				+ requiereRefrigeracion + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(clientePaquete, contenido, destinatario, direccionDeEnvio, estadoPaquete, id, precioEnvio,
-				tiempoDeEnvio, tipoPaquete);
+		return Objects.hash(clientePaquete, contenido, destinatario, direccionDeEnvio, esFragil, estadoPaquete, id,
+				pesoKg, precioEnvio, requiereRefrigeracion, tiempoDeEnvio, tipoPaquete);
 	}
 
 	@Override
@@ -168,8 +203,11 @@ public class Paquete {
 		Paquete other = (Paquete) obj;
 		return Objects.equals(clientePaquete, other.clientePaquete) && Objects.equals(contenido, other.contenido)
 				&& Objects.equals(destinatario, other.destinatario)
-				&& Objects.equals(direccionDeEnvio, other.direccionDeEnvio) && estadoPaquete == other.estadoPaquete
-				&& Objects.equals(id, other.id) && Objects.equals(precioEnvio, other.precioEnvio)
+				&& Objects.equals(direccionDeEnvio, other.direccionDeEnvio) && esFragil == other.esFragil
+				&& estadoPaquete == other.estadoPaquete && Objects.equals(id, other.id)
+				&& Float.floatToIntBits(pesoKg) == Float.floatToIntBits(other.pesoKg)
+				&& Objects.equals(precioEnvio, other.precioEnvio)
+				&& requiereRefrigeracion == other.requiereRefrigeracion
 				&& Objects.equals(tiempoDeEnvio, other.tiempoDeEnvio) && tipoPaquete == other.tipoPaquete;
 	}
 
