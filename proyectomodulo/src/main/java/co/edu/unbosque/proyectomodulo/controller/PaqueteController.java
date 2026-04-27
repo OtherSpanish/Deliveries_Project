@@ -146,8 +146,6 @@ public class PaqueteController {
 		return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 	}
 
-
-
 	/**
 	 * Retorna los tiempos de entrega estimados por tipo de paquete.
 	 */

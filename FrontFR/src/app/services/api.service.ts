@@ -153,11 +153,28 @@ export class ApiService {
 
   // ── PAQUETE ───────────────────────────────────────────────────────────────
 
-  paqueteCrear(tipoPaquete: string, contenido: string, direccionAEnviar: string): Observable<string> {
+  paqueteCrear(
+    tipoPaquete: string,
+    contenido: string,
+    direccionAEnviar: string,
+    destinatario: string,
+    pesoKg: number,
+    esFragil: boolean,
+    requiereRefrigeracion: boolean
+  ): Observable<string> {
+
     const params = new HttpParams()
       .set('tipoPaquete', tipoPaquete)
       .set('contenido', contenido)
-      .set('direccionAEnviar', direccionAEnviar);
-    return this.http.post(`${this.BASE}/paquete/crear`, null, { params, responseType: 'text' });
+      .set('direccionAEnviar', direccionAEnviar)
+      .set('destinatario', destinatario)
+      .set('pesoKg', pesoKg.toString())
+      .set('esFragil', esFragil.toString())
+      .set('requiereRefrigeracion', requiereRefrigeracion.toString());
+
+    return this.http.post(`${this.BASE}/paquete/crear`, null, {
+      params,
+      responseType: 'text'
+    });
   }
 }
