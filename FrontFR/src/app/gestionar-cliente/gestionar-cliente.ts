@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { ApiService } from '../services/api.service';
 
 export type VistaActiva = 'ninguna' | 'mostrar' | 'actualizar' | 'borrar' | 'editar';
 
@@ -26,23 +27,36 @@ export class GestionarCliente {
   editForm = { usuario: '', contrasena: '', cedula: '', tipoCliente: '' };
   mensajeExito = '';
 
-  clientes: Cliente[] = [
-    { numero: 1,  id: 'CLI-001', usuario: 'jperez',     contrasena: 'pass1234', cedula: '10234567',  tipoCliente: 'Premium'   },
-    { numero: 2,  id: 'CLI-002', usuario: 'mgarcia',    contrasena: 'garcia99', cedula: '20345678',  tipoCliente: 'Estándar'  },
-    { numero: 3,  id: 'CLI-003', usuario: 'lrodriguez', contrasena: 'lrod2024', cedula: '30456789',  tipoCliente: 'Empresarial'},
-    { numero: 4,  id: 'CLI-004', usuario: 'cmartinez',  contrasena: 'cmart456', cedula: '40567890',  tipoCliente: 'Premium'   },
-    { numero: 5,  id: 'CLI-005', usuario: 'alopez',     contrasena: 'lopez789', cedula: '50678901',  tipoCliente: 'Estándar'  },
-    { numero: 6,  id: 'CLI-006', usuario: 'rherrera',   contrasena: 'rherr321', cedula: '60789012',  tipoCliente: 'Empresarial'},
-    { numero: 7,  id: 'CLI-007', usuario: 'storres',    contrasena: 'storr654', cedula: '70890123',  tipoCliente: 'Estándar'  },
-    { numero: 8,  id: 'CLI-008', usuario: 'dflores',    contrasena: 'dflor987', cedula: '80901234',  tipoCliente: 'Premium'   },
-    { numero: 9,  id: 'CLI-009', usuario: 'ncastillo',  contrasena: 'ncast111', cedula: '90123456',  tipoCliente: 'Estándar'  },
-    { numero: 10, id: 'CLI-010', usuario: 'emoreno',    contrasena: 'emor222',  cedula: '10012345',  tipoCliente: 'Empresarial'},
-  ];
+  clientes: Cliente[] = [];
+
+  constructor(private api: ApiService) {}
 
   setVista(vista: VistaActiva): void {
     this.vistaActiva = vista;
     this.clienteEditando = null;
     this.mensajeExito = '';
+    if (vista === 'mostrar' || vista === 'actualizar' || vista === 'borrar') {
+      this.cargarClientes();
+    }
+  }
+
+  cargarClientes(): void {
+    this.api.adminMostrarClientes().subscribe({
+      next: (data) => {
+        try {
+          const lista = JSON.parse(data);
+          this.clientes = lista.map((c: any, i: number) => ({
+            numero: i + 1,
+            id: String(c.id),
+            usuario: c.usuario,
+            contrasena: c.contrasenia,
+            cedula: c.cedula,
+            tipoCliente: c.tipoCliente,
+          }));
+        } catch { this.clientes = []; }
+      },
+      error: () => { this.clientes = []; }
+    });
   }
 
   iniciarEdicion(cliente: Cliente): void {
@@ -58,19 +72,24 @@ export class GestionarCliente {
 
   guardarEdicion(): void {
     if (!this.clienteEditando) return;
-    const idx = this.clientes.findIndex(c => c.id === this.clienteEditando!.id);
-    if (idx !== -1) {
-      this.clientes[idx] = {
-        ...this.clientes[idx],
-        usuario: this.editForm.usuario,
-        contrasena: this.editForm.contrasena,
-        cedula: this.editForm.cedula,
-        tipoCliente: this.editForm.tipoCliente,
-      };
-    }
-    this.mensajeExito = `Cliente ${this.clienteEditando.id} actualizado correctamente.`;
-    this.clienteEditando = null;
-    this.vistaActiva = 'actualizar';
+    this.api.adminActualizarCliente(
+      Number(this.clienteEditando.id),
+      this.editForm.usuario,
+      this.editForm.contrasena,
+      this.editForm.cedula,
+      this.editForm.tipoCliente.toUpperCase()
+    ).subscribe({
+      next: (msg) => {
+        const idx = this.clientes.findIndex(c => c.id === this.clienteEditando!.id);
+        if (idx !== -1) {
+          this.clientes[idx] = { ...this.clientes[idx], ...this.editForm, contrasena: this.editForm.contrasena };
+        }
+        this.mensajeExito = `Cliente ${this.clienteEditando!.id} actualizado correctamente.`;
+        this.clienteEditando = null;
+        this.vistaActiva = 'actualizar';
+      },
+      error: (err) => alert(err?.error || 'Error al actualizar cliente'),
+    });
   }
 
   cancelarEdicion(): void {
@@ -80,8 +99,13 @@ export class GestionarCliente {
 
   borrarCliente(cliente: Cliente): void {
     if (confirm(`¿Eliminar al cliente ${cliente.id} (${cliente.usuario})?`)) {
-      this.clientes = this.clientes.filter(c => c.id !== cliente.id);
-      this.mensajeExito = `Cliente ${cliente.id} eliminado.`;
+      this.api.adminBorrarCliente(Number(cliente.id)).subscribe({
+        next: () => {
+          this.clientes = this.clientes.filter(c => c.id !== cliente.id);
+          this.mensajeExito = `Cliente ${cliente.id} eliminado.`;
+        },
+        error: (err) => alert(err?.error || 'Error al eliminar cliente'),
+      });
     }
   }
 

@@ -58,4 +58,8 @@ export class PaqueteService {
   eliminar(id: string): void {
     this.paquetes = this.paquetes.filter(p => p.id !== id);
   }
+
+  setPaquetes(paquetes: Paquete[]): void {
+    this.paquetes = paquetes;
+  }
 }
