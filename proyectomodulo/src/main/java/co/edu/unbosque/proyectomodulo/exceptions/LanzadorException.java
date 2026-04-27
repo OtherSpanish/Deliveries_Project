@@ -44,7 +44,16 @@ public class LanzadorException {
 	 * @throws TipoPaqueteException si el tipo es nulo o no corresponde a ninguno de
 	 *                              los tipos permitidos.
 	 */
-	
+	public static void verificarTipoPaquete(String tipo) throws TipoPaqueteException {
+		if (tipo == null) {
+			throw new TipoPaqueteException();
+		}
+		String t = tipo.trim().toLowerCase();
+		if (!(t.equals("carta") || t.equals("alimenticios") || t.equals("no alimenticios") || t.equals("no alimenticio")
+				|| t.equals("alimenticio"))) {
+			throw new TipoPaqueteException();
+		}
+	}
 
 	/**
 	 * Verifica que el tipo de vehículo ingresado sea válido. Los tipos válidos son:
