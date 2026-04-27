@@ -73,7 +73,7 @@ export class Login implements OnInit {
   }
 
   registrar() {
-    if (!this.usuario || !this.password || !this.nombre || !this.direccion || !this.cedula || !this.tipoCliente) {
+    if (!this.usuario || !this.password || !this.nombre || !this.cedula || !this.tipoCliente) {
       alert('Completa todos los campos');
       return;
     }
