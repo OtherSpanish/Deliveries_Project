@@ -1,0 +1,34 @@
+-------------------------------------------------------------------------------
+Test set: co.edu.unbosque.proyectomodulo.PaqueteServiceTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 89.31 s <<< FAILURE! -- in co.edu.unbosque.proyectomodulo.PaqueteServiceTest
+co.edu.unbosque.proyectomodulo.PaqueteServiceTest.testUpdateByIdRequiereAdminYCliente -- Time elapsed: 8.331 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <0> but was: <1>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:158)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:139)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:201)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:152)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:147)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:558)
+	at co.edu.unbosque.proyectomodulo.PaqueteServiceTest.testUpdateByIdRequiereAdminYCliente(PaqueteServiceTest.java:216)
+
+co.edu.unbosque.proyectomodulo.PaqueteServiceTest.testGetAllManipuladorPaquetes -- Time elapsed: 6.713 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: not <null>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:159)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:139)
+	at org.junit.jupiter.api.AssertNotNull.failNull(AssertNotNull.java:55)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:40)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:34)
+	at org.junit.jupiter.api.Assertions.assertNotNull(Assertions.java:325)
+	at co.edu.unbosque.proyectomodulo.PaqueteServiceTest.testGetAllManipuladorPaquetes(PaqueteServiceTest.java:176)
+
+co.edu.unbosque.proyectomodulo.PaqueteServiceTest.testGetAllSoloParaRolesAutorizados -- Time elapsed: 6.429 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: not <null>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:159)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:139)
+	at org.junit.jupiter.api.AssertNotNull.failNull(AssertNotNull.java:55)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:40)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:34)
+	at org.junit.jupiter.api.Assertions.assertNotNull(Assertions.java:325)
+	at co.edu.unbosque.proyectomodulo.PaqueteServiceTest.testGetAllSoloParaRolesAutorizados(PaqueteServiceTest.java:160)
+

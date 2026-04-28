@@ -93,8 +93,9 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 * accesible para administradores, conductores o manipuladores de paquetes con
 	 * sesión activa.
 	 *
-	 * @return lista de {@link PaqueteDTO} con todos los paquetes, o {@code null} si
-	 *         ningún usuario autorizado tiene sesión activa
+	 * @return lista de {@link PaqueteDTO} con todos los paquetes serializada en
+	 *         formato JSON, o {@code null} si ningún usuario autorizado tiene sesión
+	 *         activa
 	 */
 	@Override
 	public String getAll() {
@@ -115,8 +116,9 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 * Retorna la lista de todos los paquetes para uso exclusivo de manipuladores de
 	 * paquetes o administradores con sesión activa.
 	 *
-	 * @return lista de {@link PaqueteDTO} con todos los paquetes, o {@code null} si
-	 *         el usuario no tiene los permisos requeridos
+	 * @return lista de {@link PaqueteDTO} con todos los paquetes serializada en
+	 *         formato JSON, o {@code null} si el usuario no tiene los permisos
+	 *         requeridos
 	 */
 	public String getAllManipuladorPaquetes() {
 		Gson gson = Converters.registerLocalDateTime(new GsonBuilder()).create();
@@ -164,11 +166,19 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 	 * sesión activa simultánea de cliente y administrador, además de que los nuevos
 	 * datos superen la validación de tipo y dirección.
 	 *
+	 * <p>Códigos de retorno:
+	 * <ul>
+	 *   <li>{@code 0} — paquete actualizado exitosamente</li>
+	 *   <li>{@code 1} — paquete no encontrado o dirección de envío inválida</li>
+	 *   <li>{@code 2} — cliente y administrador no tienen sesión activa simultáneamente</li>
+	 *   <li>{@code 3} — el cliente no tiene sesión activa</li>
+	 *   <li>{@code 4} — el administrador no tiene sesión activa</li>
+	 * </ul>
+	 *
 	 * @param id   identificador único del paquete a actualizar
 	 * @param data objeto {@link PaqueteDTO} con los nuevos datos del paquete
-	 * @return {@code 0} si el paquete fue actualizado exitosamente, {@code 1} si no
-	 *         se encontró el paquete o los datos son inválidos, {@code 2} si no se
-	 *         cuenta con los permisos requeridos
+	 * @return código entero que indica el resultado de la operación según la tabla
+	 *         descrita anteriormente
 	 */
 	public int updateById(Long id, PaqueteDTO data) {
 
@@ -257,6 +267,16 @@ public class PaqueteService implements CRUDOPERATION<PaqueteDTO> {
 
 		return dtoList;
 	}
+
+	/**
+	 * Retorna la lista de paquetes asociados a un cliente específico, identificado
+	 * por su nombre o identificador de cliente.
+	 *
+	 * @param clientePaquete nombre o identificador del cliente cuyos paquetes se
+	 *                       desean consultar
+	 * @return lista de {@link Paquete} pertenecientes al cliente indicado; lista
+	 *         vacía si no se encontraron registros asociados
+	 */
 	public List<Paquete> paquetesPorCliente(String clientePaquete) {
 	    return paqueteRep.findByClientePaquete(clientePaquete);
 	}
