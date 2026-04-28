@@ -74,40 +74,50 @@ public class LanzadorException {
 	}
 
 	/**
-	 * Verifica que la dirección ingresada sea válida. Una dirección válida no debe
-	 * ser nula, no debe estar vacía y debe tener al menos 5 caracteres.
+	 * Verifica que la dirección ingresada sea válida según el formato colombiano
+	 * estándar. Para ser considerada válida, la dirección debe cumplir todas las
+	 * siguientes condiciones:
+	 * <ul>
+	 *   <li>No ser nula ni estar vacía.</li>
+	 *   <li>Comenzar con una nomenclatura reconocida: {@code calle}, {@code carrera},
+	 *       {@code avenida}, {@code cl}, {@code cra}, {@code av} o {@code cll}.</li>
+	 *   <li>Contener al menos un dígito numérico.</li>
+	 *   <li>Contener los caracteres {@code #} y {@code -}, propios del formato de
+	 *       dirección colombiana (ej. {@code Calle 10 #5-20}).</li>
+	 * </ul>
 	 *
 	 * @param direccion dirección a validar.
-	 * @throws DireccionException si la dirección es nula, está vacía o tiene menos
-	 *                            de 5 caracteres.
+	 * @throws DireccionException si la dirección es nula, está vacía, no inicia con
+	 *                            una nomenclatura válida, no contiene dígitos, o no
+	 *                            incluye los caracteres {@code #} y {@code -}.
 	 */
 	public static void verificarDireccion(String direccion) throws DireccionException {
-		if (direccion == null || direccion.trim().isEmpty()) {
-			throw new DireccionException();
-		}
+	    if (direccion == null || direccion.trim().isEmpty()) {
+	        throw new DireccionException();
+	    }
 
-		String t = direccion.trim().toLowerCase();
+	    String t = direccion.trim().toLowerCase();
 
-		if (!(t.startsWith("calle") || t.startsWith("carrera") || t.startsWith("avenida") || t.startsWith("cl")
-				|| t.startsWith("cra") || t.startsWith("av") || t.startsWith("cll"))) {
-			throw new DireccionException();
-		}
+	    if (!(t.startsWith("calle") || t.startsWith("carrera") || t.startsWith("avenida") || t.startsWith("cl")
+	            || t.startsWith("cra") || t.startsWith("av") || t.startsWith("cll"))) {
+	        throw new DireccionException();
+	    }
 
-		boolean tieneNumero = false;
-		for (char c : t.toCharArray()) {
-			if (Character.isDigit(c)) {
-				tieneNumero = true;
-				break;
-			}
-		}
+	    boolean tieneNumero = false;
+	    for (char c : t.toCharArray()) {
+	        if (Character.isDigit(c)) {
+	            tieneNumero = true;
+	            break;
+	        }
+	    }
 
-		if (!tieneNumero) {
-			throw new DireccionException();
-		}
+	    if (!tieneNumero) {
+	        throw new DireccionException();
+	    }
 
-		if (!t.contains("#") || !t.contains("-")) {
-			throw new DireccionException();
-		}
+	    if (!t.contains("#") || !t.contains("-")) {
+	        throw new DireccionException();
+	    }
 	}
 
 	/**
