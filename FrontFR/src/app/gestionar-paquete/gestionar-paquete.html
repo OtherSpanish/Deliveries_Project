@@ -46,6 +46,11 @@
         <div class="alert-success">✅ {{ mensajeExito }}</div>
       }
 
+      <!-- ERROR -->
+      @if (mensajeError) {
+        <div class="alert-error">⚠️ {{ mensajeError }}</div>
+      }
+
       <!-- MOSTRAR -->
       @if (vistaActiva === 'mostrar') {
         <div class="tabla-container">
