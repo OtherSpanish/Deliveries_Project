@@ -23,13 +23,17 @@ public class ManipuladorPaqueteController {
     @PostMapping("/loginmanipulador")
     public ResponseEntity<String> login(@RequestParam String usuario, @RequestParam String contrasenia) {
         int status = manipuladorService.login(usuario, contrasenia);
-        if (status == 0) return new ResponseEntity<>("Login exitoso", HttpStatus.OK);
+        if (status == 0) {
+        	return new ResponseEntity<>("Login exitoso", HttpStatus.OK);
+        }         	
         return new ResponseEntity<>("Credenciales incorrectas", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/logoutmanipulador")
     public ResponseEntity<String> logout() {
-        if (!manipuladorService.isLogged()) return new ResponseEntity<>("No hay sesion iniciada", HttpStatus.BAD_REQUEST);
+        if (!manipuladorService.isLogged()) {
+        	return new ResponseEntity<>("No hay sesion iniciada", HttpStatus.BAD_REQUEST);        	
+        }
         manipuladorService.logout();
         return new ResponseEntity<>("Sesion cerrada", HttpStatus.OK);
     }
@@ -37,7 +41,9 @@ public class ManipuladorPaqueteController {
     @GetMapping("/mostrarpaquete")
     public ResponseEntity<String> mostrarPaquetes() {
         String paquetes = pService.getAllManipuladorPaquetes();
-        if (paquetes == null) return new ResponseEntity<>("Se necesita ingresar un manipulador de paquetes o un admin", HttpStatus.UNAUTHORIZED);
+        if (paquetes == null) {
+        	return new ResponseEntity<>("Se necesita ingresar un manipulador de paquetes o un admin", HttpStatus.UNAUTHORIZED);
+        }         	
         return new ResponseEntity<>(paquetes, HttpStatus.OK);
     }
 }

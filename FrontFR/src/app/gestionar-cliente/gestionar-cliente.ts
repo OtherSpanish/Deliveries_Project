@@ -19,22 +19,27 @@ export interface Cliente {
   styleUrl: './gestionar-cliente.css',
 })
 export class GestionarCliente {
-
   @Output() cerrarSesionEvent = new EventEmitter<string>();
 
   vistaActiva: VistaActiva = 'ninguna';
   clienteEditando: Cliente | null = null;
-  editForm = { usuario: '', contrasena: '', cedula: '', tipoCliente: '' };
+  editForm = { usuario: '', contrasena: '', cedula: '', tipoCliente: 'NORMAL' };
   mensajeExito = '';
+  mensajeError = '';
 
   clientes: Cliente[] = [];
 
   constructor(private api: ApiService) {}
 
+  private mostrarError(err: any, fallback: string): void {
+    this.mensajeError = err?.error || fallback;
+  }
+
   setVista(vista: VistaActiva): void {
     this.vistaActiva = vista;
     this.clienteEditando = null;
     this.mensajeExito = '';
+    this.mensajeError = '';
     if (vista === 'mostrar' || vista === 'actualizar' || vista === 'borrar') {
       this.cargarClientes();
     }
@@ -67,44 +72,54 @@ export class GestionarCliente {
       cedula: cliente.cedula,
       tipoCliente: cliente.tipoCliente,
     };
+    this.mensajeError = '';
     this.vistaActiva = 'editar';
   }
 
   guardarEdicion(): void {
     if (!this.clienteEditando) return;
+    this.mensajeError = '';
+    // Validación de cédula: 10 dígitos, no empieza en 0 (igual al backend)
+    const cedula = this.editForm.cedula.trim();
+    if (cedula.length !== 10 || cedula[0] === '0' || !/^\d+$/.test(cedula)) {
+      this.mensajeError = 'Ingrese una cédula válida (10 dígitos numéricos, no empieza por 0).';
+      return;
+    }
     this.api.adminActualizarCliente(
       Number(this.clienteEditando.id),
       this.editForm.usuario,
       this.editForm.contrasena,
-      this.editForm.cedula,
+      cedula,
       this.editForm.tipoCliente.toUpperCase()
     ).subscribe({
-      next: (msg) => {
+      next: () => {
         const idx = this.clientes.findIndex(c => c.id === this.clienteEditando!.id);
         if (idx !== -1) {
-          this.clientes[idx] = { ...this.clientes[idx], ...this.editForm, contrasena: this.editForm.contrasena };
+          this.clientes[idx] = { ...this.clientes[idx], ...this.editForm };
         }
         this.mensajeExito = `Cliente ${this.clienteEditando!.id} actualizado correctamente.`;
         this.clienteEditando = null;
         this.vistaActiva = 'actualizar';
       },
-      error: (err) => alert(err?.error || 'Error al actualizar cliente'),
+      error: (err) => this.mostrarError(err, 'Error al actualizar el cliente'),
     });
   }
 
   cancelarEdicion(): void {
     this.clienteEditando = null;
+    this.mensajeError = '';
     this.vistaActiva = 'actualizar';
   }
 
   borrarCliente(cliente: Cliente): void {
     if (confirm(`¿Eliminar al cliente ${cliente.id} (${cliente.usuario})?`)) {
+      this.mensajeError = '';
       this.api.adminBorrarCliente(Number(cliente.id)).subscribe({
         next: () => {
           this.clientes = this.clientes.filter(c => c.id !== cliente.id);
           this.mensajeExito = `Cliente ${cliente.id} eliminado.`;
         },
-        error: (err) => alert(err?.error || 'Error al eliminar cliente'),
+        error: (err) => this.mostrarError(err, 'Error al eliminar el cliente'),
       });
     }
   }

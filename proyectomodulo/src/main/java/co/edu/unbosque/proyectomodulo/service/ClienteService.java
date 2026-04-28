@@ -55,8 +55,9 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 	@Override
 	public int create(ClienteDTO data) {
 		Optional<Cliente> encontrado = clienteRep.findByUsuario(data.getUsuario());
-		if (encontrado.isPresent())
-			return 2;
+		if (encontrado.isPresent()) {
+			return 2;			
+		}
 		try {
 			LanzadorException.verificarCedulaValida(data.getCedula());
 		} catch (CedulaException e) {
@@ -69,8 +70,9 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 
 	@Override
 	public String getAll() {
-		if (!adminService.isLoggedadmin())
-			return null;
+		if (!adminService.isLoggedadmin()) {
+			return null;			
+		}
 		Gson gson = new Gson();
 		List<Cliente> entityList = (List<Cliente>) clienteRep.findAll();
 		List<ClienteDTO> dtoList = new ArrayList<>();
@@ -80,9 +82,9 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 
 	@Override
 	public int deleteById(Long id) {
-		if (!adminService.isLoggedadmin())
-			return 2;
-		// Bug fix: eliminar directamente por id, sin conversión innecesaria
+		if (!adminService.isLoggedadmin()) {
+			return 2;			
+		}
 		if (clienteRep.existsById(id)) {
 			clienteRep.deleteById(id);
 			return 0;
@@ -140,15 +142,11 @@ public class ClienteService implements CRUDOPERATION<ClienteDTO> {
 
 	public String getClienteStatus(Long id) {
 		Optional<Cliente> encontrado = clienteRep.findById(id);
-		if (encontrado.isEmpty())
-			return "NORMAL";
-		return mapper.map(encontrado.get(), ClienteDTO.class).getTipoCliente().toString();
+		return encontrado.get().getUsuario();
 	}
 
 	public String getClienteNombre(Long id) {
 		Optional<Cliente> encontrado = clienteRep.findById(id);
-		if (encontrado.isEmpty())
-			return "";
 		return encontrado.get().getUsuario();
 	}
 

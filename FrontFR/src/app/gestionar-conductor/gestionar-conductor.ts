@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiService } from '../services/api.service';
 
-export type VistaActiva = 'ninguna' | 'mostrar' | 'actualizar' | 'borrar' | 'editar';
+export type VistaActiva = 'ninguna' | 'mostrar' | 'actualizar' | 'borrar' | 'editar' | 'crear';
 
 export interface Conductor {
   numero: number;
@@ -18,22 +18,29 @@ export interface Conductor {
   styleUrl: './gestionar-conductor.css',
 })
 export class GestionarConductor {
-
   @Output() cerrarSesionEvent = new EventEmitter<string>();
 
   vistaActiva: VistaActiva = 'ninguna';
   conductorEditando: Conductor | null = null;
-  editForm = { usuario: '', contrasena: '', tipoVehiculo: '' };
+  editForm = { usuario: '', contrasena: '', tipoVehiculo: 'carro' };
+  crearForm = { usuario: '', contrasena: '', tipoVehiculo: 'carro' };
   mensajeExito = '';
+  mensajeError = '';
 
   conductores: Conductor[] = [];
 
   constructor(private api: ApiService) {}
 
+  private mostrarError(err: any, fallback: string): void {
+    this.mensajeError = err?.error || fallback;
+  }
+
   setVista(vista: VistaActiva): void {
     this.vistaActiva = vista;
     this.conductorEditando = null;
     this.mensajeExito = '';
+    this.mensajeError = '';
+    this.crearForm = { usuario: '', contrasena: '', tipoVehiculo: 'carro' };
     if (vista === 'mostrar' || vista === 'actualizar' || vista === 'borrar') {
       this.cargarConductores();
     }
@@ -64,11 +71,13 @@ export class GestionarConductor {
       contrasena: conductor.contrasena,
       tipoVehiculo: conductor.tipoVehiculo,
     };
+    this.mensajeError = '';
     this.vistaActiva = 'editar';
   }
 
   guardarEdicion(): void {
     if (!this.conductorEditando) return;
+    this.mensajeError = '';
     this.api.adminActualizarConductor(
       Number(this.conductorEditando.id),
       this.editForm.usuario,
@@ -84,23 +93,46 @@ export class GestionarConductor {
         this.conductorEditando = null;
         this.vistaActiva = 'actualizar';
       },
-      error: (err) => alert(err?.error || 'Error al actualizar conductor'),
+      error: (err) => this.mostrarError(err, 'Error al actualizar el conductor'),
     });
   }
 
   cancelarEdicion(): void {
     this.conductorEditando = null;
+    this.mensajeError = '';
     this.vistaActiva = 'actualizar';
+  }
+
+  crearConductor(): void {
+    this.mensajeError = '';
+    if (!this.crearForm.usuario.trim() || !this.crearForm.contrasena.trim()) {
+      this.mensajeError = 'Por favor completa todos los campos obligatorios.';
+      return;
+    }
+    this.api.adminCrearConductor(
+      this.crearForm.usuario.trim(),
+      this.crearForm.contrasena.trim(),
+      this.crearForm.tipoVehiculo
+    ).subscribe({
+      next: () => {
+        this.mensajeExito = `Conductor '${this.crearForm.usuario}' creado correctamente.`;
+        this.crearForm = { usuario: '', contrasena: '', tipoVehiculo: 'carro' };
+        this.vistaActiva = 'mostrar';
+        this.cargarConductores();
+      },
+      error: (err) => this.mostrarError(err, 'Error al crear el conductor'),
+    });
   }
 
   borrarConductor(conductor: Conductor): void {
     if (confirm(`¿Eliminar al conductor ${conductor.id} (${conductor.usuario})?`)) {
+      this.mensajeError = '';
       this.api.adminBorrarConductor(Number(conductor.id)).subscribe({
         next: () => {
           this.conductores = this.conductores.filter(c => c.id !== conductor.id);
           this.mensajeExito = `Conductor ${conductor.id} eliminado.`;
         },
-        error: (err) => alert(err?.error || 'Error al eliminar conductor'),
+        error: (err) => this.mostrarError(err, 'Error al eliminar el conductor'),
       });
     }
   }

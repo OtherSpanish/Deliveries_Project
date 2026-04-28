@@ -47,6 +47,11 @@
         <div class="alert-success">✅ {{ mensajeExito }}</div>
       }
 
+      <!-- ERROR -->
+      @if (mensajeError) {
+        <div class="alert-error">⚠️ {{ mensajeError }}</div>
+      }
+
       <!-- FORMULARIO CARTA -->
       @if (vistaActiva === 'carta') {
         <div class="tabla-container">

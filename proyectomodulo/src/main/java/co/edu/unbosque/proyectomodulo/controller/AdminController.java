@@ -97,20 +97,18 @@ public class AdminController {
 			return new ResponseEntity<>("Conductor creado", HttpStatus.CREATED);
 		}
 		case 1: {
-
-		}
 			return new ResponseEntity<>("Tipo de vehiculo invalido (carro, moto, camion)", HttpStatus.BAD_REQUEST);
-		case 2: {
-
 		}
+		case 2: {
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
+		}
 		case 3: {
 			return new ResponseEntity<>("El nombre de usuario ya esta en uso", HttpStatus.BAD_REQUEST);
 		}
 		default: {
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
-		}
+	  }
 	}
 
 	@PostMapping("/crearmanipulador")
@@ -118,14 +116,18 @@ public class AdminController {
 			@RequestParam int tiempoDeTrabajo) {
 		int status = mService.create(new ManipuladorPaqueteDTO(usuario, contrasenia, tiempoDeTrabajo));
 		switch (status) {
-		case 0:
-			return new ResponseEntity<>("Manipulador creado", HttpStatus.CREATED);
-		case 1:
-			return new ResponseEntity<>("Ingreso invalido", HttpStatus.BAD_REQUEST);
-		case 2:
-			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
-		case 3:
-			return new ResponseEntity<>("Usuario Ya Existente", HttpStatus.BAD_REQUEST);
+		case 0: {
+			return new ResponseEntity<>("Manipulador creado", HttpStatus.CREATED);			
+		}
+		case 1:{
+			return new ResponseEntity<>("Ingreso invalido", HttpStatus.BAD_REQUEST);			
+		}
+		case 2: {
+			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);			
+		}
+		case 3: {
+			return new ResponseEntity<>("Usuario Ya Existente", HttpStatus.BAD_REQUEST);			
+		}
 		default:
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
@@ -136,18 +138,24 @@ public class AdminController {
 			@RequestParam String contrasenia, @RequestParam String cedula, @RequestParam TipoCliente tipoCliente) {
 		int status = clienteService.updateById(id, new ClienteDTO(usuario, contrasenia, cedula, tipoCliente));
 		switch (status) {
-		case 0:
-			return new ResponseEntity<>("Cliente Actualizado", HttpStatus.OK);
-		case 1:
-			return new ResponseEntity<>("No se pudo actualizar el cliente", HttpStatus.BAD_REQUEST);
-		case 2:
+		case 0: {
+			return new ResponseEntity<>("Cliente Actualizado", HttpStatus.OK);			
+		}
+		case 1: {
+			return new ResponseEntity<>("No se pudo actualizar el cliente", HttpStatus.BAD_REQUEST);			
+		}
+		case 2: {			
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
-		case 3:
+		}
+		case 3: {			
 			return new ResponseEntity<>("El Usuario ya existe", HttpStatus.BAD_REQUEST);
-		case 4:
-			return new ResponseEntity<>("La cedula ya existe", HttpStatus.BAD_REQUEST);
-		case 5:
-			return new ResponseEntity<>("El usuario y la cedula ya existen", HttpStatus.BAD_REQUEST);
+		}
+		case 4: {
+			return new ResponseEntity<>("La cedula ya existe", HttpStatus.BAD_REQUEST);			
+		}
+		case 5: {
+			return new ResponseEntity<>("El usuario y la cedula ya existen", HttpStatus.BAD_REQUEST);			
+		}
 		default:
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
@@ -168,23 +176,26 @@ public class AdminController {
 		int minuto = Integer.parseInt(ahora.format(DateTimeFormatter.ofPattern("mm")));
 		int precio;
 		switch (tipoPaquete) {
-		case CARTA:
+		case CARTA: {
 			dia += 1;
 			hora = 8;
 			minuto = 0;
 			precio = 10000;
-			break;
-		case ALIMENTICIO:
+			break;			
+		}
+		case ALIMENTICIO: {
 			hora += 6;
 			minuto = 0;
 			precio = 20000;
-			break;
-		case NO_ALIMENTICIO:
+			break;			
+		}
+		case NO_ALIMENTICIO: {
 			dia += 1;
 			hora = 8;
 			minuto = 0;
 			precio = 30000;
-			break;
+			break;			
+		}
 		default:
 			return new ResponseEntity<>("Tipo de paquete invalido", HttpStatus.BAD_REQUEST);
 		}
@@ -193,31 +204,39 @@ public class AdminController {
 		String nameCliente = clienteService.getClienteNombre(id);
 		String precioEnvio;
 		switch (estadoCliente) {
-		case "NORMAL":
+		case "NORMAL": {
 			precioEnvio = String.valueOf(precio);
-			break;
-		case "CONCURRENTE":
+			break;			
+		}
+		case "CONCURRENTE": {
 			precioEnvio = String.valueOf(precio - (precio * 0.10));
-			break;
-		case "PREMIUM":
+			break;			
+		}
+		case "PREMIUM": {
 			precioEnvio = String.valueOf(precio - (precio * 0.30));
-			break;
+			break;			
+		}
 		default:
 			return new ResponseEntity<>("Tipo de cliente no valido", HttpStatus.BAD_REQUEST);
 		}
 		int status = pService.updateById(id, new PaqueteDTO(tipoPaquete, contenido, direccionDeEnvio, tiempoDeEnvio,
 				precioEnvio, EstadoPaquete.DESPACHADO, nameCliente, destinatario, pesoKg, esFragil, requiereRefrigeracion));
 		switch (status) {
-		case 0:
-			return new ResponseEntity<>("Paquete actualizado", HttpStatus.OK);
-		case 1:
-			return new ResponseEntity<>("No se pudo actualizar el paquete", HttpStatus.BAD_REQUEST);
-		case 2:
-			return new ResponseEntity<>("Debe iniciar sesion un admin y un cliente", HttpStatus.UNAUTHORIZED);
-		case 3:
-			return new ResponseEntity<>("Debe iniciar sesion un cliente", HttpStatus.UNAUTHORIZED);
-		case 4:
-			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
+		case 0: {
+			return new ResponseEntity<>("Paquete actualizado", HttpStatus.OK);			
+		}
+		case 1: {
+			return new ResponseEntity<>("No se pudo actualizar el paquete", HttpStatus.BAD_REQUEST);			
+		}
+		case 2: {
+			return new ResponseEntity<>("Debe iniciar sesion un admin y un cliente", HttpStatus.UNAUTHORIZED);			
+		}
+		case 3: {
+			return new ResponseEntity<>("Debe iniciar sesion un cliente", HttpStatus.UNAUTHORIZED);			
+		}
+		case 4: {
+			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);			
+		}
 		default:
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
@@ -228,14 +247,18 @@ public class AdminController {
 			@RequestParam String contrasenia, @RequestParam String tipoDeVehiculo) {
 		int status = cService.updateById(id, new ConductorDTO(usuario, contrasenia, tipoDeVehiculo));
 		switch (status) {
-		case 0:
-			return new ResponseEntity<>("Conductor Actualizado", HttpStatus.OK);
-		case 1:
+		case 0: {
+			return new ResponseEntity<>("Conductor Actualizado", HttpStatus.OK);			
+		}
+		case 1: {			
 			return new ResponseEntity<>("No se pudo actualizar el conductor", HttpStatus.BAD_REQUEST);
-		case 2:
-			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
-		case 3:
+		}
+		case 2: {
+			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);			
+		}
+		case 3: {
 			return new ResponseEntity<>("El usuario ya existe", HttpStatus.BAD_REQUEST);
+		}
 		default:
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
@@ -246,14 +269,18 @@ public class AdminController {
 			@RequestParam String contrasenia, @RequestParam int tiempoDeTrabajo) {
 		int status = mService.updateById(id, new ManipuladorPaqueteDTO(usuario, contrasenia, tiempoDeTrabajo));
 		switch (status) {
-		case 0:
+		case 0: {			
 			return new ResponseEntity<>("Manipulador Actualizado", HttpStatus.OK);
-		case 1:
+		}
+		case 1: {			
 			return new ResponseEntity<>("No se pudo actualizar el manipulador", HttpStatus.BAD_REQUEST);
-		case 2:
+		}
+		case 2: {			
 			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
-		case 3:
+		}
+		case 3: {			
 			return new ResponseEntity<>("El usuario ya existe", HttpStatus.CONFLICT);
+		}
 		default:
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
@@ -279,12 +306,15 @@ public class AdminController {
 	public ResponseEntity<String> borrarCliente(@RequestParam Long id) {
 		int status = clienteService.deleteById(id);
 		switch (status) {
-		case 0:
-			return new ResponseEntity<>("Cliente borrado", HttpStatus.OK);
-		case 1:
-			return new ResponseEntity<>("Cliente no encontrado", HttpStatus.NOT_FOUND);
-		case 2:
-			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
+		case 0: {
+			return new ResponseEntity<>("Cliente borrado", HttpStatus.OK);			
+		}
+		case 1: {
+			return new ResponseEntity<>("Cliente no encontrado", HttpStatus.NOT_FOUND);			
+		}
+		case 2: {
+			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);			
+		}
 		default:
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
@@ -294,12 +324,15 @@ public class AdminController {
 	public ResponseEntity<String> borrarPaquete(@RequestParam Long id) {
 		int status = pService.deleteById(id);
 		switch (status) {
-		case 0:
-			return new ResponseEntity<>("Paquete eliminado", HttpStatus.OK);
-		case 1:
-			return new ResponseEntity<>("Paquete no encontrado", HttpStatus.NOT_FOUND);
-		case 2:
-			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
+		case 0: {
+			return new ResponseEntity<>("Paquete eliminado", HttpStatus.OK);			
+		}
+		case 1: {
+			return new ResponseEntity<>("Paquete no encontrado", HttpStatus.NOT_FOUND);			
+		}
+		case 2: {
+			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);			
+		}
 		default:
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}
@@ -309,12 +342,15 @@ public class AdminController {
 	public ResponseEntity<String> borrarManipulador(@RequestParam Long id) {
 		int status = mService.deleteById(id);
 		switch (status) {
-		case 0:
-			return new ResponseEntity<>("Manipulador eliminado", HttpStatus.OK);
-		case 1:
-			return new ResponseEntity<>("Manipulador no encontrado", HttpStatus.NOT_FOUND);
-		case 2:
-			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);
+		case 0: {
+			return new ResponseEntity<>("Manipulador eliminado", HttpStatus.OK);			
+		}
+		case 1: {
+			return new ResponseEntity<>("Manipulador no encontrado", HttpStatus.NOT_FOUND);			
+		}
+		case 2: {
+			return new ResponseEntity<>("Debe iniciar sesion un admin", HttpStatus.UNAUTHORIZED);			
+		}
 		default:
 			return new ResponseEntity<>("Error", HttpStatus.CONFLICT);
 		}

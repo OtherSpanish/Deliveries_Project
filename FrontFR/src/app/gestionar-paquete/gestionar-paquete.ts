@@ -35,6 +35,7 @@ export class GestionarPaquete {
   tiempoForm = { tipoPaquete: 'Carta' as Paquete['tipoPaquete'], distanciaKm: 0 };
   tiempoResultado: string | null = null;
   mensajeExito = '';
+  mensajeError = '';
 
   constructor(
     private paqueteService: PaqueteService,
@@ -49,6 +50,7 @@ export class GestionarPaquete {
     this.vistaActiva = vista;
     this.paqueteEditando = null;
     this.mensajeExito = '';
+    this.mensajeError = '';
     this.tiempoResultado = null;
     this.crearForm = {
       tipoPaquete: 'Carta',
@@ -59,14 +61,15 @@ export class GestionarPaquete {
       esFragil: false,
       requiereRefrigeracion: false,
     };
-
-    this.tiempoForm = {
-      tipoPaquete: 'Carta',
-      distanciaKm: 0,
-    };
+    this.tiempoForm = { tipoPaquete: 'Carta', distanciaKm: 0 };
     if (vista === 'mostrar' || vista === 'actualizar' || vista === 'borrar') {
       this.cargarPaquetes();
     }
+  }
+
+  private mostrarError(err: any, fallback: string): void {
+    const msg = err?.error || fallback;
+    this.mensajeError = msg;
   }
 
   cargarPaquetes(): void {
@@ -74,7 +77,6 @@ export class GestionarPaquete {
       next: (data) => {
         try {
           const lista = JSON.parse(data);
-          // Sincronizar lista del backend con el PaqueteService local
           const nuevos: Paquete[] = lista.map((p: any, i: number) => ({
             numero: i + 1,
             id: String(p.id),
@@ -101,8 +103,11 @@ export class GestionarPaquete {
           /* mantiene datos locales */
         }
       },
-      error: () => {
-        /* mantiene datos locales */
+      error: (err) => {
+        // 401 = no hay sesión de admin, no mostrar error en pantalla de lista
+        if (err?.status !== 401) {
+          this.mensajeError = err?.error || 'No se pudieron cargar los paquetes';
+        }
       },
     });
   }
@@ -114,11 +119,13 @@ export class GestionarPaquete {
       contenido: paquete.contenido,
       direccionEnvio: paquete.direccionEnvio,
     };
+    this.mensajeError = '';
     this.vistaActiva = 'editar';
   }
 
   guardarEdicion(): void {
     if (!this.paqueteEditando) return;
+    this.mensajeError = '';
     const tipoBE =
       this.editForm.tipoPaquete === 'Carta'
         ? 'CARTA'
@@ -143,34 +150,41 @@ export class GestionarPaquete {
           this.paqueteEditando = null;
           this.vistaActiva = 'actualizar';
         },
-        error: (err) => alert(err?.error || 'Error al actualizar paquete'),
+        error: (err) => this.mostrarError(err, 'Error al actualizar el paquete'),
       });
   }
 
   cancelarEdicion(): void {
     this.paqueteEditando = null;
+    this.mensajeError = '';
     this.vistaActiva = 'actualizar';
   }
 
   borrarPaquete(paquete: Paquete): void {
     if (confirm('¿Eliminar el paquete ' + paquete.id + '?')) {
+      this.mensajeError = '';
       this.api.adminBorrarPaquete(Number(paquete.id)).subscribe({
         next: () => {
           this.paqueteService.eliminar(paquete.id);
           this.mensajeExito = 'Paquete ' + paquete.id + ' eliminado.';
         },
-        error: (err) => alert(err?.error || 'Error al eliminar paquete'),
+        error: (err) => this.mostrarError(err, 'Error al eliminar el paquete'),
       });
     }
   }
 
   crearPaquete(): void {
+    this.mensajeError = '';
     if (
       !this.crearForm.contenido.trim() ||
       !this.crearForm.direccionEnvio.trim() ||
       !this.crearForm.destinatario.trim()
     ) {
-      alert('Por favor completa todos los campos antes de crear el paquete.');
+      this.mensajeError = 'Por favor completa todos los campos obligatorios.';
+      return;
+    }
+    if (this.crearForm.tipoPaquete !== 'Carta' && this.crearForm.pesoKg <= 0) {
+      this.mensajeError = 'El peso debe ser mayor a 0 kg.';
       return;
     }
     const tipoBE =
@@ -208,13 +222,16 @@ export class GestionarPaquete {
             requiereRefrigeracion: false,
           };
         },
-        error: (err) => alert(err?.error || 'Error al crear paquete'),
+        error: (err) => this.mostrarError(err, 'Error al crear el paquete'),
       });
   }
 
   calcularTiempo(): void {
-    if (!this.tiempoForm.distanciaKm || this.tiempoForm.distanciaKm <= 0) return;
-
+    this.mensajeError = '';
+    if (!this.tiempoForm.distanciaKm || this.tiempoForm.distanciaKm <= 0) {
+      this.mensajeError = 'Ingresa una distancia mayor a 0 km.';
+      return;
+    }
     const velocidades: Record<string, number> = {
       Carta: 80,
       Alimenticio: 60,
