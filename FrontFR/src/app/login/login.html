@@ -1,9 +1,8 @@
 <div class="login-container">
 
-  <!-- HEADER (ARRIBA DE TODO) -->
+  <!-- HEADER -->
   <header class="header">
     <div class="header-title">Delivery Service</div>
-
     <div class="roles">
       <button type="button" [class.active]="rol === 'cliente'" (click)="cambiarRol('cliente')">Cliente</button>
       <button type="button" [class.active]="rol === 'admin'" (click)="cambiarRol('admin')">Admin</button>
@@ -12,35 +11,38 @@
     </div>
   </header>
 
-  <!-- CONTENIDO (CARRUSEL + LOGIN) -->
+  <!-- CONTENIDO -->
   <div class="main-content">
 
-    <!-- CARRUSEL IZQUIERDA -->
+    <!-- CARRUSEL -->
     <div class="carousel">
       <img [src]="imagenes[indiceImagen]" alt="delivery">
     </div>
 
-    <!-- LOGIN / REGISTER DERECHA -->
+    <!-- LOGIN / REGISTER -->
     <div class="login-box">
+
+      <!-- MENSAJES -->
+      @if (mensajeError) {
+        <div class="alert-error">⚠️ {{ mensajeError }}</div>
+      }
+      @if (mensajeExito) {
+        <div class="alert-success">✅ {{ mensajeExito }}</div>
+      }
 
       <!-- LOGIN -->
       <div *ngIf="modo === 'login'">
         <h2>Login - {{ rol }}</h2>
-
         <form>
           <input type="text" placeholder="Usuario" [(ngModel)]="usuario" name="usuario">
           <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="password">
-
-          <!-- Solo admin -->
           <input *ngIf="rol === 'admin'"
                  type="text"
                  placeholder="Código de verificación"
                  [(ngModel)]="codigo"
                  name="codigo">
-
           <button type="button" (click)="login()">Ingresar</button>
         </form>
-
         <p class="link" *ngIf="rol === 'cliente'" (click)="cambiarModo('register')">
           ¿No tienes una cuenta? Regístrate como cliente!
         </p>
@@ -49,28 +51,22 @@
       <!-- REGISTER -->
       <div *ngIf="modo === 'register'">
         <h2>Registro</h2>
-
         <form>
           <div class="register-stack">
             <input type="text" placeholder="Usuario" [(ngModel)]="usuario" name="r_usuario">
             <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="r_password">
             <select [(ngModel)]="tipoCliente" name="tipoCliente">
-              <option value="" disabled selected>Tipo de cliente</option>
-              <option value="normal">Normal</option>
-              <option value="premium">Premium</option>
+              <option value="NORMAL">Normal</option>
+              <option value="PREMIUM">Premium</option>
             </select>
           </div>
-
           <button type="button" (click)="registrar()">Registrarse</button>
         </form>
-
         <p class="link" (click)="cambiarModo('login')">
           ¿Ya tienes cuenta? Inicia sesión
         </p>
       </div>
 
     </div>
-
   </div>
-
 </div>

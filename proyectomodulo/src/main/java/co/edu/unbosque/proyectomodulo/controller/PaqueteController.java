@@ -64,6 +64,11 @@ public class PaqueteController {
 			hora += 6;
 			minuto = 0;
 			precio = 20000;
+			// Si la suma supera las 23h, avanzar al día siguiente desde las 8h
+			if (hora >= 24) {
+				dia += 1;
+				hora = 8;
+			}
 			break;			
 		}
 		case NO_ALIMENTICIO: {

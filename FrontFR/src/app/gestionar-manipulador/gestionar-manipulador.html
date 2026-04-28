@@ -20,6 +20,9 @@
         <button [class.active]="vistaActiva === 'actualizar' || vistaActiva === 'editar'" (click)="setVista('actualizar')">
           ✏️ Actualizar
         </button>
+        <button class="btn-crear" [class.active]="vistaActiva === 'crear'" (click)="setVista('crear')">
+          ➕ Crear
+        </button>
         <button class="btn-danger" [class.active]="vistaActiva === 'borrar'" (click)="setVista('borrar')">
           🗑️ Borrar
         </button>
@@ -40,6 +43,11 @@
       <!-- ÉXITO -->
       @if (mensajeExito) {
         <div class="alert-success">✅ {{ mensajeExito }}</div>
+      }
+
+      <!-- ERROR -->
+      @if (mensajeError) {
+        <div class="alert-error">⚠️ {{ mensajeError }}</div>
       }
 
       <!-- MOSTRAR -->
@@ -196,6 +204,35 @@
               </tbody>
             </table>
           </div>
+        </div>
+      }
+
+      <!-- CREAR -->
+      @if (vistaActiva === 'crear') {
+        <div class="tabla-container">
+          <div class="tabla-header">
+            <span>Nuevo manipulador</span>
+            <span class="chip-note">El ID se asigna automáticamente</span>
+          </div>
+          <form class="editar-form" (ngSubmit)="crearManipulador()" novalidate>
+            <div class="form-group">
+              <label>Usuario</label>
+              <input type="text" [(ngModel)]="crearForm.usuario" name="usuario" placeholder="Nombre de usuario" required/>
+            </div>
+            <div class="form-group">
+              <label>Contraseña</label>
+              <input type="password" [(ngModel)]="crearForm.contrasena" name="contrasena" placeholder="Contraseña" required/>
+            </div>
+            <div class="form-group">
+              <label>Horas de trabajo (2 - 8)</label>
+              <input type="number" [(ngModel)]="crearForm.tiempoTrabajo" name="tiempoTrabajo"
+                     placeholder="Ej: 4" min="2" max="8" required/>
+            </div>
+            <div class="editar-actions">
+              <button type="button" class="btn-cancelar" (click)="setVista('ninguna')">← Cancelar</button>
+              <button type="submit" class="btn-guardar">Crear manipulador ✓</button>
+            </div>
+          </form>
         </div>
       }
 
