@@ -155,18 +155,9 @@ public class ClienteController {
 		return new ResponseEntity<>("Carta: $10.000 | Alimenticios: $20.000 | No Alimenticios: $30.000", HttpStatus.OK);
 	}
 
-	/**
-	 * Retorna la lista de paquetes asociados al cliente que tiene sesión activa.
-	 * <p>
-	 * Endpoint: {@code GET /cliente/clientePaquete}
-	 * </p>
-	 *
-	 * @return {@link ResponseEntity} con la lista de {@link Paquete} pertenecientes
-	 *         al cliente logueado y estado {@code 200 OK}.
-	 */
 	@GetMapping("/clientePaquete")
 	public ResponseEntity<List<Paquete>> clientePorPaquete() {
-		String clientePorPaquete =  clienteService.getClienteLogueado().getUsuario();
+		String clientePorPaquete = clienteService.getClienteLogueado().getUsuario();
 		return new ResponseEntity<>(pService.paquetesPorCliente(clientePorPaquete), HttpStatus.OK);
 	}
 

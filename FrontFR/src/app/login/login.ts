@@ -12,7 +12,7 @@ export class Login implements OnInit {
 
   imagenes: string[] = ['login_pic_1.png', 'login_pic_2.png'];
   indiceImagen: number = 0;
-
+  cedula: string = '';
   usuario: string = '';
   password: string = '';
   codigo: string = '';
@@ -45,6 +45,7 @@ export class Login implements OnInit {
     this.usuario = '';
     this.password = '';
     this.codigo = '';
+    this.cedula = '';
     this.tipoCliente = 'NORMAL';
   }
 
@@ -109,7 +110,7 @@ export class Login implements OnInit {
     this.mensajeError = '';
     this.mensajeExito = '';
 
-    if (!this.usuario.trim() || !this.password.trim() || !this.tipoCliente) {
+    if (!this.usuario.trim() || !this.password.trim() || !this.tipoCliente || !this.cedula.trim()) {
       this.mensajeError = 'Por favor completa todos los campos.';
       return;
     }
@@ -122,11 +123,12 @@ export class Login implements OnInit {
     }
 
     // Pasamos cedula vacía — el backend en register no la valida con LanzadorException
-    this.api.clienteRegistrar(this.usuario.trim(), this.password, '', tipo).subscribe({
+    this.api.clienteRegistrar(this.usuario.trim(), this.password, this.cedula, tipo).subscribe({
       next: () => {
         this.mensajeExito = 'Usuario registrado correctamente. Ya puedes iniciar sesión.';
         this.usuario = '';
         this.password = '';
+        this.cedula = '';
         this.tipoCliente = 'NORMAL';
         setTimeout(() => this.cambiarModo('login'), 1500);
       },
