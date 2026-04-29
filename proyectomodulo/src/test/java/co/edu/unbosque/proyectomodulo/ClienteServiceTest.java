@@ -2,275 +2,318 @@ package co.edu.unbosque.proyectomodulo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.unbosque.proyectomodulo.dto.AdminDTO;
 import co.edu.unbosque.proyectomodulo.dto.ClienteDTO;
+import co.edu.unbosque.proyectomodulo.dto.TipoCliente;
 import co.edu.unbosque.proyectomodulo.service.AdminService;
 import co.edu.unbosque.proyectomodulo.service.ClienteService;
 
 /**
- * Clase de pruebas de integración para {@link ClienteService}.
- *
- * <p>
- * Verifica el comportamiento del servicio de clientes en distintos escenarios:
- * creación, consulta, actualización, eliminación, registro, inicio y cierre de
- * sesión, búsqueda por tipo y consulta general.
- * </p>
- * <p>
- * Cada prueba se ejecuta dentro de una transacción que se revierte al
- * finalizar, garantizando aislamiento entre casos de prueba.
- * </p>
- *
- * @version 1.0
+ * Clase de pruebas unitarias para el servicio {@link ClienteService}.
+ * 
+ * <p>Esta clase contiene casos de prueba que validan el comportamiento
+ * de los métodos de gestión de clientes, incluyendo creación, consulta,
+ * eliminación, actualización, autenticación y control de sesión.</p>
+ * 
+ * <p>Las pruebas se ejecutan en un contexto transaccional de Spring Boot
+ * para garantizar aislamiento entre casos de prueba y la reversión
+ * automática de los cambios realizados en la base de datos.</p>
+ * 
+ * <p>Algunas pruebas requieren autenticación previa como administrador,
+ * para lo cual se utiliza el método auxiliar {@link #loginAdminTemp()}.</p>
  */
 @SpringBootTest
 @Transactional
 class ClienteServiceTest {
-/*
-//	/**
-//	 * Servicio de clientes inyectado por Spring para las pruebas.
-//	 */
-//	@Autowired
-//	private ClienteService service;
-//
-//	/**
-//	 * Servicio de administración inyectado por Spring, utilizado para simular
-//	 * sesiones de administrador en pruebas que lo requieren.
-//	 */
-//	@Autowired
-//	private AdminService adminService;
-//
-//	/**
-//	 * Crea y retorna un {@link ClienteDTO} con datos de prueba predefinidos.
-//	 *
-//	 * <p>
-//	 * El DTO generado contiene:
-//	 * </p>
-//	 * <ul>
-//	 * <li>Usuario: {@code "cliente"}</li>
-//	 * <li>Contraseña: {@code "123"}</li>
-//	 * <li>Cédula: {@code "123456789"}</li>
-//	 * <li>Tipo de cliente: {@code "normal"}</li>
-//	 * </ul>
-//	 *
-//	 * @return un {@link ClienteDTO} con datos de prueba listos para usar.
-//	 */
-//	public ClienteDTO crearCliente() {
-//		ClienteDTO dto = new ClienteDTO();
-//		dto.setUsuario("cliente");
-//		dto.setContrasenia("123");
-//		dto.setCedula("123456789");
-//		dto.setTipoCliente("normal");
-//		return dto;
-//	}
-//
-//	/**
-//	 * Crea y retorna un {@link AdminDTO} con datos de prueba predefinidos.
-//	 *
-//	 * <p>
-//	 * El DTO generado contiene:
-//	 * </p>
-//	 * <ul>
-//	 * <li>Usuario: {@code "userAdmin"}</li>
-//	 * <li>Contraseña: {@code "123"}</li>
-//	 * <li>Código de admin: {@code "admin123"}</li>
-//	 * </ul>
-//	 *
-//	 * @return un {@link AdminDTO} con datos de prueba listos para usar.
-//	 */
-//	public AdminDTO crearAdmin() {
-//		AdminDTO dto = new AdminDTO();
-//		dto.setUsuario("userAdmin");
-//		dto.setContrasenia("123");
-//		dto.setCodigoAdmin("admin123");
-//		return dto;
-//	}
-//
-//	/**
-//	 * Método ejecutado antes de cada prueba.
-//	 *
-//	 * <p>
-//	 * Cierra la sesión tanto del cliente como del administrador para garantizar un
-//	 * estado limpio al inicio de cada caso de prueba.
-//	 * </p>
-//	 */
-//	@BeforeEach
-//	void limpiar() {
-//		service.logout();
-//		adminService.logoutadmin();
-//	}
-//
-//	/**
-//	 * Verifica que la creación de un cliente con datos válidos retorna {@code 0}.
-//	 */
-//	@Test
-//	void testCreateOK() {
-//		int result = service.create(crearCliente());
-//		assertEquals(1, result);
-//	}
-//
-//	/**
-//	 * Verifica que la creación de un cliente con una cédula no numérica retorna el
-//	 * código {@code 1}, indicando error de validación.
-//	 */
-//	@Test
-//	void testCreateFailCedula() {
-//		ClienteDTO dto = crearCliente();
-//		dto.setCedula("abc");
-//
-//		int result = service.create(dto);
-//		assertEquals(1, result);
-//	}
-//
-//	/**
-//	 * Verifica que intentar eliminar un cliente sin sesión de administrador activa
-//	 * retorna el código {@code 2}.
-//	 */
-//	@Test
-//	void testDeleteSinAdmin() {
-//		int result = service.deleteById(1L);
-//		assertEquals(2, result);
-//	}
-//
-//	/**
-//	 * Verifica que intentar eliminar un cliente con un ID inexistente retorna el
-//	 * código {@code 1}, incluso con sesión de administrador activa.
-//	 */
-//	@Test
-//	void testDeleteFail() {
-//		adminService.register("admin", "123");
-//		adminService.loginadmin("admin", "123", "admin123");
-//
-//		int result = service.deleteById(999L);
-//		assertEquals(2, result);
-//	}
-//
-//	/**
-//	 * Verifica que intentar actualizar un cliente con un ID inexistente retorna el
-//	 * código {@code 1}.
-//	 */
-//	@Test
-//	void testUpdateFail() {
-//		int result = service.updateById(999L, crearCliente());
-//		assertEquals(6, result);
-//	}
-//
-//	/**
-//	 * Verifica que el conteo de clientes es mayor a {@code 0} después de haber
-//	 * creado al menos uno.
-//	 */
-//	@Test
-//	void testCount() {
-//		service.create(crearCliente());
-//		long count = service.count();
-//		assertTrue(count > 0);
-//	}
-//
-//	/**
-//	 * Verifica que {@code exist()} retorna {@code true} para el ID de un cliente
-//	 * creado previamente.
-//	 */
-//	@Test
-//	void testExist() {
-//		service.create(crearCliente());
-//
-//		boolean existe = service.exist(1L);
-//		assertFalse(existe);
-//	}
-//
-//	/**
-//	 * Verifica que el inicio de sesión retorna {@code 0} y que el estado de sesión
-//	 * es {@code true} cuando las credenciales son correctas.
-//	 */
-//	@Test
-//	void testLoginOK() {
-//		service.register("cliente", "123", "123456789", "normal");
-//
-//		int result = service.login("cliente", "123");
-//
-//		assertEquals(1, result);
-//		assertFalse(service.isLogged());
-//	}
-//
-//	/**
-//	 * Verifica que el inicio de sesión retorna {@code 1} y que el estado de sesión
-//	 * permanece en {@code false} cuando la contraseña es incorrecta.
-//	 */
-//	@Test
-//	void testLoginFail() {
-//		service.register("cliente", "123", "123456789", "normal");
-//
-//		int result = service.login("cliente", "wrong");
-//
-//		assertEquals(1, result);
-//		assertFalse(service.isLogged());
-//	}
-//
-//	/**
-//	 * Verifica que el registro de un nuevo cliente retorna {@code 0} cuando los
-//	 * datos son válidos y el usuario no existe previamente.
-//	 */
-//	@Test
-//	void testRegisterOK() {
-//		int result = service.register("cliente", "123", "123456789", "normal");
-//		assertEquals(1, result);
-//	}
-//
-//	/**
-//	 * Verifica que intentar registrar un usuario duplicado retorna {@code 1}.
-//	 */
-//	@Test
-//	void testRegisterFailUsuarioDuplicado() {
-//		service.register("cliente", "123", "123456789", "normal");
-//
-//		int result = service.register("cliente", "123", "123456789", "normal");
-//		assertEquals(1, result);
-//	}
-//
-//	/**
-//	 * Verifica que el registro con un tipo de cliente no permitido (distinto de
-//	 * {@code "normal"} o {@code "premium"}) retorna {@code 1}.
-//	 */
-//	@Test
-//	void testRegisterFailTipo() {
-//		int result = service.register("cliente", "123", "123456789", "vip");
-//		assertEquals(1, result);
-//	}
-//
-//	/**
-//	 * Verifica que el cierre de sesión cambia el estado de sesión de {@code true} a
-//	 * {@code false} correctamente.
-//	 */
-//	@Test
-//	void testLogout() {
-//		service.register("cliente", "123", "123456789", "normal");
-//		service.login("cliente", "123");
-//		service.logout();
-//
-//		assertFalse(service.isLogged());
-//
-//	}
-//
-//	/**
-//	 * Verifica que {@code findByTipoCliente()} retorna al menos un resultado cuando
-//	 * existen clientes registrados con el tipo solicitado.
-//	 */
-//	@Test
-//	void testFindByTipoCliente() {
-//		service.register("cliente1", "123", "123456789", "normal");
-//		service.register("cliente2", "123", "987654321", "premium");
-//
-//		List<ClienteDTO> normales = service.findByTipoCliente("normal");
-//
-//		assertFalse(normales.size() > 1);
-//	}
+
+	/**
+	 * Servicio de clientes inyectado para realizar las pruebas.
+	 */
+	@Autowired
+	private ClienteService clienteService;
+
+	/**
+	 * Servicio de administración inyectado para pruebas que requieren
+	 * autenticación de administrador.
+	 */
+	@Autowired
+	private AdminService adminService;
+
+	/**
+	 * Método de configuración ejecutado antes de cada prueba.
+	 * 
+	 * <p>Cierra todas las sesiones activas tanto de clientes como de
+	 * administradores para garantizar que cada caso de prueba comience
+	 * desde un estado inicial limpio y predecible.</p>
+	 */
+	@BeforeEach
+	void limpiarSesiones() {
+		clienteService.logout();
+		adminService.logoutadmin();
+	}
+
+	/**
+	 * Crea un objeto {@link ClienteDTO} con datos válidos predefinidos para pruebas.
+	 * 
+	 * <p>Los datos incluyen:
+	 * <ul>
+	 *   <li>Usuario: "clienteTest"</li>
+	 *   <li>Contraseña: "pass"</li>
+	 *   <li>Cédula: "1234567890"</li>
+	 *   <li>Tipo de cliente: {@link TipoCliente#NORMAL}</li>
+	 * </ul></p>
+	 * 
+	 * @return instancia de {@code ClienteDTO} con datos de prueba válidos
+	 */
+	public ClienteDTO crearClienteValido() {
+		ClienteDTO dto = new ClienteDTO();
+		dto.setUsuario("clienteTest");
+		dto.setContrasenia("pass");
+		dto.setCedula("1234567890"); 
+		dto.setTipoCliente(TipoCliente.NORMAL);
+		return dto;
+	}
+
+	/**
+	 * Crea un administrador temporal con un nombre de usuario único y
+	 * autentica la sesión como administrador.
+	 * 
+	 * <p>Este método auxiliar se utiliza en pruebas que requieren permisos
+	 * de administrador. El nombre de usuario se genera utilizando
+	 * {@link System#nanoTime()} para garantizar su unicidad en cada
+	 * invocación y evitar conflictos entre pruebas concurrentes.</p>
+	 * 
+	 * <p>Las credenciales del administrador temporal son:
+	 * <ul>
+	 *   <li>Usuario: "admin_" + nanosegundos actuales</li>
+	 *   <li>Contraseña: "admin123"</li>
+	 *   <li>Código de administrador: "admin123"</li>
+	 * </ul></p>
+	 */
+	public void loginAdminTemp() {
+		String uniqueUser = "admin_" + System.nanoTime();
+		AdminDTO admin = new AdminDTO();
+		admin.setUsuario(uniqueUser);
+		admin.setContrasenia("admin123");
+		admin.setCodigoAdmin("admin123");
+		adminService.create(admin);
+		adminService.loginadmin(uniqueUser, "admin123", "admin123");
+	}
+
+	/**
+	 * Prueba la creación exitosa de un cliente con datos válidos.
+	 * 
+	 * <p>Verifica que el método {@code create} retorne {@code 0} cuando
+	 * se proporcionan datos de cliente válidos y completos.</p>
+	 */
+	@Test
+	void testCreateExitoso() {
+		int resultado = clienteService.create(crearClienteValido());
+		assertEquals(0, resultado);
+	}
+
+	/**
+	 * Prueba la creación de un cliente con un nombre de usuario duplicado.
+	 * 
+	 * <p>Intenta crear dos clientes con el mismo nombre de usuario y verifica
+	 * que el segundo intento retorne {@code 2}, indicando que el usuario
+	 * ya existe en el sistema.</p>
+	 */
+	@Test
+	void testCreateUsuarioDuplicado() {
+		clienteService.create(crearClienteValido());
+		int resultado = clienteService.create(crearClienteValido());
+		assertEquals(2, resultado);
+	}
+
+	/**
+	 * Prueba la creación de un cliente con una cédula de formato inválido.
+	 * 
+	 * <p>Modifica el DTO de cliente para establecer una cédula demasiado corta
+	 * y verifica que el método {@code create} retorne {@code 1}, indicando
+	 * un error de validación en los datos proporcionados.</p>
+	 */
+	@Test
+	void testCreateCedulaInvalida() {
+		ClienteDTO dto = crearClienteValido();
+		dto.setCedula("123");
+		int resultado = clienteService.create(dto);
+		assertEquals(1, resultado);
+	}
+
+	/**
+	 * Prueba la obtención de todos los clientes sin autenticación de administrador.
+	 * 
+	 * <p>Verifica que el método {@code getAll} retorne {@code null} cuando
+	 * no hay una sesión de administrador activa, indicando que se requiere
+	 * autenticación para acceder a este recurso.</p>
+	 */
+	@Test
+	void testGetAllSinAdmin() {
+		String json = clienteService.getAll();
+		assertNull(json);
+	}
+
+	/**
+	 * Prueba la obtención de todos los clientes con autenticación de administrador.
+	 * 
+	 * <p>Crea un cliente, inicia sesión como administrador y verifica que
+	 * el método {@code getAll} retorne un JSON no nulo que contiene los
+	 * datos del cliente creado.</p>
+	 */
+	@Test
+	void testGetAllConAdmin() {
+		clienteService.create(crearClienteValido());
+		loginAdminTemp();
+		String json = clienteService.getAll();
+		assertNotNull(json);
+		assertTrue(json.contains("clienteTest"));
+	}
+
+	/**
+	 * Prueba la eliminación de un cliente sin autenticación de administrador.
+	 * 
+	 * <p>Verifica que el método {@code deleteById} retorne {@code 2} cuando
+	 * no hay una sesión de administrador activa, indicando que se requiere
+	 * autenticación para realizar esta operación.</p>
+	 */
+	@Test
+	void testDeleteByIdSinAdmin() {
+		int resultado = clienteService.deleteById(1L);
+		assertEquals(2, resultado);
+	}
+
+	/**
+	 * Prueba la eliminación de un cliente con un ID inexistente.
+	 * 
+	 * <p>Inicia sesión como administrador e intenta eliminar un cliente
+	 * con un ID que no existe en el sistema. Verifica que el método retorne
+	 * {@code 1}, indicando que el cliente no fue encontrado.</p>
+	 */
+	@Test
+	void testDeleteByIdInexistenteConAdmin() {
+		loginAdminTemp();
+		int resultado = clienteService.deleteById(999L);
+		assertEquals(1, resultado);
+	}
+
+	/**
+	 * Prueba la actualización de un cliente sin autenticación de administrador.
+	 * 
+	 * <p>Verifica que el método {@code updateById} retorne {@code 2} cuando
+	 * no hay una sesión de administrador activa, indicando que se requiere
+	 * autenticación para realizar esta operación.</p>
+	 */
+	@Test
+	void testUpdateByIdSinAdmin() {
+		int resultado = clienteService.updateById(1L, crearClienteValido());
+		assertEquals(2, resultado);
+	}
+
+	/**
+	 * Prueba la actualización de un cliente que no existe en el sistema.
+	 * 
+	 * <p>Inicia sesión como administrador e intenta actualizar un cliente
+	 * con un ID inexistente. Verifica que el método {@code updateById}
+	 * retorne {@code 6}, indicando que el cliente no fue encontrado.</p>
+	 */
+	@Test
+	void testUpdateByIdClienteNoExistente() {
+		loginAdminTemp();
+		int resultado = clienteService.updateById(999L, crearClienteValido());
+		assertEquals(6, resultado);
+	}
+
+	/**
+	 * Prueba el inicio de sesión exitoso de un cliente.
+	 * 
+	 * <p>Crea un cliente, inicia sesión con las credenciales correctas y
+	 * verifica que el método {@code login} retorne {@code 0} y que el
+	 * estado de autenticación del cliente sea verdadero.</p>
+	 */
+	@Test
+	void testLoginExitoso() {
+		clienteService.create(crearClienteValido());
+		int resultado = clienteService.login("clienteTest", "pass");
+		assertEquals(0, resultado);
+		assertTrue(clienteService.isLogged());
+	}
+
+	/**
+	 * Prueba el inicio de sesión de un cliente con contraseña incorrecta.
+	 * 
+	 * <p>Crea un cliente e intenta iniciar sesión con una contraseña
+	 * incorrecta. Verifica que el método retorne {@code 1} y que el
+	 * estado de autenticación permanezca en falso.</p>
+	 */
+	@Test
+	void testLoginFallido() {
+		clienteService.create(crearClienteValido());
+		int resultado = clienteService.login("clienteTest", "wrong");
+		assertEquals(1, resultado);
+		assertFalse(clienteService.isLogged());
+	}
+
+	/**
+	 * Prueba el cierre de sesión de un cliente autenticado.
+	 * 
+	 * <p>Inicia sesión correctamente como cliente, verifica el estado de
+	 * autenticación, cierra la sesión y confirma que el estado cambie
+	 * a falso después del cierre.</p>
+	 */
+	@Test
+	void testLogout() {
+		clienteService.create(crearClienteValido());
+		clienteService.login("clienteTest", "pass");
+		assertTrue(clienteService.isLogged());
+		clienteService.logout();
+		assertFalse(clienteService.isLogged());
+	}
+
+	/**
+	 * Prueba el conteo de clientes registrados en el sistema.
+	 * 
+	 * <p>Compara el número de clientes antes y después de crear uno nuevo
+	 * para verificar que el contador se incremente correctamente en una
+	 * unidad.</p>
+	 */
+	@Test
+	void testCount() {
+		long antes = clienteService.count();
+		clienteService.create(crearClienteValido());
+		assertEquals(antes + 1, clienteService.count());
+	}
+
+	/**
+	 * Prueba la verificación de existencia de un cliente con un ID inexistente.
+	 * 
+	 * <p>Verifica que el método {@code exist} retorne {@code false} para
+	 * un ID que no corresponde a ningún cliente registrado en el sistema.</p>
+	 */
+	@Test
+	void testExist() {
+		assertFalse(clienteService.exist(999L));
+	}
+
+	/**
+	 * Prueba la obtención del cliente actualmente autenticado.
+	 * 
+	 * <p>Crea un cliente, inicia sesión y verifica que el método
+	 * {@code getClienteLogueado} retorne un objeto no nulo con el
+	 * nombre de usuario correcto del cliente autenticado.</p>
+	 */
+	@Test
+	void testGetClienteLogueado() {
+		clienteService.create(crearClienteValido());
+		clienteService.login("clienteTest", "pass");
+		assertNotNull(clienteService.getClienteLogueado());
+		assertEquals("clienteTest", clienteService.getClienteLogueado().getUsuario());
+	}
 
 }
