@@ -7,7 +7,8 @@
       <button type="button" [class.active]="rol === 'cliente'" (click)="cambiarRol('cliente')">Cliente</button>
       <button type="button" [class.active]="rol === 'admin'" (click)="cambiarRol('admin')">Admin</button>
       <button type="button" [class.active]="rol === 'conductor'" (click)="cambiarRol('conductor')">Conductor</button>
-      <button type="button" [class.active]="rol === 'manipulador'" (click)="cambiarRol('manipulador')">Manipulador</button>
+      <button type="button" [class.active]="rol === 'manipulador'" (click)="cambiarRol('manipulador')">Manipulador
+      </button>
     </div>
   </header>
 
@@ -55,6 +56,7 @@
           <div class="register-stack">
             <input type="text" placeholder="Usuario" [(ngModel)]="usuario" name="r_usuario">
             <input type="password" placeholder="Contraseña" [(ngModel)]="password" name="r_password">
+            <input type="text" placeholder="Cedula" [(ngModel)]="cedula" name="r_cedula">
             <select [(ngModel)]="tipoCliente" name="tipoCliente">
               <option value="NORMAL">Normal</option>
               <option value="PREMIUM">Premium</option>

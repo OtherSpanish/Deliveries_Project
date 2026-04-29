@@ -32,7 +32,7 @@ public class ClienteController {
 	public ResponseEntity<String> login(@RequestParam String usuario, @RequestParam String contrasenia) {
 		int status = clienteService.login(usuario, contrasenia);
 		if (status == 0) {
-			return new ResponseEntity<>("Login exitoso", HttpStatus.OK);			
+			return new ResponseEntity<>("Login exitoso", HttpStatus.OK);
 		}
 		return new ResponseEntity<>("Credenciales incorrectas", HttpStatus.UNAUTHORIZED);
 	}
@@ -40,7 +40,7 @@ public class ClienteController {
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout() {
 		if (!clienteService.isLogged()) {
-			return new ResponseEntity<>("No hay sesion iniciada", HttpStatus.BAD_REQUEST);			
+			return new ResponseEntity<>("No hay sesion iniciada", HttpStatus.BAD_REQUEST);
 		}
 		clienteService.logout();
 		return new ResponseEntity<>("Sesion cerrada", HttpStatus.OK);
@@ -54,13 +54,13 @@ public class ClienteController {
 		case 0: {
 			return new ResponseEntity<>("Usuario registrado", HttpStatus.CREATED);
 		}
-			
+
 		case 1: {
 			return new ResponseEntity<>("Ingrese correctamente el tipo de usuario (NORMAL, PREMIUM)",
 					HttpStatus.BAD_REQUEST);
 		}
-			
-		case 2: {		
+
+		case 2: {
 			return new ResponseEntity<>("El Nombre de usuario ya se encuentra registrado", HttpStatus.BAD_REQUEST);
 		}
 		case 3: {
@@ -80,11 +80,11 @@ public class ClienteController {
 	public ResponseEntity<String> mostrarPrecio() {
 		return new ResponseEntity<>("Carta: $10.000 | Alimenticios: $20.000 | No Alimenticios: $30.000", HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/clientePaquete")
 	public ResponseEntity<List<Paquete>> clientePorPaquete() {
-		String clientePorPaquete =  clienteService.getClienteLogueado().getUsuario();
+		String clientePorPaquete = clienteService.getClienteLogueado().getUsuario();
 		return new ResponseEntity<>(pService.paquetesPorCliente(clientePorPaquete), HttpStatus.OK);
 	}
-	
+
 }
